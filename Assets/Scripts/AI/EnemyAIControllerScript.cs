@@ -11,12 +11,9 @@ public class EnemyAIControllerScript : MonoBehaviour
     private NavMeshAgent navMesh;
     private GameObject player;
 
-    //флаг, выставляющийся, когда ИИ подошёл на расстояние для удара
-    private bool targetReached;
     
     void Start()
     {
-        targetReached = false;
         navMesh = GetComponent<NavMeshAgent>();
         navMesh.stoppingDistance = reachTargetDistance;
         player = GameObject.FindGameObjectsWithTag("Player")[0];
@@ -24,16 +21,13 @@ public class EnemyAIControllerScript : MonoBehaviour
 
     void Update()
     {
-        if (!targetReached)
+        if (FollowPlayer())
         {
-            targetReached = FollowPlayer();
-        } else
-        {
-            //todo атака
+            //атака
         }
     }
 
-    public bool FollowPlayer()
+        public bool FollowPlayer()
     {
         return FollowAgent(player);
     }
