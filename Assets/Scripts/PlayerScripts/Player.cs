@@ -7,47 +7,36 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    private PlayerInput _playerInput;
-    private CharacterController _characterController;
+    private PlayerInput playerInput;
+    private CharacterController characterController;
 
-    [SerializeField] [Range (1f, 100f)] private float _sensetivityRotation;
-    [SerializeField] [Range(1f, 100f)] private float _runSpeed;
-    [SerializeField] [Range(1f, 100f)] private float _walkSpeed;
-    [SerializeField] [Range(1f, 100f)] private float _jumpForce;
-    [SerializeField] [Range(1f, 100f)] private float _fallMultiplier;
+    [SerializeField] [Range(1f, 100f)] private float runSpeed;
+    [SerializeField] [Range(1f, 100f)] private float walkSpeed;
+    [SerializeField] [Range(1f, 100f)] private float jumpForce;
+    [SerializeField] [Range(1f, 100f)] private float fallControlSpeed;
+    [SerializeField] [Range(0f, 100f)] private float gravity;
 
-    [SerializeField] [Range(-10f, -1f)] private float _gravity = -9.8f;
-    [SerializeField] [Range(-10f, -1f)] private float _groundedGravity = -0.05f;
-    [SerializeField] [Range(1f, 100f)] private float _massCharacter = 5.0f;
-    [SerializeField] [Range(0f, 1f)] private float _rotationSpeed = 0.5f;
+    private Vector2 input;
+    private Vector3 currentMovement;
 
+    private bool isRunPressed;
+    private bool isJumpPressed = false;
+    private bool isFalling = false;
 
-    private Vector2 _input;
-    private Vector3 _currentMovement;
-    private Vector3 _currentRunMovement;
-
-    private bool _isMovementPressed;
-    private bool _isRunPressed;
-    private bool _isJumpPressed = false;
-    private bool _isJumping = false;
-
-    private float _initialJumpVelocity;
-    private float _maxJumpHeight = 0.5f;
-    private float _maxJumpTime = 0.75f;
 
 
     private void Awake()
     {
-        _playerInput = new PlayerInput();
-        _characterController = GetComponent<CharacterController>();
+        playerInput = new PlayerInput();
+        characterController = GetComponent<CharacterController>();
 
-        _playerInput.PlayerController.Move.started += OnMovementInput;
-        _playerInput.PlayerController.Move.canceled += OnMovementInput;
-        _playerInput.PlayerController.Move.performed += OnMovementInput;
-        _playerInput.PlayerController.Run.started += OnRun;
-        _playerInput.PlayerController.Run.canceled += OnRun;
-        _playerInput.PlayerController.Jump.started += OnJump;
-        _playerInput.PlayerController.Jump.canceled += OnJump;
+        playerInput.PlayerController.Move.started += OnMovementInput;
+        playerInput.PlayerController.Move.canceled += OnMovementInput;
+        playerInput.PlayerController.Move.performed += OnMovementInput;
+        playerInput.PlayerController.Run.started += OnRun;
+        playerInput.PlayerController.Run.canceled += OnRun;
+        playerInput.PlayerController.Jump.started += OnJump;
+        playerInput.PlayerController.Jump.canceled += OnJump;
     }
 
     private void Start()
@@ -57,111 +46,84 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        HandleRotation();
         HandleMovement();
-        HandleJump();
-        HandleGravity();
-        SetUpJumpVariables();
     }
 
-    void SetUpJumpVariables()
-    {
-        float timeToApex = _maxJumpTime / 2;
-        _gravity = (-2 * _maxJumpHeight) / (timeToApex * timeToApex);
-        _initialJumpVelocity = (2 * _maxJumpHeight) / timeToApex;
-    }
+  
 
-    private void HandleGravity()
-    {
-        {
-            bool isFalling = _currentMovement.y <= 0.0f || !_isJumpPressed;
-            float fallMultiplier = 2.0f;
-            if (_characterController.isGrounded)
-            {
-                _currentMovement.y = _groundedGravity;
-                _currentRunMovement.y = _groundedGravity;
-            }
-            else if (isFalling)
-            {
-                float previousYVelocity = _currentMovement.y;
-                float newYVelocity = _currentMovement.y + (_gravity * fallMultiplier * Time.deltaTime);
-                float nextYVelocity = (previousYVelocity + newYVelocity) * 0.5f;
-                _currentMovement.y = nextYVelocity;
-                _currentRunMovement.y = nextYVelocity;
-            }
-            else
-            {
-                float previousYVelocity = _currentMovement.y;
-                float newYVelocity = _currentMovement.y + (_gravity * Time.deltaTime);
-                float nextYVelocity = (previousYVelocity + newYVelocity) * 0.5f;
-                _currentMovement.y = nextYVelocity;
-                _currentRunMovement.y = nextYVelocity;
-            }
-        }
-    }
     private void HandleMovement()
     {
-        _currentMovement = new Vector3(_input.x, 0, _input.y);
-
-        //_currentMovement = _currentMovement.x * cameraTransform.right.normalized + _currentMovement.z * cameraTransform.forward.normalized;
-        _currentMovement.y = 0f;
-
-        if (_isRunPressed)
+        Vector3 forward = transform.TransformDirection(Vector3.forward);
+        Vector3 right = transform.TransformDirection(Vector3.right);
+        float speedMultipler;
+        if (isFalling)
         {
-            _characterController.Move(_currentMovement * _runSpeed * Time.deltaTime);
+            speedMultipler = fallControlSpeed;
         }
         else
         {
-            _characterController.Move(_currentMovement * _walkSpeed * Time.deltaTime);
+            if (isRunPressed)
+            {
+                speedMultipler = runSpeed;
+            } else
+            {
+                speedMultipler = walkSpeed;
+            }
         }
+        float curSpeedX = speedMultipler * -input.x;
+        float curSpeedY = speedMultipler * input.y;
+        float movementDirectionY = currentMovement.y;
+        currentMovement = forward * curSpeedX + right * curSpeedY;
+        HandleJump(movementDirectionY);
+        characterController.Move(currentMovement * Time.deltaTime);
+
     }
 
-    private void HandleRotation()
+    private void HandleJump(float movementDirectionY)
     {
-
-    }
-
-    private void HandleJump()
-    {
-        Debug.Log(_characterController.isGrounded);
-        if (!_isJumping && _characterController.isGrounded && _isJumpPressed)
+        if (isJumpPressed && !isFalling)
+        {  
+            currentMovement.y = jumpForce;
+        } else
         {
-            _isJumping = true;
-
-            _currentMovement.y = _initialJumpVelocity * 0.5f;
-            _currentRunMovement.y = _initialJumpVelocity * 0.5f * _walkSpeed;
+            currentMovement.y = movementDirectionY;
         }
-        else if (!_isJumpPressed && _isJumping && _characterController.isGrounded)
+        if (!characterController.isGrounded)
         {
-            _isJumping = false;
+            if (currentMovement.y < 0f)
+            {
+                isFalling = true;
+            }
+            currentMovement.y -= gravity * Time.deltaTime;
+        }
+        else
+        {
+            isFalling = false;
         }
     }
 
     private void OnJump(InputAction.CallbackContext obj)
     {
-        _isJumpPressed = obj.ReadValueAsButton();
+        isJumpPressed = obj.ReadValueAsButton();
     }
     private void OnRun(InputAction.CallbackContext obj)
     {
-        _isRunPressed = obj.ReadValueAsButton();
+        isRunPressed = obj.ReadValueAsButton();
     }
 
     private void OnMovementInput(InputAction.CallbackContext obj)
     {
-        _input = obj.ReadValue<Vector2>();
-
-       _isMovementPressed = _input.x != 0 || _input.y != 0;
-
+        input = obj.ReadValue<Vector2>();
     }
 
 
     private void OnEnable()
     {
-        _playerInput.PlayerController.Enable();
+        playerInput.PlayerController.Enable();
     }
 
     private void OnDisable()
     {
-        _playerInput.PlayerController.Disable();
+        playerInput.PlayerController.Disable();
     }
 }
