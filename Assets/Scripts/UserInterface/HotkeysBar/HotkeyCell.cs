@@ -31,7 +31,7 @@ public class HotkeyCell : MonoBehaviour
     
     private Coroutine _activatedAnimation;
     private Coroutine _cooldownAnimation;
-    private Events subscribedEvent;
+    private Events _subscribedEvent;
     
     void Start()
     {
@@ -49,6 +49,7 @@ public class HotkeyCell : MonoBehaviour
     public void SetNewHotkey(string hotkey) => hotkeyCharTextField.text = hotkey;
     public void SetEventSubscription(Events newEvent)
     {
+        _subscribedEvent = newEvent;
         Unsubscribe();
         ObserverWithoutData.Sub(newEvent, BindedAction);
         ObserverWithData<CooldownObservingDTO>.Sub(newEvent, SetOnCooldown);
@@ -56,11 +57,11 @@ public class HotkeyCell : MonoBehaviour
 
     public void Unsubscribe()
     {
-        if (subscribedEvent == null)
+        if (_subscribedEvent == null)
             return;
         
-        ObserverWithoutData.Unsub(subscribedEvent, BindedAction);
-        ObserverWithData<CooldownObservingDTO>.Unsub(subscribedEvent, SetOnCooldown);
+        ObserverWithoutData.Unsub(_subscribedEvent, BindedAction);
+        ObserverWithData<CooldownObservingDTO>.Unsub(_subscribedEvent, SetOnCooldown);
     }
 
     public void BindedAction()
@@ -119,7 +120,6 @@ public class HotkeyCell : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
             timeLeft -= 0.1f;
             cooldownComponent.UpdateTimerValue((float)Math.Round(timeLeft));
-            //Debug.Log(@$"TimerValue = {timeLeft}");
         }
         
         cooldownComponent.HideCooldown();

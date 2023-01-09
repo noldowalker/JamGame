@@ -7,5 +7,6 @@ namespace GameLogic
         Button1Pressed,
         Button2Pressed,
         Button3Pressed,
+        HPLossPercent,
     }
 }
