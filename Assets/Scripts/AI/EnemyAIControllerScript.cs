@@ -6,11 +6,12 @@ using UnityEngine.AI;
 public class EnemyAIControllerScript : MonoBehaviour
 {
     public bool AIDisabled = false;
-    //минимальное расстояние до цели, на котором может проводиться атака
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
     public float reachTargetDistance;
 
     private NavMeshAgent navMesh;
     private GameObject player;
+    private Animator animator;
 
     
     void Start()
@@ -18,20 +19,20 @@ public class EnemyAIControllerScript : MonoBehaviour
         navMesh = GetComponent<NavMeshAgent>();
         navMesh.stoppingDistance = reachTargetDistance;
         player = GameObject.FindGameObjectsWithTag("Player")[0];
+        animator = GetComponent<Animator>();
     }
 
     void Update()
     {
         if (!AIDisabled)
         {
-            if (FollowPlayer())
-            {
-                //атака
-            }
+            //пїЅпїЅпїЅпїЅпїЅ
+            if(animator != null)
+            animator.Play("Base Layer.RobotHipHopDance");
         }
     }
 
-        public bool FollowPlayer()
+    bool FollowPlayer()
     {
         return FollowAgent(player);
     }
