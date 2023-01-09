@@ -32,7 +32,6 @@ public class EnemySpawnScript : MonoBehaviour
 
     public void SpawnRandomActor()
     {
-        print(actorPrefabs.Count);
         SpawnActor(actorPrefabs[Random.Range(0, actorPrefabs.Count)]);
     }
 
