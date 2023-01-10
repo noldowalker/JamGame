@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
 {
     private PlayerInput playerInput;
     private CharacterController characterController;
+   private Animator animator;
 
     [SerializeField] [Range(1f, 100f)] private float runSpeed;
     [SerializeField] [Range(1f, 100f)] private float walkSpeed;
@@ -22,11 +23,13 @@ public class Player : MonoBehaviour
     private bool isRunPressed;
     private bool isJumpPressed = false;
     private bool isFalling = false;
+    private bool isMovementPressed;
 
 
 
     private void Awake()
     {
+        animator = GetComponent<Animator>();
         playerInput = new PlayerInput();
         characterController = GetComponent<CharacterController>();
 
@@ -37,6 +40,8 @@ public class Player : MonoBehaviour
         playerInput.PlayerController.Run.canceled += OnRun;
         playerInput.PlayerController.Jump.started += OnJump;
         playerInput.PlayerController.Jump.canceled += OnJump;
+
+
     }
 
     private void Start()
@@ -65,10 +70,19 @@ public class Player : MonoBehaviour
             if (isRunPressed)
             {
                 speedMultipler = runSpeed;
+                animator.SetBool("isRunning", true);
+                animator.SetBool("isWalk", false);
             } else
             {
                 speedMultipler = walkSpeed;
+                animator.SetBool("isWalk", true);
+                animator.SetBool("isRunning", false);
             }
+        }
+        if (!isMovementPressed)
+        {
+            animator.SetBool("isWalk", false);
+            animator.SetBool("isRunning", false);
         }
         float curSpeedX = speedMultipler * -input.x;
         float curSpeedY = speedMultipler * input.y;
@@ -76,14 +90,14 @@ public class Player : MonoBehaviour
         currentMovement = forward * curSpeedX + right * curSpeedY;
         HandleJump(movementDirectionY);
         characterController.Move(currentMovement * Time.deltaTime);
-
     }
 
     private void HandleJump(float movementDirectionY)
     {
         if (isJumpPressed && !isFalling)
-        {  
+        {
             currentMovement.y = jumpForce;
+            animator.Play("Base Layer.Jump Attack");  
         } else
         {
             currentMovement.y = movementDirectionY;
@@ -114,6 +128,8 @@ public class Player : MonoBehaviour
     private void OnMovementInput(InputAction.CallbackContext obj)
     {
         input = obj.ReadValue<Vector2>();
+        isMovementPressed = input.x != 0 || input.y != 0;
+
     }
 
 
