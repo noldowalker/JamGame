@@ -13,6 +13,13 @@ public class UIService : MonoBehaviour
     private Canvas gameCanvas;
     [SerializeField] 
     private HotkeyBar hotKeyPrefab;
+    [SerializeField] 
+    private HelpPanel helpPanelPrefab;
+
+    private HotkeyBar _hotKeyPanel;
+    private HelpPanel _helpPanel;
+    
+    private float testHp = 100;
     
     private void Awake()
     {
@@ -28,8 +35,12 @@ public class UIService : MonoBehaviour
             Debug.LogError("Не установлен основной игровой канвас для сервиса пользовательского интерфейса");
         if (hotKeyPrefab == null)
             Debug.LogError("Не установлен префаб для панели горячих клавиш");
+        if (helpPanelPrefab == null)
+            Debug.LogError("Не установлен префаб для панели-подсказки");
 
-        Instantiate(hotKeyPrefab, gameCanvas.transform);
+        _hotKeyPanel = Instantiate(hotKeyPrefab, gameCanvas.transform);
+        _helpPanel = Instantiate(helpPanelPrefab, gameCanvas.transform);
+        ObserverWithoutData.Sub(Events.HelpPanelCalled, _helpPanel.SwitchPanelVisibility);
     }
 
     // ToDo: Бинды чисто для теста, после реализации контроллера персонажа и управления - удалить.
@@ -42,6 +53,9 @@ public class UIService : MonoBehaviour
             FireSkillEvent(Events.Button2Pressed, 5f);
         if (Input.GetKeyUp(KeyCode.Alpha3)) 
             FireSkillEvent(Events.Button3Pressed, 7f);
+        if (Input.GetKeyUp(KeyCode.F1)) 
+            ObserverWithoutData.FireEvent(Events.HelpPanelCalled);
+        
     }
     
     public void FireSkillEvent(Events skillEvent, float cooldown = 0)
@@ -55,6 +69,13 @@ public class UIService : MonoBehaviour
         ObserverWithoutData.FireEvent(skillEvent);
         yield return new WaitForSeconds(0.1f);
 
+        testHp -= 10;
+        var hpData = new NewHPPercentObservingDTO()
+        {
+            NewPercent = (testHp / 100)
+        };
+        ObserverWithData<NewHPPercentObservingDTO>.FireEvent(Events.HPLossPercent, hpData);
+        
         if (cooldown <= 0)
             yield break;
 
