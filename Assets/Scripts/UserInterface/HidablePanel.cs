@@ -9,7 +9,7 @@ public class HidablePanel : MonoBehaviour
     private Vector3 _showPoint;
     private bool _panelStatus;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         var currentPoint = transform.position;
 

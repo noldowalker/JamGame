@@ -3,18 +3,32 @@ using System.Collections;
 using System.Collections.Generic;
 using GameLogic;
 using UnityEngine;
+using UserInterface.Enums;
+using UserInterface.IngameInformation;
 
 
 public class UIService : MonoBehaviour
 {
     public static UIService Current; 
     
+    [Header("Включить игровой интерфейс")]
+    [SerializeField] 
+    private bool showGameLayout;
+    
+    [Space]
+    [Header("Необходимые для игрового интерфейса ссылки")]
     [SerializeField] 
     private Canvas gameCanvas;
+    [Header("Префабы")]
     [SerializeField] 
     private HotkeyBar hotKeyPrefab;
     [SerializeField] 
     private HelpPanel helpPanelPrefab;
+    [SerializeField]
+    private HotkeyCell hotkeyCellPrefab;
+    [Header("Спрайты")]
+    [SerializeField]
+    private Sprite helpIcon;
 
     private HotkeyBar _hotKeyPanel;
     private HelpPanel _helpPanel;
@@ -31,16 +45,8 @@ public class UIService : MonoBehaviour
 
     void Start()
     {
-        if (gameCanvas == null)
-            Debug.LogError("Не установлен основной игровой канвас для сервиса пользовательского интерфейса");
-        if (hotKeyPrefab == null)
-            Debug.LogError("Не установлен префаб для панели горячих клавиш");
-        if (helpPanelPrefab == null)
-            Debug.LogError("Не установлен префаб для панели-подсказки");
-
-        _hotKeyPanel = Instantiate(hotKeyPrefab, gameCanvas.transform);
-        _helpPanel = Instantiate(helpPanelPrefab, gameCanvas.transform);
-        ObserverWithoutData.Sub(Events.HelpPanelCalled, _helpPanel.SwitchPanelVisibility);
+        if (showGameLayout)
+            TurnOnGameInterface();
     }
 
     // ToDo: Бинды чисто для теста, после реализации контроллера персонажа и управления - удалить.
@@ -85,5 +91,34 @@ public class UIService : MonoBehaviour
         };
             
         ObserverWithData<CooldownObservingDTO>.FireEvent(skillEvent, data);
+    }
+
+    private void TurnOnGameInterface()
+    {
+        if (gameCanvas == null)
+            Debug.LogError("Не установлен основной игровой канвас для сервиса пользовательского интерфейса");
+        if (hotKeyPrefab == null)
+            Debug.LogError("Не установлен префаб для панели горячих клавиш");
+        if (helpPanelPrefab == null)
+            Debug.LogError("Не установлен префаб для панели-подсказки");
+
+        var helpHotkey = AddHotkey(Events.HelpPanelCalled, "F1", helpIcon);
+        helpHotkey.AlignToCoords(0, 0, Align.LeftBottom);
+        
+        _hotKeyPanel = Instantiate(hotKeyPrefab, gameCanvas.transform);
+        
+        _helpPanel = Instantiate(helpPanelPrefab, gameCanvas.transform);
+        ObserverWithoutData.Sub(Events.HelpPanelCalled, _helpPanel.SwitchPanelVisibility);
+    }
+    
+    public HotkeyCell AddHotkey(Events eventForPress, string hotkeyChar, Sprite icon)
+    {
+        var containerTransform = gameCanvas.transform;
+        var hotkey = Instantiate(hotkeyCellPrefab, containerTransform);
+        hotkey.SetNewHotkey(hotkeyChar);
+        hotkey.SetEventSubscription(eventForPress);
+        hotkey.SetIcon(icon);
+        
+        return hotkey;
     }
 }

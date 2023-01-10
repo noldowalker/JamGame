@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UserInterface.Enums;
 using UserInterface.HotkeysBar;
 
 public class HotkeyCell : MonoBehaviour
@@ -99,6 +100,23 @@ public class HotkeyCell : MonoBehaviour
             StopCoroutine(_activatedAnimation);
     }
 
+    public void AlignToCoords(float x, float y, Align align)
+    {
+        var rectTransform = GetComponent<RectTransform>();
+        var halfWidth = rectTransform.sizeDelta.x / 2;
+        var halfHeight = rectTransform.sizeDelta.y / 2;
+
+        switch (align)
+        {
+            case Align.LeftBottom:
+                var transformPosition = transform.position;
+                transformPosition.x = x + halfWidth;
+                transformPosition.y = y + halfHeight;
+                transform.position = transformPosition;
+                break;
+        }
+    }
+
     private IEnumerator PlayActivationAnimation()
     {
         Debug.Log(@$"Нажата кнопка {hotkeyCharTextField.text}");
@@ -133,4 +151,6 @@ public class HotkeyCell : MonoBehaviour
         CooldownRemove();
         ActivatedRemove();
     }
+    
+    
 }
