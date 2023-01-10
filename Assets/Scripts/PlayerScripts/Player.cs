@@ -74,31 +74,31 @@ public class Player : MonoBehaviour
 
     private void HandleMovement()
     {
+        animator.SetFloat("speed", 0);
+
         Vector3 forward = Vector3.forward;
         Vector3 right = Vector3.right;
-        float speedMultipler;
+        float speedMultipler = 1;
         if (isFalling)
         {
             speedMultipler = fallControlSpeed;
         }
         else
         {
-            if (isRunPressed)
+            if (isMovementPressed)
             {
-                speedMultipler = runSpeed;
-                animator.SetBool("isRunning", true);
-                animator.SetBool("isWalk", false);
-            } else
-            {
-                speedMultipler = walkSpeed;
-                animator.SetBool("isWalk", true);
-                animator.SetBool("isRunning", false);
+                if (isRunPressed)
+                {
+                    speedMultipler = runSpeed;
+                    animator.SetFloat("speed", 2);
+                }
+                else
+                {
+                    speedMultipler = walkSpeed;
+                    animator.SetFloat("speed", 1);
+                }
             }
-        }
-        if (!isMovementPressed)
-        {
-            animator.SetBool("isWalk", false);
-            animator.SetBool("isRunning", false);
+           
         }
         float curSpeedX = speedMultipler * -input.x;
         float curSpeedY = speedMultipler * input.y;
@@ -107,7 +107,7 @@ public class Player : MonoBehaviour
         HandleJump(movementDirectionY);
         characterController.Move(currentMovement * Time.deltaTime);
         Quaternion currentRotation = transform.rotation;
-        if (Vector3.Magnitude(currentMovement) > 2) //������-�� �������� ������ ������ 0, ���� ����� ������ �� ���������
+        if (Vector3.Magnitude(currentMovement) > 2) 
         {
             transform.rotation = Quaternion.Euler(0, Quaternion.LookRotation(currentMovement).eulerAngles.y, 0);
         } else
@@ -118,6 +118,8 @@ public class Player : MonoBehaviour
 
     private void HandleJump(float movementDirectionY)
     {
+        Debug.Log(characterController.isGrounded);
+
         if (isJumpPressed && characterController.isGrounded)
         {  
             currentMovement.y = jumpForce;

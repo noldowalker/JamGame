@@ -26,12 +26,14 @@ public class EnemyAIControllerScript : MonoBehaviour
     {
         if (!AIDisabled)
         {
-            animator.SetBool("isRunning", false);
+            if (FollowPlayer())
+            {
+                animator.SetBool("isRunning", false);
 
-            //�����  ���� ������� �� �� ����� � ����������� ��� ������ �����, ���� � �������� ��������� ���
-            animator.Play("Base Layer.Melee Attack"); 
+                animator.Play("Base Layer.Melee Attack");
+            }
 
-            // animator.Play("Base Layer.RobotHipHopDance");  �������� � �����
+            // animator.Play("Base Layer.RobotHipHopDance"); 
         }
     }
 
