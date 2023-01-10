@@ -8,5 +8,6 @@ namespace GameLogic
         Button2Pressed,
         Button3Pressed,
         HPLossPercent,
+        HelpPanelCalled,
     }
 }
