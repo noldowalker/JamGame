@@ -51,7 +51,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""id"": ""c0c478cb-f30a-46ad-957e-4b58abfba508"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Hold"",
                     ""initialStateCheck"": false
                 },
                 {
@@ -60,7 +60,16 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""id"": ""15c5ca71-3ac6-4528-acf5-221a605f5787"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Press"",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Kick"",
+                    ""type"": ""Button"",
+                    ""id"": ""23a9a808-d9c9-474e-ae20-70db5029de8a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press"",
                     ""initialStateCheck"": false
                 }
             ],
@@ -79,7 +88,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 {
                     ""name"": ""up"",
                     ""id"": ""8eee7dd1-62ba-42f9-afb1-39c15d101653"",
-                    ""path"": ""<Keyboard>/w"",
+                    ""path"": ""<Keyboard>/upArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -90,7 +99,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 {
                     ""name"": ""down"",
                     ""id"": ""8bfa6694-9135-43dd-9b97-2594188bf808"",
-                    ""path"": ""<Keyboard>/s"",
+                    ""path"": ""<Keyboard>/downArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -101,7 +110,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 {
                     ""name"": ""left"",
                     ""id"": ""2eed015a-49db-43be-b117-dcbac016c7f6"",
-                    ""path"": ""<Keyboard>/a"",
+                    ""path"": ""<Keyboard>/leftArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -112,7 +121,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 {
                     ""name"": ""right"",
                     ""id"": ""85280688-0b8c-4a3d-9ec5-f5352b79701e"",
-                    ""path"": ""<Keyboard>/d"",
+                    ""path"": ""<Keyboard>/rightArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -134,7 +143,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""ce3ed8c9-9b2e-4f4d-b010-b14ce58f406e"",
-                    ""path"": ""<Mouse>/leftButton"",
+                    ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -152,6 +161,17 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2e3707ac-bef4-4a40-85d4-7e27293aaa45"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Kick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -164,6 +184,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         m_PlayerController_Jump = m_PlayerController.FindAction("Jump", throwIfNotFound: true);
         m_PlayerController_Run = m_PlayerController.FindAction("Run", throwIfNotFound: true);
         m_PlayerController_Punch = m_PlayerController.FindAction("Punch", throwIfNotFound: true);
+        m_PlayerController_Kick = m_PlayerController.FindAction("Kick", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -227,6 +248,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerController_Jump;
     private readonly InputAction m_PlayerController_Run;
     private readonly InputAction m_PlayerController_Punch;
+    private readonly InputAction m_PlayerController_Kick;
     public struct PlayerControllerActions
     {
         private @PlayerInput m_Wrapper;
@@ -235,6 +257,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         public InputAction @Jump => m_Wrapper.m_PlayerController_Jump;
         public InputAction @Run => m_Wrapper.m_PlayerController_Run;
         public InputAction @Punch => m_Wrapper.m_PlayerController_Punch;
+        public InputAction @Kick => m_Wrapper.m_PlayerController_Kick;
         public InputActionMap Get() { return m_Wrapper.m_PlayerController; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -256,6 +279,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @Punch.started -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnPunch;
                 @Punch.performed -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnPunch;
                 @Punch.canceled -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnPunch;
+                @Kick.started -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnKick;
+                @Kick.performed -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnKick;
+                @Kick.canceled -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnKick;
             }
             m_Wrapper.m_PlayerControllerActionsCallbackInterface = instance;
             if (instance != null)
@@ -272,6 +298,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @Punch.started += instance.OnPunch;
                 @Punch.performed += instance.OnPunch;
                 @Punch.canceled += instance.OnPunch;
+                @Kick.started += instance.OnKick;
+                @Kick.performed += instance.OnKick;
+                @Kick.canceled += instance.OnKick;
             }
         }
     }
@@ -282,5 +311,6 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnRun(InputAction.CallbackContext context);
         void OnPunch(InputAction.CallbackContext context);
+        void OnKick(InputAction.CallbackContext context);
     }
 }
