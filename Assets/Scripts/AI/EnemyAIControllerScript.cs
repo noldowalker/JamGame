@@ -26,20 +26,27 @@ public class EnemyAIControllerScript : MonoBehaviour
     {
         if (!AIDisabled)
         {
-            //�����
-            if(animator != null)
-            animator.Play("Base Layer.RobotHipHopDance");
+            animator.SetBool("isRunning", false);
+
+            //�����  ���� ������� �� �� ����� � ����������� ��� ������ �����, ���� � �������� ��������� ���
+            animator.Play("Base Layer.Melee Attack"); 
+
+            // animator.Play("Base Layer.RobotHipHopDance");  �������� � �����
         }
     }
 
     bool FollowPlayer()
     {
+        if(player !=null)
         return FollowAgent(player);
+
+        return false;
     }
 
     public bool FollowPoint(Transform point)
     {
         navMesh.destination = point.position;
+        animator.SetBool("isRunning", true);
         if (Vector3.Distance(transform.position, point.transform.position) <= reachTargetDistance)
         {
             return true;

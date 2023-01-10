@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
 {
     private PlayerInput playerInput;
     private CharacterController characterController;
+   private Animator animator;
 
     [SerializeField] [Range(1f, 100f)] private float runSpeed;
     [SerializeField] [Range(1f, 100f)] private float walkSpeed;
@@ -27,6 +28,7 @@ public class Player : MonoBehaviour
     private bool isRunPressed;
     private bool isJumpPressed = false;
     private bool isFalling = false;
+    private bool isMovementPressed;
     private bool isPunching;
     private bool isKicking;
 
@@ -38,6 +40,7 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        animator = GetComponent<Animator>();
         playerInput = new PlayerInput();
         characterController = GetComponent<CharacterController>();
         playerInput.PlayerController.Move.started += OnMovementInput;
@@ -83,10 +86,19 @@ public class Player : MonoBehaviour
             if (isRunPressed)
             {
                 speedMultipler = runSpeed;
+                animator.SetBool("isRunning", true);
+                animator.SetBool("isWalk", false);
             } else
             {
                 speedMultipler = walkSpeed;
+                animator.SetBool("isWalk", true);
+                animator.SetBool("isRunning", false);
             }
+        }
+        if (!isMovementPressed)
+        {
+            animator.SetBool("isWalk", false);
+            animator.SetBool("isRunning", false);
         }
         float curSpeedX = speedMultipler * -input.x;
         float curSpeedY = speedMultipler * input.y;
@@ -95,7 +107,7 @@ public class Player : MonoBehaviour
         HandleJump(movementDirectionY);
         characterController.Move(currentMovement * Time.deltaTime);
         Quaternion currentRotation = transform.rotation;
-        if (Vector3.Magnitude(currentMovement) > 2) //почему-то значение всегда больше 0, даже когда объект не двигается
+        if (Vector3.Magnitude(currentMovement) > 2) //пїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 0, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         {
             transform.rotation = Quaternion.Euler(0, Quaternion.LookRotation(currentMovement).eulerAngles.y, 0);
         } else
@@ -109,6 +121,7 @@ public class Player : MonoBehaviour
         if (isJumpPressed && characterController.isGrounded)
         {  
             currentMovement.y = jumpForce;
+            animator.Play("Base Layer.Jump Attack");  
         } else
         {
             currentMovement.y = movementDirectionY;
@@ -177,6 +190,8 @@ public class Player : MonoBehaviour
     private void OnMovementInput(InputAction.CallbackContext obj)
     {
         input = obj.ReadValue<Vector2>();
+        isMovementPressed = input.x != 0 || input.y != 0;
+
     }
 
 

@@ -69,7 +69,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf82e8ff18ed89747b31f8928a7db7cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reachTargetDistance: 10
+  reachTargetDistance: 2
 --- !u!95 &49230472137354941
 Animator:
   serializedVersion: 4
