@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public class EnemyAIControllerScript : MonoBehaviour
 {
+    public bool AIDisabled = false;
     //минимальное расстояние до цели, на котором может проводиться атака
     public float reachTargetDistance;
 
@@ -21,9 +22,12 @@ public class EnemyAIControllerScript : MonoBehaviour
 
     void Update()
     {
-        if (FollowPlayer())
+        if (!AIDisabled)
         {
-            //атака
+            if (FollowPlayer())
+            {
+                //атака
+            }
         }
     }
 
