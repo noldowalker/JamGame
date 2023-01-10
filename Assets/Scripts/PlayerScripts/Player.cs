@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
 {
     private PlayerInput playerInput;
     private CharacterController characterController;
+   private Animator animator;
 
     [SerializeField] [Range(1f, 100f)] private float runSpeed;
     [SerializeField] [Range(1f, 100f)] private float walkSpeed;
@@ -27,6 +28,7 @@ public class Player : MonoBehaviour
     private bool isRunPressed;
     private bool isJumpPressed = false;
     private bool isFalling = false;
+    private bool isMovementPressed;
     private bool isPunching;
     private bool isKicking;
 
@@ -38,6 +40,7 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        animator = GetComponent<Animator>();
         playerInput = new PlayerInput();
         characterController = GetComponent<CharacterController>();
         playerInput.PlayerController.Move.started += OnMovementInput;
@@ -71,22 +74,31 @@ public class Player : MonoBehaviour
 
     private void HandleMovement()
     {
+        animator.SetFloat("speed", 0);
+
         Vector3 forward = Vector3.forward;
         Vector3 right = Vector3.right;
-        float speedMultipler;
+        float speedMultipler = 1;
         if (isFalling)
         {
             speedMultipler = fallControlSpeed;
         }
         else
         {
-            if (isRunPressed)
+            if (isMovementPressed)
             {
-                speedMultipler = runSpeed;
-            } else
-            {
-                speedMultipler = walkSpeed;
+                if (isRunPressed)
+                {
+                    speedMultipler = runSpeed;
+                    animator.SetFloat("speed", 2);
+                }
+                else
+                {
+                    speedMultipler = walkSpeed;
+                    animator.SetFloat("speed", 1);
+                }
             }
+           
         }
         float curSpeedX = speedMultipler * -input.x;
         float curSpeedY = speedMultipler * input.y;
@@ -95,7 +107,7 @@ public class Player : MonoBehaviour
         HandleJump(movementDirectionY);
         characterController.Move(currentMovement * Time.deltaTime);
         Quaternion currentRotation = transform.rotation;
-        if (Vector3.Magnitude(currentMovement) > 2) //почему-то значение всегда больше 0, даже когда объект не двигается
+        if (Vector3.Magnitude(currentMovement) > 2) 
         {
             transform.rotation = Quaternion.Euler(0, Quaternion.LookRotation(currentMovement).eulerAngles.y, 0);
         } else
@@ -106,9 +118,12 @@ public class Player : MonoBehaviour
 
     private void HandleJump(float movementDirectionY)
     {
+        Debug.Log(characterController.isGrounded);
+
         if (isJumpPressed && characterController.isGrounded)
         {  
             currentMovement.y = jumpForce;
+            animator.Play("Base Layer.Jump Attack");  
         } else
         {
             currentMovement.y = movementDirectionY;
@@ -177,6 +192,8 @@ public class Player : MonoBehaviour
     private void OnMovementInput(InputAction.CallbackContext obj)
     {
         input = obj.ReadValue<Vector2>();
+        isMovementPressed = input.x != 0 || input.y != 0;
+
     }
 
 

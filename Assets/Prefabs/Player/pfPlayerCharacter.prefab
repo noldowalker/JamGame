@@ -566,7 +566,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4949418540665431440}
-  - component: {fileID: 4838383934983088988}
   m_Layer: 0
   m_Name: Model_Jetster(Rigged)
   m_TagString: Untagged
@@ -591,18 +590,6 @@ Transform:
   m_Father: {fileID: 7765022532433750478}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4838383934983088988
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5756740912804282154}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 382b6e48b34bd2c49bb3ae80cde5e786, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &5886228670495225238
 GameObject:
   m_ObjectHideFlags: 0
@@ -895,6 +882,9 @@ MonoBehaviour:
   jumpForce: 9
   fallControlSpeed: 11.5
   gravity: 92.4
+  punchCoolDown: 0.72
+  kickCoolDown: 0.67
+  kickForce: 1419
 --- !u!95 &7765022532433750471
 Animator:
   serializedVersion: 4
@@ -908,7 +898,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: cde56ce4db8733342a47a2aad3163646, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 
