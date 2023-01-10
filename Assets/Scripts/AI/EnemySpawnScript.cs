@@ -7,6 +7,7 @@ public class EnemySpawnScript : MonoBehaviour
     //Список префабов объектов для спавна
     public List<GameObject> actorPrefabs;
     public float respawnTimer;
+    public float maxEnemiesToSpawn;
 
     private float currentTimer;
 
