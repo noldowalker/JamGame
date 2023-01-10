@@ -81,7 +81,7 @@ public class Player : MonoBehaviour
 
     private void HandleJump(float movementDirectionY)
     {
-        if (isJumpPressed && !isFalling)
+        if (isJumpPressed && characterController.isGrounded)
         {  
             currentMovement.y = jumpForce;
         } else
