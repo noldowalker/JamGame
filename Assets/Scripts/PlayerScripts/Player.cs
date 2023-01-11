@@ -31,10 +31,12 @@ public class Player : MonoBehaviour
     private bool isMovementPressed;
     private bool isPunching;
     private bool isKicking;
-
+    private int punchCount = 0;
+    private float punchAnimCoolDownTimer;
     private float punchCoolDownTimer;
     private float kickCoolDownTimer;
-    
+    private HealthSystem hs;
+    public float maxHealth;
 
 
 
@@ -54,11 +56,20 @@ public class Player : MonoBehaviour
         playerInput.PlayerController.Punch.canceled += OnPunch;
         playerInput.PlayerController.Kick.started += OnKick;
         playerInput.PlayerController.Kick.canceled += OnKick;
+        hs = new HealthSystem(maxHealth);
+        hs.OnDamaged += HealthSystem_OnDamaged;
 
     }
 
+    private void HealthSystem_OnDamaged(object sender, EventArgs e)
+    {
+
+    }
+
+
     private void Start()
     {
+        punchAnimCoolDownTimer = 0;
         punchCoolDownTimer = punchCoolDown;
         kickCoolDownTimer = kickCoolDown;
     }
@@ -107,7 +118,7 @@ public class Player : MonoBehaviour
         HandleJump(movementDirectionY);
         characterController.Move(currentMovement * Time.deltaTime);
         Quaternion currentRotation = transform.rotation;
-        if (Vector3.Magnitude(currentMovement) > 2) 
+        if (currentMovement.x + currentMovement.z != 0) 
         {
             transform.rotation = Quaternion.Euler(0, Quaternion.LookRotation(currentMovement).eulerAngles.y, 0);
         } else
@@ -118,12 +129,11 @@ public class Player : MonoBehaviour
 
     private void HandleJump(float movementDirectionY)
     {
-        Debug.Log(characterController.isGrounded);
 
         if (isJumpPressed && characterController.isGrounded)
         {  
             currentMovement.y = jumpForce;
-            animator.Play("Base Layer.Jump Attack");  
+            animator.SetTrigger("JumpPressed");
         } else
         {
             currentMovement.y = movementDirectionY;
@@ -133,24 +143,62 @@ public class Player : MonoBehaviour
             if (currentMovement.y < 0f)
             {
                 isFalling = true;
+                animator.SetBool("IsFalling", true);
             }
+            
             currentMovement.y -= gravity * Time.deltaTime;
         }
         else
         {
             isFalling = false;
+            animator.SetBool("IsFalling", false);
+        }
+        
+    }
+
+    public void ResetPunch()
+    {
+        /*punchCount = 0;
+        animator.SetInteger("Punch", punchCount);*/
+    }
+
+    private void CoolDown()
+    {
+        if (punchCoolDownTimer < punchCoolDown)
+        {
+            punchCoolDownTimer += Time.deltaTime;
+        }
+        if (punchCount != 0)
+        {
+            if (punchAnimCoolDownTimer < punchCoolDown + 0.5)
+            {
+                punchAnimCoolDownTimer += Time.deltaTime;
+            }
+            else
+            {
+                punchCount = 0;
+                animator.SetInteger("Punch", punchCount);
+                punchAnimCoolDownTimer = 0;
+            }
         }
     }
 
     private void HandlePunch()
     {
-        if (punchCoolDownTimer < punchCoolDown)
-        {
-            punchCoolDownTimer+=Time.deltaTime;
-        }
+        CoolDown();
         if (isPunching && punchCoolDownTimer >= punchCoolDown)
         {
-            print("Punch");
+            animator.SetTrigger("IsPunching");
+            punchAnimCoolDownTimer = 0;
+            if (punchCount >= 3)
+            {
+                punchCount = 0;
+            }
+            else
+            {
+                punchCount++;
+            }
+            animator.SetInteger("Punch", punchCount);
             punchEvent?.Invoke();
             punchCoolDownTimer = 0;
         }
@@ -164,7 +212,7 @@ public class Player : MonoBehaviour
         }
         if (isKicking && kickCoolDownTimer >= kickCoolDown)
         {
-            print("Kick");
+            animator.SetTrigger("IsKicking");
             kickEvent?.Invoke(kickForce);
             kickCoolDownTimer = 0;
         }

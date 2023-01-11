@@ -22,9 +22,8 @@ public class InteractionScript : MonoBehaviour
     {
     }
 
-    public void onKick(float force)
+    private void onKick(float force)
     {
-        print(playerInTrigger);
         if (playerInTrigger)
         {
             rigidbody.AddForce((transform.position-player.transform.position)*force);
@@ -33,8 +32,8 @@ public class InteractionScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag.Equals("Player"))
-        {
+        if (other.tag.Equals("HitArea"))
+        { 
             playerInTrigger = true;
         }
         if (other.tag.Equals("Enemy"))
@@ -51,7 +50,7 @@ public class InteractionScript : MonoBehaviour
     }
     private void OnTriggerExit(Collider other)
     {
-        if(other.tag.Equals("Player"))
+        if(other.tag.Equals("HitArea"))
         {
             playerInTrigger = false;
         }

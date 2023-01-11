@@ -35,7 +35,7 @@ namespace UserInterface.IngameInformation
         {
             for (var i = 0; i < _points.Count; i++)
             {
-                Debug.Log(@$"SetShownPointsAmount {i} active = {i < newAmount}");
+                //Debug.Log(@$"SetShownPointsAmount {i} active = {i < newAmount}");
                 _points[i].gameObject.SetActive(i < newAmount);
             }
         }
