@@ -107,8 +107,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2431516839803398124}
   - component: {fileID: 2431516839803398123}
-  - component: {fileID: 6919278710971769034}
   - component: {fileID: 8767679706075597879}
+  - component: {fileID: 7998076368801654918}
   m_Layer: 0
   m_Name: InteractObject
   m_TagString: Interact
@@ -144,19 +144,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8918a597b0195934387f5c83f21d7064, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!135 &6919278710971769034
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2431516839803398125}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 2
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &8767679706075597879
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -173,3 +160,16 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &7998076368801654918
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2431516839803398125}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 2, z: 2}
+  m_Center: {x: 0, y: 0, z: 0}

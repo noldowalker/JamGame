@@ -37,7 +37,7 @@ public class HotkeyBar : MonoBehaviour
         hotkey.SetNewHotkey(hotkeyChar.ToString());
         _hotkeysCells.Add(hotkey);
 
-        Debug.Log(@$"hotkeyChar {hotkeyChar}");
+        //Debug.Log(@$"hotkeyChar {hotkeyChar}");
         switch (hotkeyChar)
         {
             case 1 :
