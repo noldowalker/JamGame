@@ -13,7 +13,6 @@ public class EnemyAIControllerScript : MonoBehaviour
     private GameObject player;
     private Animator animator;
 
-    
     void Start()
     {
         navMesh = GetComponent<NavMeshAgent>();
@@ -60,4 +59,6 @@ public class EnemyAIControllerScript : MonoBehaviour
     {
         return FollowPoint(agent.transform);
     }
+
+
 }
