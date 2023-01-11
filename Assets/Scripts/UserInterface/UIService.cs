@@ -103,7 +103,7 @@ public class UIService : MonoBehaviour
             Debug.LogError("Не установлен префаб для панели-подсказки");
 
         var helpHotkey = AddHotkey(Events.HelpPanelCalled, "F1", helpIcon);
-        helpHotkey.AlignToCoords(0, 0, Align.LeftBottom);
+        helpHotkey.AlignToCoords(50, 50, Align.LeftBottom);
         
         _hotKeyPanel = Instantiate(hotKeyPrefab, gameCanvas.transform);
         

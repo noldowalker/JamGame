@@ -103,16 +103,13 @@ public class HotkeyCell : MonoBehaviour
     public void AlignToCoords(float x, float y, Align align)
     {
         var rectTransform = GetComponent<RectTransform>();
-        var halfWidth = rectTransform.sizeDelta.x / 2;
-        var halfHeight = rectTransform.sizeDelta.y / 2;
 
         switch (align)
         {
             case Align.LeftBottom:
-                var transformPosition = transform.position;
-                transformPosition.x = x + halfWidth;
-                transformPosition.y = y + halfHeight;
-                transform.position = transformPosition;
+                rectTransform.anchorMin = new Vector2(0, 0);
+                rectTransform.anchorMax = new Vector2(0, 0);
+                rectTransform.pivot = new Vector2(0, 0f);
                 break;
         }
     }
