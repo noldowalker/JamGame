@@ -24,11 +24,11 @@ public class HotkeyCell : MonoBehaviour
     private CooldownDisplayComponent cooldownComponent;
     
     [SerializeField]
-    private Sprite backgroundInactiveSprite;
+    private Color backgroundInactiveColor;
     [SerializeField]
-    private Sprite backgroundReadySprite;
+    private Color backgroundReadyColor;
     [SerializeField]
-    private Sprite backgroundOnActivationSprite;
+    private Color backgroundOnActivationColor;
     
     private Coroutine _activatedAnimation;
     private Coroutine _cooldownAnimation;
@@ -36,7 +36,7 @@ public class HotkeyCell : MonoBehaviour
     
     void Start()
     {
-        SetBackground(backgroundInactiveSprite);
+        SetBackground(backgroundReadyColor);
     }
 
     void Update()
@@ -45,7 +45,7 @@ public class HotkeyCell : MonoBehaviour
     }
 
     public void SetBorder(Sprite sprite) => border.sprite = sprite;
-    public void SetBackground(Sprite sprite) => background.sprite = sprite;
+    public void SetBackground(Color color) => background.color = color;
     public void SetIcon(Sprite sprite) => icon.sprite = sprite;
     public void SetNewHotkey(string hotkey) => hotkeyCharTextField.text = hotkey;
     public void SetEventSubscription(Events newEvent)
@@ -91,7 +91,7 @@ public class HotkeyCell : MonoBehaviour
             
         StopCoroutine(_cooldownAnimation);
         cooldownComponent.HideCooldown();
-        SetBackground(backgroundReadySprite);
+        SetBackground(backgroundReadyColor);
     }
 
     public void ActivatedRemove()
@@ -117,16 +117,16 @@ public class HotkeyCell : MonoBehaviour
     private IEnumerator PlayActivationAnimation()
     {
         Debug.Log(@$"Нажата кнопка {hotkeyCharTextField.text}");
-        SetBackground(backgroundOnActivationSprite);
+        SetBackground(backgroundOnActivationColor);
         yield return new WaitForSeconds(0.1f);
-        SetBackground(backgroundReadySprite);
+        SetBackground(backgroundReadyColor);
         _activatedAnimation = null;
     }
 
     private IEnumerator PlayCooldownAnimation(float cooldownTime)
     {
         Debug.Log(@$"Кнопка {hotkeyCharTextField.text} ушла в кулдаун");
-        SetBackground(backgroundInactiveSprite);
+        SetBackground(backgroundInactiveColor);
         cooldownComponent.ShowCooldown(cooldownTime);   
         
         var timeLeft = cooldownTime;
@@ -138,7 +138,7 @@ public class HotkeyCell : MonoBehaviour
         }
         
         cooldownComponent.HideCooldown();
-        SetBackground(backgroundReadySprite);
+        SetBackground(backgroundReadyColor);
         
         _cooldownAnimation = null;
     }
