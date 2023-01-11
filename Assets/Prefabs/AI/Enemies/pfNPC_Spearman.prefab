@@ -698,10 +698,11 @@ GameObject:
   - component: {fileID: 7037532199596934241}
   - component: {fileID: 860756315006902900}
   - component: {fileID: 7037532199596934254}
+  - component: {fileID: -690802513099821912}
   - component: {fileID: 7037532199596934255}
   - component: {fileID: 1663514536}
   - component: {fileID: 1663514530}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: pfNPC_Spearman
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -773,6 +774,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AIDisabled: 0
   reachTargetDistance: 2
+--- !u!114 &-690802513099821912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7037532199596934252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e52bd2ea0f5c1f408533275ca27aa1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
 --- !u!95 &7037532199596934255
 Animator:
   serializedVersion: 4

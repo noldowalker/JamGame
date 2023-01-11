@@ -869,7 +869,7 @@ GameObject:
   - component: {fileID: 7765022532433750464}
   - component: {fileID: 7765022532433750479}
   - component: {fileID: 7765022532433750471}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: pfPlayerCharacter
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -932,7 +932,12 @@ MonoBehaviour:
   punchCoolDown: 0.5
   kickCoolDown: 1
   kickForce: 1419
-  maxHealth: 0
+  damage: 40
+  attackRange: 19.2
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 640
+  hitPoint: {fileID: 1699041391630362749}
 --- !u!95 &7765022532433750471
 Animator:
   serializedVersion: 4

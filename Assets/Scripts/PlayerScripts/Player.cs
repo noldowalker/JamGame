@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
 {
     private PlayerInput playerInput;
     private CharacterController characterController;
-   private Animator animator;
+    private Animator animator;
 
     [SerializeField] [Range(1f, 100f)] private float runSpeed;
     [SerializeField] [Range(1f, 100f)] private float walkSpeed;
@@ -20,26 +20,32 @@ public class Player : MonoBehaviour
     [SerializeField] [Range(0.1f, 10f)] private float punchCoolDown;
     [SerializeField] [Range(0.1f, 10f)] private float kickCoolDown;
     [SerializeField] [Range(1000f, 10000f)] private float kickForce;
+    [SerializeField] [Range(0f, 1000f)] private float damage;
+    [SerializeField] [Range(0f, 100f)] private float attackRange;
+
+    [SerializeField] LayerMask layerMask;
+
+    [SerializeField] private Transform hitPoint;
+
     public static UnityEvent punchEvent = new UnityEvent();
     public static UnityEvent<float> kickEvent = new UnityEvent<float>();
 
     private Vector2 input;
     private Vector3 currentMovement;
+
     private bool isRunPressed;
     private bool isJumpPressed = false;
     private bool isFalling = false;
     private bool isMovementPressed;
     private bool isPunching;
     private bool isKicking;
+
     private int punchCount = 0;
+
     private float punchAnimCoolDownTimer;
     private float punchCoolDownTimer;
     private float kickCoolDownTimer;
-    private HealthSystem hs;
-    public float maxHealth;
-
-
-
+  
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -56,16 +62,8 @@ public class Player : MonoBehaviour
         playerInput.PlayerController.Punch.canceled += OnPunch;
         playerInput.PlayerController.Kick.started += OnKick;
         playerInput.PlayerController.Kick.canceled += OnKick;
-        hs = new HealthSystem(maxHealth);
-        hs.OnDamaged += HealthSystem_OnDamaged;
 
     }
-
-    private void HealthSystem_OnDamaged(object sender, EventArgs e)
-    {
-
-    }
-
 
     private void Start()
     {
@@ -80,9 +78,6 @@ public class Player : MonoBehaviour
         HandlePunch();
         HandleKick();
     }
-
-  
-
     private void HandleMovement()
     {
         animator.SetFloat("speed", 0);
@@ -188,6 +183,18 @@ public class Player : MonoBehaviour
         CoolDown();
         if (isPunching && punchCoolDownTimer >= punchCoolDown)
         {
+
+            Collider[] hitEnemies = Physics.OverlapSphere(hitPoint.position, attackRange, layerMask);
+
+            foreach (Collider enemy in hitEnemies)
+            {
+                IDamagable damagable = enemy.GetComponent<IDamagable>();
+                if (damagable != null)
+                { 
+                    damagable.Damage(damage);
+                }
+            }
+
             animator.SetTrigger("IsPunching");
             punchAnimCoolDownTimer = 0;
             if (punchCount >= 3)
@@ -202,6 +209,12 @@ public class Player : MonoBehaviour
             punchEvent?.Invoke();
             punchCoolDownTimer = 0;
         }
+    }
+    void OnDrawGizmosSelected()
+    {
+        // Draw a yellow sphere at the transform's position
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(hitPoint.position, attackRange);
     }
 
     private void HandleKick()
@@ -241,7 +254,6 @@ public class Player : MonoBehaviour
     {
         input = obj.ReadValue<Vector2>();
         isMovementPressed = input.x != 0 || input.y != 0;
-
     }
 
 

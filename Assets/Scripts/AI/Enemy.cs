@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public float maxHP;
+   // public float maxHP;
     private EnemyAIControllerScript controller;
     private Player player;
     private Animator animator;
-    private HealthSystem healthSystem;
+   // private HealthSystem healthSystem;
     private bool playerCanHit;
     void Start()
     {
         controller = GetComponent<EnemyAIControllerScript>();
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         animator = GetComponent<Animator>();
-        healthSystem = new HealthSystem(maxHP);
+     //   healthSystem = new HealthSystem(maxHP);
         Player.punchEvent.AddListener(OnHaveBeenPunched);
         Player.kickEvent.AddListener(OnHaveBeenKicked);
     }
