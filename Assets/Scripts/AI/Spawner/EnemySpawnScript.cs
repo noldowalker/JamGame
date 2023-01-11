@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class EnemySpawnScript : MonoBehaviour
 {
-    //Список префабов объектов для спавна
     public List<GameObject> actorPrefabs;
+    public bool canSpawnEnemies = true; //for debug
     public float respawnTimer;
-    public float maxEnemiesToSpawn;
+    public int maxEnemiesToSpawn = 10;
 
     private float currentTimer;
 
@@ -18,6 +18,7 @@ public class EnemySpawnScript : MonoBehaviour
 
     void Update()
     {
+        if(canSpawnEnemies && CountAllEnemies() < maxEnemiesToSpawn)
         SpawnByTimer();
     }
 
@@ -39,5 +40,10 @@ public class EnemySpawnScript : MonoBehaviour
     public void SpawnActor(GameObject actor)
     {
         Instantiate(actor, transform.position, Quaternion.identity);
+    }
+
+    public int CountAllEnemies()
+    {
+        return GameObject.FindGameObjectsWithTag("Enemy").Length;
     }
 }

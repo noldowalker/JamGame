@@ -48,4 +48,6 @@ MonoBehaviour:
   - {fileID: 5284700780344215641, guid: f068e21bbc8ce09479a3c9887c5d6110, type: 3}
   - {fileID: 6018972075183849616, guid: e88f65ff909f540419fa5f8e2176b768, type: 3}
   - {fileID: 7037532199596934252, guid: d1c79aafef2146040bf03964d0ae66f0, type: 3}
-  respawnTimer: 5
+  canSpawnEnemies: 0
+  respawnTimer: 1
+  maxEnemiesToSpawn: 10

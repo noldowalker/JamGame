@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - Interact
+  - HitArea
   layers:
   - Default
   - TransparentFX
