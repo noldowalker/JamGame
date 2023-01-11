@@ -26,6 +26,11 @@ namespace UserInterface.IngameInformation
             ObserverWithoutData.Sub(Events.Button1Pressed, AddPoint);
         }
 
+        public void Update()
+        {
+            transform.rotation = Camera.main.transform.rotation;
+        }
+
         public void SetShownPointsAmount(int newAmount)
         {
             for (var i = 0; i < _points.Count; i++)
