@@ -25,7 +25,7 @@ public class HealthBar : MonoBehaviour
 
     public void ChangeHealthPercent(float newPercent)
     {
-        Debug.Log($@"New percent = {newPercent}");
+       // Debug.Log($@"New percent = {newPercent}");
         if (newPercent > 1f)
             newPercent = 1f;
         

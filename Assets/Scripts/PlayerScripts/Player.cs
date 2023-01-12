@@ -188,10 +188,13 @@ public class Player : MonoBehaviour
 
             foreach (Collider enemy in hitEnemies)
             {
-                IDamagable damagable = enemy.GetComponent<IDamagable>();
-                if (damagable != null)
-                { 
-                    damagable.Damage(damage);
+                if (enemy.CompareTag("Enemy"))
+                {
+                    IPunchable punchable = enemy.GetComponent<IPunchable>();
+                    if (punchable != null)
+                    {
+                        punchable.Punch(damage);
+                    }
                 }
             }
 
@@ -206,10 +209,11 @@ public class Player : MonoBehaviour
                 punchCount++;
             }
             animator.SetInteger("Punch", punchCount);
-            punchEvent?.Invoke();
+           // punchEvent?.Invoke();  // delete line
             punchCoolDownTimer = 0;
         }
     }
+
     void OnDrawGizmosSelected()
     {
         // Draw a yellow sphere at the transform's position
@@ -226,7 +230,30 @@ public class Player : MonoBehaviour
         if (isKicking && kickCoolDownTimer >= kickCoolDown)
         {
             animator.SetTrigger("IsKicking");
-            kickEvent?.Invoke(kickForce);
+
+            Collider[] hitEnemies = Physics.OverlapSphere(hitPoint.position, attackRange, layerMask);
+
+            foreach (Collider enemy in hitEnemies)
+            {
+                if (enemy.CompareTag("Enemy"))
+                {
+                    IKickable kickable = enemy.GetComponent<IKickable>();
+                    if (kickable != null)
+                    {
+                        kickable.Kick(damage, kickForce, transform.position);
+                    }
+                }
+                if (enemy.CompareTag("Interact"))
+                {
+                    IKickable kickable = enemy.GetComponent<IKickable>();
+                    if (kickable != null)
+                    {
+                        kickable.Kick(0, kickForce, transform.position);
+                    }
+                }
+            }
+
+            //kickEvent?.Invoke(kickForce);
             kickCoolDownTimer = 0;
         }
     }
