@@ -16,43 +16,43 @@ public class Enemy : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         animator = GetComponent<Animator>();
      //   healthSystem = new HealthSystem(maxHP);
-        Player.punchEvent.AddListener(OnHaveBeenPunched);
-        Player.kickEvent.AddListener(OnHaveBeenKicked);
+      //  Player.punchEvent.AddListener(OnHaveBeenPunched);
+     //   Player.kickEvent.AddListener(OnHaveBeenKicked);
     }
 
     void Update()
     {
     }
 
-    private void OnHaveBeenPunched()
-    {
-        if (playerCanHit)
-        {
-            animator.SetTrigger("IsPunched");
-        }
-    }
+    //private void OnHaveBeenPunched()
+    //{
+    //    if (playerCanHit)
+    //    {
+    //        animator.SetTrigger("IsPunched");
+    //    }
+    //}
 
-    private void OnHaveBeenKicked(float force)
-    {
-        if (playerCanHit)
-        {
-            animator.SetTrigger("IsKicked");
-        }
-    }
+    //private void OnHaveBeenKicked(float force)
+    //{
+    //    if (playerCanHit)
+    //    {
+    //        animator.SetTrigger("IsKicked");
+    //    }
+    //}
 
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.tag.Equals("HitArea"))
-        {
-            playerCanHit = true;
-        }
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.tag.Equals("HitArea"))
-        {
-            playerCanHit = false;
-        }
-    }
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.tag.Equals("HitArea"))
+    //    {
+    //        playerCanHit = true;
+    //    }
+    //}
+    //private void OnTriggerExit(Collider other)
+    //{
+    //    if (other.tag.Equals("HitArea"))
+    //    {
+    //        playerCanHit = false;
+    //    }
+    //}
 }
