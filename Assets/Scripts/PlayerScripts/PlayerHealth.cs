@@ -29,7 +29,7 @@ public class PlayerHealth : MonoBehaviour, IDamagable
     }
     private void HealthSystem_OnDamaged(object sender, EventArgs e)
     {
-        //  Debug.Log("PlayerDamaged" + healthSystem.GetHealth());
+          Debug.Log("PlayerDamaged" + healthSystem.GetHealth());
     }
     private void HealthSystem_OnHealed(object sender, EventArgs e)
     {
