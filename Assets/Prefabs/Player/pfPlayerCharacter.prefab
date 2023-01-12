@@ -150,7 +150,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2906423060121519859, guid: bee67661409e2534d8a932aab43870d1, type: 3}
+  - {fileID: 2100000, guid: 85ce489fbcf8d08429cfd4532b98faa6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -869,6 +869,7 @@ GameObject:
   - component: {fileID: 7765022532433750464}
   - component: {fileID: 7765022532433750479}
   - component: {fileID: 7765022532433750471}
+  - component: {fileID: -2117327101703794335}
   m_Layer: 8
   m_Name: pfPlayerCharacter
   m_TagString: Player
@@ -933,7 +934,7 @@ MonoBehaviour:
   kickCoolDown: 1
   kickForce: 1419
   damage: 40
-  attackRange: 19.2
+  attackRange: 0.75
   layerMask:
     serializedVersion: 2
     m_Bits: 640
@@ -958,6 +959,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &-2117327101703794335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7765022532433750467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24a1da15ba3aed6488de8aaa565579e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 500
 --- !u!1 &8211192253649445612
 GameObject:
   m_ObjectHideFlags: 0

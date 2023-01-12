@@ -48,6 +48,7 @@ public class Player : MonoBehaviour
   
     private void Awake()
     {
+        
         animator = GetComponent<Animator>();
         playerInput = new PlayerInput();
         characterController = GetComponent<CharacterController>();
@@ -240,7 +241,7 @@ public class Player : MonoBehaviour
                     IKickable kickable = enemy.GetComponent<IKickable>();
                     if (kickable != null)
                     {
-                        kickable.Kick(damage, kickForce, transform.position);
+                        kickable.Kick(damage, kickForce, hitPoint.position);
                     }
                 }
                 if (enemy.CompareTag("Interact"))
@@ -248,7 +249,7 @@ public class Player : MonoBehaviour
                     IKickable kickable = enemy.GetComponent<IKickable>();
                     if (kickable != null)
                     {
-                        kickable.Kick(0, kickForce, transform.position);
+                        kickable.Kick(0, kickForce, hitPoint.position);
                     }
                 }
             }
