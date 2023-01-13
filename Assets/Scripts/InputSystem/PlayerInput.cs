@@ -71,6 +71,24 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""Press"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Ultimate1"",
+                    ""type"": ""Button"",
+                    ""id"": ""6e1dd959-fd41-47ea-8ff9-1731b48fc134"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Ultimate2"",
+                    ""type"": ""Button"",
+                    ""id"": ""f1cc22ba-656d-4331-abb5-04533b39b1cd"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -172,6 +190,28 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""action"": ""Kick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c27cce7b-9aff-4d73-ba70-7fb19c313bc6"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Ultimate1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cfec3f6b-5a7d-4017-acd1-9d339cb616a3"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Ultimate2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -185,6 +225,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         m_PlayerController_Run = m_PlayerController.FindAction("Run", throwIfNotFound: true);
         m_PlayerController_Punch = m_PlayerController.FindAction("Punch", throwIfNotFound: true);
         m_PlayerController_Kick = m_PlayerController.FindAction("Kick", throwIfNotFound: true);
+        m_PlayerController_Ultimate1 = m_PlayerController.FindAction("Ultimate1", throwIfNotFound: true);
+        m_PlayerController_Ultimate2 = m_PlayerController.FindAction("Ultimate2", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -249,6 +291,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerController_Run;
     private readonly InputAction m_PlayerController_Punch;
     private readonly InputAction m_PlayerController_Kick;
+    private readonly InputAction m_PlayerController_Ultimate1;
+    private readonly InputAction m_PlayerController_Ultimate2;
     public struct PlayerControllerActions
     {
         private @PlayerInput m_Wrapper;
@@ -258,6 +302,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         public InputAction @Run => m_Wrapper.m_PlayerController_Run;
         public InputAction @Punch => m_Wrapper.m_PlayerController_Punch;
         public InputAction @Kick => m_Wrapper.m_PlayerController_Kick;
+        public InputAction @Ultimate1 => m_Wrapper.m_PlayerController_Ultimate1;
+        public InputAction @Ultimate2 => m_Wrapper.m_PlayerController_Ultimate2;
         public InputActionMap Get() { return m_Wrapper.m_PlayerController; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -282,6 +328,12 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @Kick.started -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnKick;
                 @Kick.performed -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnKick;
                 @Kick.canceled -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnKick;
+                @Ultimate1.started -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUltimate1;
+                @Ultimate1.performed -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUltimate1;
+                @Ultimate1.canceled -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUltimate1;
+                @Ultimate2.started -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUltimate2;
+                @Ultimate2.performed -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUltimate2;
+                @Ultimate2.canceled -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUltimate2;
             }
             m_Wrapper.m_PlayerControllerActionsCallbackInterface = instance;
             if (instance != null)
@@ -301,6 +353,12 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @Kick.started += instance.OnKick;
                 @Kick.performed += instance.OnKick;
                 @Kick.canceled += instance.OnKick;
+                @Ultimate1.started += instance.OnUltimate1;
+                @Ultimate1.performed += instance.OnUltimate1;
+                @Ultimate1.canceled += instance.OnUltimate1;
+                @Ultimate2.started += instance.OnUltimate2;
+                @Ultimate2.performed += instance.OnUltimate2;
+                @Ultimate2.canceled += instance.OnUltimate2;
             }
         }
     }
@@ -312,5 +370,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         void OnRun(InputAction.CallbackContext context);
         void OnPunch(InputAction.CallbackContext context);
         void OnKick(InputAction.CallbackContext context);
+        void OnUltimate1(InputAction.CallbackContext context);
+        void OnUltimate2(InputAction.CallbackContext context);
     }
 }

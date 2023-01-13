@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+public class EnemyHealth : MonoBehaviour, IKickable, IPunchable, IStompable
 [RequireComponent(typeof(EnemyAIControllerScript))]
 public class EnemyHealth : MonoBehaviour, IKickable, IPunchable
 {
@@ -67,5 +68,10 @@ public class EnemyHealth : MonoBehaviour, IKickable, IPunchable
         animator.SetTrigger("IsPunched");
         healthSystem.Damage(damage);
         aiSystem.ReactOnPunch();
+    }
+
+    public void Stomp(float damage)
+    {
+        healthSystem.Damage(damage);
     }
 }

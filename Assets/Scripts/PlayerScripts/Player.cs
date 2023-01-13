@@ -27,6 +27,7 @@ public class Player : MonoBehaviour
     [SerializeField] LayerMask layerMask;
 
     [SerializeField] private Transform hitPoint;
+    [SerializeField] private Transform stompPoint;
     [SerializeField] private ParticleSystem pfVFXwalk;
 
     private AudioSource audioSource;
@@ -45,6 +46,7 @@ public class Player : MonoBehaviour
     private bool isMovementPressed;
     private bool isPunching;
     private bool isKicking;
+    private bool isGiant = false;
 
     private int punchCount = 0;
 
@@ -73,6 +75,10 @@ public class Player : MonoBehaviour
         playerInput.PlayerController.Punch.canceled += OnPunch;
         playerInput.PlayerController.Kick.started += OnKick;
         playerInput.PlayerController.Kick.canceled += OnKick;
+        playerInput.PlayerController.Ultimate1.started += OnUltimate1;
+        playerInput.PlayerController.Ultimate1.canceled += OnUltimate1;
+        playerInput.PlayerController.Ultimate2.started += OnUltimate2;
+        playerInput.PlayerController.Ultimate2.canceled += OnUltimate2;
 
         pfVFXwalk = GetComponentInChildren<ParticleSystem>();
 
@@ -90,6 +96,7 @@ public class Player : MonoBehaviour
         HandleMovement();
         HandlePunch();
         HandleKick();
+        
     }
     private void HandleMovement()
     {
@@ -130,6 +137,15 @@ public class Player : MonoBehaviour
         var rotationVector = new Vector3(input.y, 0, -input.x);
         rotationVector.Normalize();
         transform.forward = rotationVector;
+        Quaternion currentRotation = transform.rotation;
+        if (currentMovement.x + currentMovement.z != 0) 
+        {
+            transform.rotation = Quaternion.Euler(0, Quaternion.LookRotation(currentMovement).eulerAngles.y, 0);
+        } else
+        {
+            transform.rotation = currentRotation;
+        }
+        if (isGiant) HandleStomping();
     }
 
     private void HandleJump(float movementDirectionY)
@@ -279,6 +295,49 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void HandleStomping()
+    {
+        //if (isGiant)
+        //{
+            Collider[] hitEnemies = Physics.OverlapSphere(stompPoint.position, attackRange, layerMask);
+
+            foreach (Collider enemy in hitEnemies)
+            {
+                if (enemy.CompareTag("Enemy"))
+                {
+                    IStompable stompable = enemy.GetComponent<IStompable>();
+                    if (stompable != null)
+                    {
+                        stompable.Stomp(damage);
+                    }
+                }
+            }
+        //}
+    }
+
+    public void UltimateEffect(byte num, bool turner) //turner - вкл/выкл
+    {
+        switch (num)
+        {
+            case 0:
+                if (turner)
+                {
+                    this.transform.localScale = new Vector3(5.0f, 5.0f, 5.0f);
+                }
+                else
+                {
+                    this.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                }
+
+                isGiant = turner;
+                break;
+            case 1:
+                animator.SetBool("IsKazachock", turner);
+                break;
+        }
+        this.GetComponent<UltimateTimers>().SetUltimateTimer(num);
+    }
+    
     private void OnJump(InputAction.CallbackContext obj)
     {
         isJumpPressed = obj.ReadValueAsButton();
@@ -316,6 +375,16 @@ public class Player : MonoBehaviour
     }
 
     //=================
+    private void OnUltimate1(InputAction.CallbackContext obj)
+    {
+        if(!isGiant) UltimateEffect(0, true);
+    }
+    
+    private void OnUltimate2(InputAction.CallbackContext obj)
+    {
+        UltimateEffect(1, true);
+    }
+
 
     private void OnEnable()
     {
