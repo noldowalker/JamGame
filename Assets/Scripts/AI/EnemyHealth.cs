@@ -24,8 +24,9 @@ public class EnemyHealth : MonoBehaviour, IKickable, IPunchable
 
     private void HealthSystem_OnDead(object sender, EventArgs e)
     {
-       // Debug.Log("EnemyDead");
-        Destroy(gameObject);
+        // Debug.Log("EnemyDead");
+        animator.SetTrigger("isDie");
+        Destroy(gameObject, 4.5f);
 
     }
     private void HealthSystem_OnDamaged(object sender, EventArgs e)
