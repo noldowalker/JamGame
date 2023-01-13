@@ -249,6 +249,7 @@ public class Player : MonoBehaviour
                     if (kickable != null)
                     {
                         kickable.Kick(damage, kickForce, hitPoint.position);
+                        SoundHandleScript.Current.PlaySound(SoundEnum.KICK_REACTION_ENEMY, audioSource);
                     }
                 }
                 if (enemy.CompareTag("Interact"))
@@ -276,11 +277,13 @@ public class Player : MonoBehaviour
     private void OnKick(InputAction.CallbackContext obj)
     {
         isKicking = obj.ReadValueAsButton();
+        SoundHandleScript.Current.PlaySound(SoundEnum.WEAPON_SLASH, audioSource);
     }
 
     private void OnPunch(InputAction.CallbackContext obj)
     {
         isPunching = obj.ReadValueAsButton();
+        SoundHandleScript.Current.PlaySound(SoundEnum.WEAPON_SLASH, audioSource);
     }
     private void OnRun(InputAction.CallbackContext obj)
     {
@@ -299,10 +302,6 @@ public class Player : MonoBehaviour
     {
         //print("Step");
         SoundHandleScript.Current.PlaySound(SoundEnum.PLAYER_STEP, audioSource);
-    }
-    private void OnGotHit()
-    {
-        SoundHandleScript.Current.PlaySound(SoundEnum.HIT_REACTION, audioSource);
     }
 
     //=================

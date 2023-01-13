@@ -6,9 +6,8 @@ using UnityEngine.AI;
 public class EnemyAIControllerScript : MonoBehaviour
 {
     public bool AIDisabled = false;
-
+    [SerializeField] public EnemyType enemyType;
     [SerializeField] [Range(0.1f, 10f)] private float reachTargetDistance;
-
     [SerializeField] [Range(1f, 1000f)] private float damage;
     [SerializeField] [Range(0.1f, 10f)] private float attackRate;
     [SerializeField] [Range(0f, 500f)] private float speedMove;
@@ -18,15 +17,20 @@ public class EnemyAIControllerScript : MonoBehaviour
 
     [SerializeField] private Transform hitArea;
 
+    private AudioSource audioSource;
     private NavMeshAgent navMesh;
     private GameObject player;
     private Animator animator;
 
     private bool isAttacking;
 
+    private float gruntCooldownTimer = 0;
+    private float gruntCooldown = 10;
+
     void Start()
     {
         navMesh = GetComponent<NavMeshAgent>();
+        audioSource = GetComponent<AudioSource>();
         navMesh.stoppingDistance = reachTargetDistance;
         navMesh.speed = speedMove;
         player = GameObject.FindGameObjectsWithTag("Player")[0];
@@ -45,7 +49,7 @@ public class EnemyAIControllerScript : MonoBehaviour
                 if(isAttacking)
                 HandlePunch();
             }
-
+            PerformGrunt(10, 25); //Random voice sounds by enemies
             // animator.Play("Base Layer.RobotHipHopDance"); 
         }
     }
@@ -78,6 +82,7 @@ public class EnemyAIControllerScript : MonoBehaviour
     }
     private void HandlePunch()
     {
+        SoundHandleScript.Current.PlaySound(SoundEnum.WEAPON_SLASH, audioSource);
 
         Collider[] hitEnemies = Physics.OverlapSphere(hitArea.position, damageRadius);
 
@@ -109,6 +114,29 @@ public class EnemyAIControllerScript : MonoBehaviour
         else
         {
             isAttacking = false;
+        }
+    }
+
+    private void PerformGrunt(float minInterval, float maxInterval)
+    {
+        if (gruntCooldownTimer < gruntCooldown)
+        {
+            gruntCooldownTimer += Time.deltaTime;
+        } else
+        {
+            switch (Random.Range(0, 2))
+            {
+                case 0: SoundHandleScript.Current.PlaySound(SoundEnum.ENEMY_GRUNT_1, audioSource);
+                    break;
+                case 1:
+                    SoundHandleScript.Current.PlaySound(SoundEnum.ENEMY_GRUNT_2, audioSource);
+                    break;
+                case 2:
+                    SoundHandleScript.Current.PlaySound(SoundEnum.ENEMY_GRUNT_3, audioSource);
+                    break;
+            }
+            gruntCooldown = Random.Range(minInterval, maxInterval);
+            gruntCooldownTimer = 0;
         }
     }
 

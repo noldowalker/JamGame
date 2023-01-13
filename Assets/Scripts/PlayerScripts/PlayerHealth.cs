@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class PlayerHealth : MonoBehaviour, IDamagable
 {
     private HealthSystem healthSystem;
+    private AudioSource audioSource;
 
     [Range(0, 500)] [SerializeField] private int maxHealth;
 
@@ -15,6 +16,7 @@ public class PlayerHealth : MonoBehaviour, IDamagable
 
     private void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
         healthSystem = new HealthSystem(maxHealth);
         healthSystem.OnDead += HealthSystem_OnDead;
         healthSystem.OnDamaged += HealthSystem_OnDamaged;
@@ -39,6 +41,7 @@ public class PlayerHealth : MonoBehaviour, IDamagable
     private void HealthSystem_OnDamaged(object sender, EventArgs e)
     {
         playerHPBarImage.fillAmount = healthSystem.GetHealthPercent();
+        SoundHandleScript.Current.PlaySound(SoundEnum.HIT_REACTION,audioSource);
     }
     private void HealthSystem_OnHealed(object sender, EventArgs e)
     {
