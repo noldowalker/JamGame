@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using GameLogic;
@@ -9,13 +10,24 @@ public class HealthBar : MonoBehaviour
     private SpriteRenderer barBackground;
     [SerializeField]
     private SpriteRenderer barFill;
+    [SerializeField]
+    private SpriteRenderer barBorder;
+    [SerializeField]
+    private Color highHpColor;
+    [SerializeField]
+    private Color middleHpColor;
+    [SerializeField]
+    private Color lowHpColor;
 
     private float _currentHealthPercent;
+    private bool _isHit;
+    private Coroutine _showBarCoroutine;
     
     void Start()
     {
         _currentHealthPercent = 1f;
-        ObserverWithData<NewHPPercentObservingDTO>.Sub(Events.HPLossPercent, ChangeHealthPercentByEvent);
+        barFill.color = highHpColor;
+        _isHit = false;
     }
 
     void Update()
@@ -25,7 +37,6 @@ public class HealthBar : MonoBehaviour
 
     public void ChangeHealthPercent(float newPercent)
     {
-       // Debug.Log($@"New percent = {newPercent}");
         if (newPercent > 1f)
             newPercent = 1f;
         
@@ -39,10 +50,41 @@ public class HealthBar : MonoBehaviour
             barFill.transform.localScale.y,
             barFill.transform.localScale.z
         );
+
+        barFill.color = newPercent switch
+        {
+            > .75f => highHpColor,
+            > .35f => middleHpColor,
+            _ => lowHpColor
+        };
+
+        _isHit = true;
+        if (_showBarCoroutine == null)
+            _showBarCoroutine = StartCoroutine(ShowHpBar(3f));
     }
 
-    public void ChangeHealthPercentByEvent(NewHPPercentObservingDTO data)
+    private IEnumerator ShowHpBar(float showtime)
     {
-        ChangeHealthPercent(data.NewPercent);
+        SetVisible(true);
+        
+        do {
+            _isHit = false;
+            yield return new WaitForSeconds(showtime);
+        } while (_isHit);
+
+        SetVisible(false);
+    }
+
+    private void SetVisible(bool isVisible)
+    {
+        barBackground.gameObject.SetActive(isVisible);
+        barFill.gameObject.SetActive(isVisible);
+        barBorder.gameObject.SetActive(isVisible);
+    }
+
+    private void OnDestroy()
+    {
+        if (_showBarCoroutine != null)
+            StopCoroutine(_showBarCoroutine);
     }
 }

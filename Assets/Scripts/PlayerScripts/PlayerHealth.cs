@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour, IDamagable
@@ -33,6 +34,7 @@ public class PlayerHealth : MonoBehaviour, IDamagable
     private void HealthSystem_OnDead(object sender, EventArgs e)
     {
         Debug.Log("PlayerDead");
+        UIService.Current.ShowDeathMessage();
     }
     private void HealthSystem_OnDamaged(object sender, EventArgs e)
     {

@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using GameLogic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UserInterface;
 using UserInterface.Enums;
 using UserInterface.IngameInformation;
 
@@ -14,7 +16,11 @@ public class UIService : MonoBehaviour
     
     [Header("Включить игровой интерфейс")]
     [SerializeField] 
-    private bool showGameLayout;
+    private bool showGameLayout; 
+    
+    [Header("Включить главное меню")]
+    [SerializeField] 
+    private bool showMainMenu;
     
     [Space]
     [Header("Необходимые для игрового интерфейса ссылки")]
@@ -30,7 +36,14 @@ public class UIService : MonoBehaviour
     [Header("Спрайты")]
     [SerializeField]
     private Sprite helpIcon;
-
+    [SerializeField]
+    private Image youDiedPanel;
+    
+    [Space]
+    [Header("Необходимые для Главного меню ссылки")]
+    [SerializeField] 
+    private MainMenu mainMenuPrefab;
+    
     private HotkeyBar _hotKeyPanel;
     private HelpPanel _helpPanel;
     private float _testHp = 100;
@@ -45,8 +58,11 @@ public class UIService : MonoBehaviour
 
     void Start()
     {
+        youDiedPanel.gameObject.SetActive(false);
         if (showGameLayout)
             TurnOnGameInterface();
+        if (showMainMenu)
+            TurnOnMainMenu();
     }
     
     void Update()
@@ -67,6 +83,14 @@ public class UIService : MonoBehaviour
         
         return hotkey;
     }
+
+    public void ShowDeathMessage()
+    {
+        if (_hotKeyPanel)
+        {
+            StartCoroutine(TranslationToMainMenuOnDeath());
+        }
+    }
     
     private void TurnOnGameInterface()
     {
@@ -85,9 +109,29 @@ public class UIService : MonoBehaviour
         _helpPanel = Instantiate(helpPanelPrefab, gameCanvas.transform);
         ObserverWithoutData.Sub(Events.HelpPanelCalled, _helpPanel.SwitchPanelVisibility);
     }
+    
+    private void TurnOnMainMenu()
+    {
+        if (gameCanvas == null)
+            Debug.LogError("Не установлен основной игровой канвас для сервиса пользовательского интерфейса");
+        if (mainMenuPrefab == null)
+            Debug.LogError("Не установлен префаб для главного меню");
+
+        Instantiate(mainMenuPrefab, gameCanvas.transform);
+    }
 
     private void OnDestroy()
     {
         Current = null;
+    }
+
+    private IEnumerator TranslationToMainMenuOnDeath()
+    {
+        youDiedPanel.gameObject.SetActive(true);
+        Time.timeScale = .2f;
+        yield return new WaitForSeconds(1f);
+        Time.timeScale = 1;
+        youDiedPanel.gameObject.SetActive(false);
+        SceneManager.LoadScene("MainMenuScene");
     }
 }
