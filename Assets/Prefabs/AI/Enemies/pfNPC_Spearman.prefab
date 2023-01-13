@@ -727,7 +727,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7037532199596934240}
   - component: {fileID: 7037532199596934241}
-  - component: {fileID: 860756315006902900}
   - component: {fileID: 7037532199596934254}
   - component: {fileID: -690802513099821912}
   - component: {fileID: 7037532199596934255}
@@ -780,18 +779,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &860756315006902900
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7037532199596934252}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 489774ed74d7d3548bc3de0cb089c001, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &7037532199596934254
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -808,6 +795,7 @@ MonoBehaviour:
   reachTargetDistance: 2
   damage: 10
   attackRate: 0.3
+  speedMove: 7
   hitArea: {fileID: 2595207713787138845}
 --- !u!114 &-690802513099821912
 MonoBehaviour:
