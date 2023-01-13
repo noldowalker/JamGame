@@ -6,7 +6,6 @@ using UnityEngine.AI;
 public class EnemyAIControllerScript : MonoBehaviour
 {
     public bool AIDisabled = false;
-    //����������� ���������� �� ����, �� ������� ����� ����������� �����
     public float reachTargetDistance;
 
     private NavMeshAgent navMesh;
