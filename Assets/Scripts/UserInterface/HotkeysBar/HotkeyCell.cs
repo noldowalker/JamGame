@@ -65,6 +65,11 @@ public class HotkeyCell : MonoBehaviour
         ObserverWithData<CooldownObservingDTO>.Unsub(_subscribedEvent, SetOnCooldown);
     }
 
+    public void BindedActionForInputSystem(InputAction.CallbackContext obj)
+    {
+        BindedAction();
+    }
+    
     public void BindedAction()
     {
         if (_activatedAnimation != null)
@@ -116,7 +121,6 @@ public class HotkeyCell : MonoBehaviour
 
     private IEnumerator PlayActivationAnimation()
     {
-        Debug.Log(@$"Нажата кнопка {hotkeyCharTextField.text}");
         SetBackground(backgroundOnActivationColor);
         yield return new WaitForSeconds(0.1f);
         SetBackground(backgroundReadyColor);

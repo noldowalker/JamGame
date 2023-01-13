@@ -9,10 +9,5 @@ namespace UserInterface.HotkeysBar
 
         [SerializeField] 
         private Image sphereImage;
-        
-        private void Update()
-        {
-            transform.rotation = Camera.main.transform.rotation;
-        }
     }
 }
