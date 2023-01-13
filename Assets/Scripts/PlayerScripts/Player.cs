@@ -31,7 +31,9 @@ public class Player : MonoBehaviour
 
     public static UnityEvent punchEvent = new UnityEvent();
     public static UnityEvent<float> kickEvent = new UnityEvent<float>();
-
+    public static Player Current;
+    public PlayerInput Input => playerInput;
+    
     private Vector2 input;
     private Vector3 currentMovement;
 
@@ -50,6 +52,10 @@ public class Player : MonoBehaviour
   
     private void Awake()
     {
+        if (Current != null)
+            Debug.LogError("Уже существует один экземпляр игрока!");
+        Current = this;
+        
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
         playerInput = new PlayerInput();
@@ -242,7 +248,7 @@ public class Player : MonoBehaviour
                     IKickable kickable = enemy.GetComponent<IKickable>();
                     if (kickable != null)
                     {
-                        kickable.Kick(damage, kickForce, transform.position);
+                        kickable.Kick(damage, kickForce, hitPoint.position);
                     }
                 }
                 if (enemy.CompareTag("Interact"))
@@ -252,6 +258,7 @@ public class Player : MonoBehaviour
                     {
                         kickable.Kick(0, kickForce, transform.position);
                         SoundHandleScript.Current.PlaySound(SoundEnum.KICK, audioSource);
+                        kickable.Kick(0, kickForce, hitPoint.position);
                     }
                 }
             }
@@ -308,5 +315,10 @@ public class Player : MonoBehaviour
     private void OnDisable()
     {
         playerInput.PlayerController.Disable();
+    }
+
+    private void OnDestroy()
+    {
+        Current = null;
     }
 }

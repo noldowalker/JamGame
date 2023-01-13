@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour, IDamagable
 {
@@ -9,6 +11,7 @@ public class PlayerHealth : MonoBehaviour, IDamagable
 
     [Range(0, 500)] [SerializeField] private int maxHealth;
 
+    private Image playerHPBarImage;
 
     private void Awake()
     {
@@ -16,6 +19,11 @@ public class PlayerHealth : MonoBehaviour, IDamagable
         healthSystem.OnDead += HealthSystem_OnDead;
         healthSystem.OnDamaged += HealthSystem_OnDamaged;
         healthSystem.OnHealed += HealthSystem_OnHealed;
+    }
+
+    private void Start()
+    {
+        playerHPBarImage = UIService.Current.GetPlayerHpBarImage();
     }
 
     public void Damage(float damage)
@@ -26,10 +34,11 @@ public class PlayerHealth : MonoBehaviour, IDamagable
     private void HealthSystem_OnDead(object sender, EventArgs e)
     {
         Debug.Log("PlayerDead");
+        UIService.Current.ShowDeathMessage();
     }
     private void HealthSystem_OnDamaged(object sender, EventArgs e)
     {
-        //  Debug.Log("PlayerDamaged" + healthSystem.GetHealth());
+        playerHPBarImage.fillAmount = healthSystem.GetHealthPercent();
     }
     private void HealthSystem_OnHealed(object sender, EventArgs e)
     {
