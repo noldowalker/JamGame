@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyAIControllerScript : MonoBehaviour
+public class KingController : MonoBehaviour
 {
     public bool AIDisabled = false;
 
@@ -11,10 +11,15 @@ public class EnemyAIControllerScript : MonoBehaviour
 
     [SerializeField] [Range(1f, 1000f)] private float damage;
     [SerializeField] [Range(0.1f, 10f)] private float attackRate;
+    [SerializeField] [Range(0.1f, 10f)] private float rollRate;
+    [SerializeField] [Range(0.1f, 10f)] private float timeOfRoll;
     [SerializeField] [Range(0f, 500f)] private float speedMove;
+    [SerializeField] [Range(0f, 500f)] private float rollSpeed;
 
     private float damageRadius;
-    private  float attackTime;
+
+    private float attackTime;
+    private float rollTime;
 
     [SerializeField] private Transform hitArea;
 
@@ -23,6 +28,8 @@ public class EnemyAIControllerScript : MonoBehaviour
     private Animator animator;
 
     private bool isAttacking;
+    private bool isRolling;
+    private bool isReadyToRoll;
 
     void Start()
     {
@@ -38,22 +45,46 @@ public class EnemyAIControllerScript : MonoBehaviour
     {
         if (!AIDisabled)
         {
-            if (FollowPlayer())
+            UpdateUltimate(Time.time);
+
+            if (!isRolling && isReadyToRoll)
             {
-                navMesh.speed = 0.0f;
-                animator.SetBool("isRunning", false);
-                if(isAttacking)
-                HandlePunch();
+                StartCoroutine(Rolling());
+            }
+            else
+            {
+                animator.SetBool("isRolling", false);
+
+                if (FollowPlayer())
+                {
+                    navMesh.speed = 0.0f;
+                    animator.SetBool("isWalking", false);
+                    if (isAttacking)
+                        HandlePunch();
+                }
             }
 
             // animator.Play("Base Layer.RobotHipHopDance"); 
         }
     }
 
+    IEnumerator Rolling()
+    {
+        isRolling = true;
+        animator.SetBool("isRolling", true);
+        navMesh.speed = rollSpeed;
+        navMesh.destination = player.transform.position;
+
+        yield return new WaitForSeconds(timeOfRoll); 
+        isRolling = false;
+    }
+
     bool FollowPlayer()
     {
-        if(player !=null)
-        return FollowAgent(player);
+        if (player != null)
+        {
+            return FollowAgent(player);
+        }
 
         return false;
     }
@@ -61,14 +92,14 @@ public class EnemyAIControllerScript : MonoBehaviour
     public bool FollowPoint(Transform point)
     {
         navMesh.destination = point.position;
-        animator.SetBool("isRunning", true);
+        animator.SetBool("isWalking", true);
         navMesh.speed = speedMove;
         if (Vector3.Distance(transform.position, point.transform.position) <= reachTargetDistance)
         {
             UpdateFiring(Time.time);
             return true;
         }
-        else 
+        else
             return false;
     }
 
@@ -112,15 +143,18 @@ public class EnemyAIControllerScript : MonoBehaviour
         }
     }
 
-    void OnDrawGizmosSelected()
+    private void UpdateUltimate(float deltaTime)
     {
-        // Draw a yellow sphere at the transform's position
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(hitArea.position, damageRadius);
+        float fireInterval = 1.0f / rollRate;
 
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawSphere(transform.position, reachTargetDistance);
+        if (deltaTime > rollTime)
+        {
+            isReadyToRoll = true;
+            rollTime = deltaTime + fireInterval;
+        }
+        else
+        {
+            isReadyToRoll = false;
+        }
     }
-
-
 }
