@@ -93,6 +93,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        
         HandleMovement();
         HandlePunch();
         HandleKick();
@@ -100,6 +101,7 @@ public class Player : MonoBehaviour
     }
     private void HandleMovement()
     {
+        
         animator.SetFloat("speed", 0);
 
         Vector3 forward = Vector3.forward;
@@ -113,16 +115,18 @@ public class Player : MonoBehaviour
         {
             if (isMovementPressed)
             {
-                if (isRunPressed)
-                {
-                    speedMultipler = runSpeed;
-                    animator.SetFloat("speed", 2);
-                }
-                else
-                {
-                    speedMultipler = walkSpeed;
-                    animator.SetFloat("speed", 1);
-                }
+
+                    if (isRunPressed)
+                    {
+                        speedMultipler = runSpeed;
+                        animator.SetFloat("speed", 2);
+                    }
+                    else
+                    {
+                        speedMultipler = walkSpeed;
+                        animator.SetFloat("speed", 1);
+                    }
+                
             }
         
 
@@ -297,6 +301,8 @@ public class Player : MonoBehaviour
 
     private void HandleStomping()
     {
+            //animator.SetBool("isGiant", true);
+            animator.SetTrigger("isGiant");
         //if (isGiant)
         //{
             Collider[] hitEnemies = Physics.OverlapSphere(stompPoint.position, attackRange, layerMask);
@@ -327,12 +333,14 @@ public class Player : MonoBehaviour
                 else
                 {
                     this.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                    
                 }
 
                 isGiant = turner;
+                
                 break;
             case 1:
-                animator.SetBool("IsKazachock", turner);
+                
                 break;
         }
         this.GetComponent<UltimateTimers>().SetUltimateTimer(num);
