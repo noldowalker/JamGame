@@ -6,14 +6,17 @@ using UnityEngine.Events;
 public class InteractionScript : MonoBehaviour, IKickable
 {
     public static UnityEvent<float> hitEvent = new UnityEvent<float>();
-
     [SerializeField] private Transform pfDestroyDetails;
+
+
    // private bool playerInTrigger;
     private Rigidbody rigidbody;
+    private AudioSource audioSource;
    // Player player;
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
        // player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
       //  Player.kickEvent.AddListener(onKick);
     }
@@ -58,7 +61,7 @@ public class InteractionScript : MonoBehaviour, IKickable
                             }
                         }
                     }
-
+                    SoundHandleScript.Current.PlaySound(SoundEnum.ITEM_DESTRUCTION, audioSource);
                     Destroy(gameObject);
                 }
                 

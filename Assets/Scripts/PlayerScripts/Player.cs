@@ -27,6 +27,8 @@ public class Player : MonoBehaviour
 
     [SerializeField] private Transform hitPoint;
 
+    private AudioSource audioSource;
+
     public static UnityEvent punchEvent = new UnityEvent();
     public static UnityEvent<float> kickEvent = new UnityEvent<float>();
     public static Player Current;
@@ -55,6 +57,7 @@ public class Player : MonoBehaviour
         Current = this;
         
         animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
         playerInput = new PlayerInput();
         characterController = GetComponent<CharacterController>();
         playerInput.PlayerController.Move.started += OnMovementInput;
@@ -135,6 +138,7 @@ public class Player : MonoBehaviour
         {  
             currentMovement.y = jumpForce;
             animator.SetTrigger("JumpPressed");
+            SoundHandleScript.Current.PlaySound(SoundEnum.JUMP_START,audioSource);
         } else
         {
             currentMovement.y = movementDirectionY;
@@ -157,12 +161,7 @@ public class Player : MonoBehaviour
         
     }
 
-    public void ResetPunch()
-    {
-        /*punchCount = 0;
-        animator.SetInteger("Punch", punchCount);*/
-    }
-
+   
     private void CoolDown()
     {
         if (punchCoolDownTimer < punchCoolDown)
@@ -201,6 +200,9 @@ public class Player : MonoBehaviour
                     {
                         punchable.Punch(damage);
                     }
+                } else
+                {
+                    SoundHandleScript.Current.PlaySound(SoundEnum.WEAPON_SLASH, audioSource);
                 }
             }
 
@@ -214,6 +216,7 @@ public class Player : MonoBehaviour
             {
                 punchCount++;
             }
+            
             animator.SetInteger("Punch", punchCount);
            // punchEvent?.Invoke();  // delete line
             punchCoolDownTimer = 0;
@@ -236,7 +239,6 @@ public class Player : MonoBehaviour
         if (isKicking && kickCoolDownTimer >= kickCoolDown)
         {
             animator.SetTrigger("IsKicking");
-
             Collider[] hitEnemies = Physics.OverlapSphere(hitPoint.position, attackRange, layerMask);
 
             foreach (Collider enemy in hitEnemies)
@@ -247,6 +249,7 @@ public class Player : MonoBehaviour
                     if (kickable != null)
                     {
                         kickable.Kick(damage, kickForce, hitPoint.position);
+                        SoundHandleScript.Current.PlaySound(SoundEnum.KICK_REACTION_ENEMY, audioSource);
                     }
                 }
                 if (enemy.CompareTag("Interact"))
@@ -254,6 +257,8 @@ public class Player : MonoBehaviour
                     IKickable kickable = enemy.GetComponent<IKickable>();
                     if (kickable != null)
                     {
+                        kickable.Kick(0, kickForce, transform.position);
+                        SoundHandleScript.Current.PlaySound(SoundEnum.KICK, audioSource);
                         kickable.Kick(0, kickForce, hitPoint.position);
                     }
                 }
@@ -272,11 +277,13 @@ public class Player : MonoBehaviour
     private void OnKick(InputAction.CallbackContext obj)
     {
         isKicking = obj.ReadValueAsButton();
+        SoundHandleScript.Current.PlaySound(SoundEnum.WEAPON_SLASH, audioSource);
     }
 
     private void OnPunch(InputAction.CallbackContext obj)
     {
         isPunching = obj.ReadValueAsButton();
+        SoundHandleScript.Current.PlaySound(SoundEnum.WEAPON_SLASH, audioSource);
     }
     private void OnRun(InputAction.CallbackContext obj)
     {
@@ -289,6 +296,15 @@ public class Player : MonoBehaviour
         isMovementPressed = input.x != 0 || input.y != 0;
     }
 
+    //SoundEvents======
+
+    private void OnStep()
+    {
+        //print("Step");
+        SoundHandleScript.Current.PlaySound(SoundEnum.PLAYER_STEP, audioSource);
+    }
+
+    //=================
 
     private void OnEnable()
     {
