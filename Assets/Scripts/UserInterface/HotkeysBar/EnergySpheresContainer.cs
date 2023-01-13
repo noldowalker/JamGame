@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GameLogic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace UserInterface.HotkeysBar
@@ -14,6 +16,10 @@ namespace UserInterface.HotkeysBar
         private EnergySphere spherePrefab;
         [SerializeField] 
         private int spheresAmount;
+        [SerializeField] 
+        private float spheresRotationRadius = 30;
+        [SerializeField] 
+        private float spheresRotationSpeed = 50;
         
         private List<EnergySphere> _spheres = new List<EnergySphere>();
 
@@ -25,7 +31,7 @@ namespace UserInterface.HotkeysBar
             SetShownPointsAmount(spheresAmount);
             _currentPoints = spheresAmount;
             IsRotationEnabled = true;
-            ObserverWithoutData.Sub(Events.Button1Pressed, AddPoint);
+            Player.Current.Input.PlayerController.Jump.started +=  AddPointForInputSystem;
         }
 
         public void Update()
@@ -41,12 +47,10 @@ namespace UserInterface.HotkeysBar
             var center = transform.position;
             _spheres.ForEach(s =>
             {
-                var newDegree = (s.lastDegree - 50 * Time.deltaTime) % 360;
-                var pos = DrawPointsByCircle(center, 50f, (int)newDegree);
-                //var rot = Quaternion.FromToRotation(Vector3.forward, center - pos);
+                var newDegree = (s.lastDegree - spheresRotationSpeed * Time.deltaTime) % 360;
+                var pos = DrawPointsByCircle(center, spheresRotationRadius, (int)newDegree);
                 var sphereTransform = s.transform;
                 sphereTransform.position = pos;
-                //sphereTransform.rotation = rot;
                 s.lastDegree = newDegree;
             });
         }
@@ -72,10 +76,10 @@ namespace UserInterface.HotkeysBar
             for (int i = 0; i < newPointsAmount; i++)
             {
                 var nextPoint = startingAngle - (i * step);
-                Vector3 pos = DrawPointsByCircle(center, 1.0f, nextPoint);
-                //Quaternion rot = Quaternion.FromToRotation(Vector3.forward, center - pos);
-                var sphere = Instantiate(spherePrefab, pos, transform.rotation);
+                Vector3 pos = DrawPointsByCircle(center, spheresRotationRadius, nextPoint);
+                var sphere = Instantiate(spherePrefab, transform);
                 var sphereTransform = sphere.transform;
+                sphereTransform.position = pos;
                 sphere.lastDegree = nextPoint;
                 
                 sphereTransform.SetParent(gameObject.transform);
@@ -91,7 +95,17 @@ namespace UserInterface.HotkeysBar
             return pos;
         }
 
+        private void OnDestroy()
+        {
+            Player.Current.Input.PlayerController.Jump.started -=  AddPointForInputSystem;
+        }
+
         private int _currentPoints = 0;
+        public void AddPointForInputSystem(InputAction.CallbackContext obj)
+        {
+            AddPoint();
+        }
+        
         public void AddPoint()
         {
             if (_currentPoints < _spheres.Count)

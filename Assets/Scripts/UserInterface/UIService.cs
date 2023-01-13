@@ -48,14 +48,11 @@ public class UIService : MonoBehaviour
         if (showGameLayout)
             TurnOnGameInterface();
     }
-
-    // ToDo: Бинды чисто для теста, после реализации контроллера персонажа и управления - удалить.
-    // Бинды прокидывать из нормального места
+    
     void Update()
     {
         if (Input.GetKeyUp(KeyCode.I)) 
             ObserverWithoutData.FireEvent(Events.HelpPanelCalled);
-        
     }
 
     public Image GetPlayerHpBarImage() => _hotKeyPanel.PlayerHpBar;
@@ -87,5 +84,10 @@ public class UIService : MonoBehaviour
         
         _helpPanel = Instantiate(helpPanelPrefab, gameCanvas.transform);
         ObserverWithoutData.Sub(Events.HelpPanelCalled, _helpPanel.SwitchPanelVisibility);
+    }
+
+    private void OnDestroy()
+    {
+        Current = null;
     }
 }

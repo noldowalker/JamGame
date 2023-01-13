@@ -29,7 +29,9 @@ public class Player : MonoBehaviour
 
     public static UnityEvent punchEvent = new UnityEvent();
     public static UnityEvent<float> kickEvent = new UnityEvent<float>();
-
+    public static Player Current;
+    public PlayerInput Input => playerInput;
+    
     private Vector2 input;
     private Vector3 currentMovement;
 
@@ -48,6 +50,9 @@ public class Player : MonoBehaviour
   
     private void Awake()
     {
+        if (Current != null)
+            Debug.LogError("Уже существует один экземпляр игрока!");
+        Current = this;
         
         animator = GetComponent<Animator>();
         playerInput = new PlayerInput();
@@ -293,5 +298,10 @@ public class Player : MonoBehaviour
     private void OnDisable()
     {
         playerInput.PlayerController.Disable();
+    }
+
+    private void OnDestroy()
+    {
+        Current = null;
     }
 }
