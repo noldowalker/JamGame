@@ -102,6 +102,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pfDestroyDetails: {fileID: 8938643334758266978, guid: 520b3b2a8e4ce0f408d064dadac68025,
     type: 3}
+  pfVFXsmoke: {fileID: 3298696981772375021, guid: 432560f2377bc0e48bddc0c1fcca55b1,
+    type: 3}
 --- !u!64 &7525046325315753613
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -129,9 +131,8 @@ Rigidbody:
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!82 &268824612182448684
 AudioSource:
   m_ObjectHideFlags: 0
@@ -229,3 +230,4 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  m_CollisionDetection: 1

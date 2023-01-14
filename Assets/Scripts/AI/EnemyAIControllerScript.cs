@@ -99,7 +99,6 @@ public class EnemyAIControllerScript : MonoBehaviour
         }
 
         animator.Play("Base Layer.Melee Attack");
-
     }
 
     private void UpdateFiring(float deltaTime)

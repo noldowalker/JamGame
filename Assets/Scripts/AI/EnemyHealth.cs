@@ -10,6 +10,11 @@ public class EnemyHealth : MonoBehaviour, IKickable, IPunchable
     private EnemyAIControllerScript enemyAI;
     private HealthBar hpBar;
 
+    [SerializeField] private Transform pfVFXpunch;
+    [SerializeField] private Transform pfVFXkick;
+    [SerializeField] private Transform pfVFXblood;
+    [SerializeField] private Transform pfVFXbloodSplash;
+
     [Range(0, 500)] [SerializeField] private int maxHealth;
     private Animator animator;
 
@@ -48,12 +53,18 @@ public class EnemyHealth : MonoBehaviour, IKickable, IPunchable
     public void Kick(float damage, float force, Vector3 direction)
     {
         animator.SetTrigger("IsKicked");
+        Instantiate(pfVFXkick,transform.position, transform.rotation);
+      //  Instantiate(pfVFXbloodSplash, transform.position, transform.rotation);
+
         healthSystem.Damage(damage);
     }
 
     public void Punch(float damage)
     {
         animator.SetTrigger("IsPunched");
+        Instantiate(pfVFXpunch, transform.position, transform.rotation);
+      //  Instantiate(pfVFXblood, transform.position, transform.rotation);
+
         healthSystem.Damage(damage);
     }
 }
