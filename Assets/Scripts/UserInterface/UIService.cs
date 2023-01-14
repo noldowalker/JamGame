@@ -53,7 +53,12 @@ public class UIService : MonoBehaviour
     {
         if (Current != null)
             Debug.LogError("Создано больше 1 сервиса для интерфейса!");
-
+        
+        if (showGameLayout)
+            TurnOnGameInterface();
+        if (showMainMenu)
+            TurnOnMainMenu();
+        
         Current = this;
     }
 
@@ -61,11 +66,6 @@ public class UIService : MonoBehaviour
     {
         youDiedPanel.gameObject.SetActive(false);
         audioSource = GetComponent<AudioSource>();
-        
-        if (showGameLayout)
-            TurnOnGameInterface();
-        if (showMainMenu)
-            TurnOnMainMenu();
     }
     
     void Update()

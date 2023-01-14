@@ -4,10 +4,8 @@ using UnityEngine;
 using System;
 
 [RequireComponent(typeof(EnemyAIControllerScript))]
-public class EnemyHealth : MonoBehaviour, IKickable, IPunchable
+public class EnemyHealth : MonoBehaviour, IKickable, IPunchable, IStompable
 {
-
-
     [SerializeField] private Transform pfVFXpunch;
     [SerializeField] private Transform pfVFXkick;
     [SerializeField] private Transform pfVFXblood;
@@ -35,6 +33,7 @@ public class EnemyHealth : MonoBehaviour, IKickable, IPunchable
 
     private void HealthSystem_OnDead(object sender, EventArgs e)
     {
+        Debug.Log($@"DEAD!!!!");
         aiSystem.ReactOnDeath();
         SoundHandleScript.Current.PlaySound(SoundEnum.ENEMY_DEATH, audioSource);
     }
@@ -43,7 +42,7 @@ public class EnemyHealth : MonoBehaviour, IKickable, IPunchable
     {
         hpBar.ChangeHealthPercent(healthSystem.GetHealthPercent());
 
-        if (aiSystem.enemyType == EnemyType.KNIGHT || aiSystem.enemyType == EnemyType.ROYAL_KNIGHT)
+        if (aiSystem.EnemyType == EnemyType.KNIGHT || aiSystem.EnemyType == EnemyType.ROYAL_KNIGHT)
         {
             SoundHandleScript.Current.PlaySound(SoundEnum.HIT_REACTION_ARMOR, audioSource);
         } else
@@ -64,5 +63,11 @@ public class EnemyHealth : MonoBehaviour, IKickable, IPunchable
         animator.SetTrigger("IsPunched");
         healthSystem.Damage(damage);
         aiSystem.ReactOnPunch();
+    }
+
+    public void Stomp(float damage)
+    {
+        Debug.Log(@$"STOMP DAMAGE = {damage}");
+        healthSystem.Damage(damage);
     }
 }

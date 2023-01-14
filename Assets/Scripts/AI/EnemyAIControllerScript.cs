@@ -6,16 +6,20 @@ using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
-public class EnemyAIControllerScript : MonoBehaviour
+public class EnemyAIControllerScript : MonoBehaviour, IDancable
 {
     public bool AIDisabled = false;
-    [SerializeField] public EnemyType enemyType;
-    [SerializeField] [Range(0.1f, 10f)] protected float reachTargetDistance;
-    [SerializeField] [Range(1f, 1000f)] protected float damage;
-    [SerializeField] [Range(0.1f, 10f)] protected float attackRate;
-    [SerializeField] [Range(0f, 500f)] protected float speedMove;
-    [SerializeField] protected Transform hitArea;
-    [SerializeField] protected Collider WeaponHitArea;
+    public EnemyType EnemyType => enemyType;
+    
+    [SerializeField] [Range(0.1f, 10f)] private float reachTargetDistance;
+    [SerializeField] [Range(1f, 1000f)] private float damage;
+    [SerializeField] [Range(0f, 500f)] private float speedMove;
+    [SerializeField] private Transform hitArea;
+    [SerializeField] private Collider WeaponHitArea;
+    [SerializeField] private EnemyType enemyType;
+
+    private float damageRadius;
+    private  float attackTime;
 
     protected float damageRadius;
     protected float attackTime;
@@ -45,7 +49,7 @@ public class EnemyAIControllerScript : MonoBehaviour
         
         animator = GetComponent<Animator>();
         damageRadius = reachTargetDistance / 2;
-        state = EnemyState.Idle;
+        ChangeState(EnemyState.Idle);
     }
 
     void Update()
@@ -72,6 +76,7 @@ public class EnemyAIControllerScript : MonoBehaviour
                 Destroy();
                 break;
         };
+        
         PerformGrunt(10, 25); //Random voice sounds by enemies
     }
     
@@ -84,7 +89,7 @@ public class EnemyAIControllerScript : MonoBehaviour
         if (state == EnemyState.Dying)
             return;
         
-        state = EnemyState.Punched;
+        ChangeState(EnemyState.Punched);
         animator.SetTrigger("IsPunched");
         ChangeStateAfterTime(1.2f, EnemyState.Idle);
     }
@@ -97,7 +102,7 @@ public class EnemyAIControllerScript : MonoBehaviour
         }
         if (state == EnemyState.Dying)
             return;  
-        state = EnemyState.Kicked;
+        ChangeState(EnemyState.Kicked);
         animator.SetTrigger("IsKicked");
         ChangeStateAfterTime(4f, EnemyState.Idle);
     }
@@ -107,9 +112,20 @@ public class EnemyAIControllerScript : MonoBehaviour
         if (state == EnemyState.Dying)
             return;
         
-        state = EnemyState.Dying;
-        animator.SetTrigger("isDie");
+        ChangeState(EnemyState.Dying);
+        animator.SetTrigger("IsDie");
         ChangeStateAfterTime(4f, EnemyState.SelfDestroy);
+    }
+    
+    public void Dance()
+    {
+        if (state == EnemyState.Dancing)
+            return;
+
+        ChangeState(EnemyState.Dancing);
+        Debug.Log("IMMA FUCKER AND IM DANCING!");
+        animator.SetTrigger("IsDancing");
+        ChangeStateAfterTime(4f, EnemyState.Idle);
     }
 
     protected void TryFindPlayerAndReach()
@@ -118,21 +134,22 @@ public class EnemyAIControllerScript : MonoBehaviour
             return;
         
         FollowPoint(player.transform);
-        state = EnemyState.MoveTowardsPlayer;
+        ChangeState(EnemyState.MoveTowardsPlayer);
     }
 
     protected void MoveTowardsPlayer()
     {
         if (player == null)
-            state = EnemyState.Idle;
-        
+            ChangeState(EnemyState.Idle);
+
+        navMesh.enabled = true;
         animator.SetBool("isRunning", true);
         FollowPoint(player.transform);
 
         if (!IsTargetAttackable(player.transform)) 
             return;
         
-        state = EnemyState.Attacking;
+        ChangeState(EnemyState.Attacking);
         isPlayerHittedByCurrentAttack = false;
         animator.Play("Base Layer.Melee Attack");
         ChangeStateAfterTime(1.8f, EnemyState.Idle);
@@ -215,10 +232,21 @@ public class EnemyAIControllerScript : MonoBehaviour
         waitCoroutine = StartCoroutine(WaitAndChangeState(waitTime, newState));
     }
 
-    protected IEnumerator WaitAndChangeState(float waitTime, EnemyState newState)
+
+    private void ChangeState(EnemyState newState)
+    {
+        if (newState != EnemyState.MoveTowardsPlayer)
+            navMesh.enabled = false;
+        if (newState == EnemyState.Idle)
+            animator.SetTrigger("ToIdle");
+        
+        state = newState;
+    }
+    
+    private IEnumerator WaitAndChangeState(float waitTime, EnemyState newState)
     {
         yield return new WaitForSeconds(waitTime);
-        state = newState;
+        ChangeState(newState);
         waitCoroutine = null;
     }
 

@@ -22,12 +22,19 @@ public class Player : MonoBehaviour
     [SerializeField] [Range(1000f, 10000f)] private float kickForce;
     [SerializeField] [Range(0f, 1000f)] private float kickDamage;
     [SerializeField] [Range(0f, 1000f)] private float punchDamage;
+    [SerializeField] [Range(0f, 1000f)] private float stompDamage;
     [SerializeField] [Range(0f, 100f)] private float attackRange;
+    [SerializeField] [Range(0f, 100f)] private float stompRange;
+    [SerializeField] [Range(0f, 100f)] private float danceRange;
+    [SerializeField] [Range(1f, 5f)] private float playerSize = 1f;
+    [SerializeField] [Range(1f, 100f)] private float danceDuration;
 
     [SerializeField] LayerMask layerMask;
 
     [SerializeField] private Transform hitPoint;
-    private ParticleSystem pfVFXwalk;
+    [SerializeField] private Transform stompPoint;
+    [SerializeField] private ParticleSystem pfVFXwalk;
+    [SerializeField] private Transform dancePoint;
 
     private AudioSource audioSource;
 
@@ -45,6 +52,8 @@ public class Player : MonoBehaviour
     private bool isMovementPressed;
     private bool isPunching;
     private bool isKicking;
+    private bool isGiant = false;
+    private bool isDancingAura = false;
 
     private int punchCount = 0;
 
@@ -73,9 +82,10 @@ public class Player : MonoBehaviour
         playerInput.PlayerController.Punch.canceled += OnPunch;
         playerInput.PlayerController.Kick.started += OnKick;
         playerInput.PlayerController.Kick.canceled += OnKick;
+        playerInput.PlayerController.Ultimate1.started += OnUltimate1;
+        playerInput.PlayerController.Ultimate2.started += OnUltimate2;
 
         pfVFXwalk = GetComponentInChildren<ParticleSystem>();
-
     }
 
     private void Start()
@@ -88,11 +98,13 @@ public class Player : MonoBehaviour
     private void Update()
     {
         HandleMovement();
+        HandleDancingAura();
         HandlePunch();
         HandleKick();
     }
     private void HandleMovement()
     {
+        
         animator.SetFloat("speed", 0);
 
         Vector3 forward = Vector3.forward;
@@ -117,9 +129,8 @@ public class Player : MonoBehaviour
                     animator.SetFloat("speed", 1);
                 }
             }
-        
-
         }
+        
         float curSpeedX = speedMultipler * -input.x;
         float curSpeedY = speedMultipler * input.y;
         float movementDirectionY = currentMovement.y;
@@ -127,18 +138,22 @@ public class Player : MonoBehaviour
         HandleJump(movementDirectionY);
         characterController.Move(currentMovement * Time.deltaTime);
         
+        if (input.y == 0 && input.x == 0)
+            return;
+        
         var rotationVector = new Vector3(input.y, 0, -input.x);
         rotationVector.Normalize();
         if (rotationVector != Vector3.zero)
         {
             transform.forward = rotationVector;
         }
+        
+        if (isGiant) 
+            HandleStomping();
     }
 
     private void HandleJump(float movementDirectionY)
     {
-        Debug.Log($@"movementDirectionY = {movementDirectionY}");
-        
         if (isJumpPressed && characterController.isGrounded)
         {  
             currentMovement.y = jumpForce;
@@ -231,7 +246,7 @@ public class Player : MonoBehaviour
             }
             
             animator.SetInteger("Punch", punchCount);
-           // punchEvent?.Invoke();  // delete line
+
             punchCoolDownTimer = 0;
         }
     }
@@ -241,47 +256,108 @@ public class Player : MonoBehaviour
         {
             kickCoolDownTimer+=Time.deltaTime;
         }
-        if (isKicking && kickCoolDownTimer >= kickCoolDown)
-        {
-            animator.SetTrigger("IsKicking");
-            Collider[] hitEnemies = Physics.OverlapSphere(hitPoint.position, attackRange, layerMask);
 
-            foreach (Collider enemy in hitEnemies)
+        if (!isKicking || !(kickCoolDownTimer >= kickCoolDown)) 
+            return;
+        
+        animator.SetTrigger("IsKicking");
+        var hitEnemies = Physics.OverlapSphere(hitPoint.position, attackRange, layerMask);
+
+        foreach (var enemy in hitEnemies)
+        {
+            if (enemy.CompareTag("Enemy"))
             {
-                if (enemy.CompareTag("Enemy"))
+                var kickable = enemy.GetComponent<IKickable>();
+                if (kickable != null)
                 {
-                    IKickable kickable = enemy.GetComponent<IKickable>();
-                    if (kickable != null)
-                    {
-                        SoundHandleScript.Current.PlaySound(SoundEnum.KICK_REACTION_ENEMY, audioSource);
-                        kickable.Kick(kickDamage, kickForce, hitPoint.position);
-                    }
-                }
-                if (enemy.CompareTag("Interact"))
-                {
-                    IKickable kickable = enemy.GetComponent<IKickable>();
-                    if (kickable != null)
-                    {
-                        kickable.Kick(0, kickForce, transform.position);
-                        SoundHandleScript.Current.PlaySound(SoundEnum.KICK, audioSource);
-                        kickable.Kick(0, kickForce, hitPoint.position);
-                    }
-                }
-                if (enemy.CompareTag("Heal"))
-                {
-                    IKickable kickable = enemy.GetComponent<IKickable>();
-                    if (kickable != null)
-                    {
-                        kickable.Kick(kickDamage, kickForce, hitPoint.position);
-                    }
+                    SoundHandleScript.Current.PlaySound(SoundEnum.KICK_REACTION_ENEMY, audioSource);
+                    kickable.Kick(kickDamage, kickForce, hitPoint.position);
                 }
             }
+            if (enemy.CompareTag("Interact"))
+            {
+                var kickable = enemy.GetComponent<IKickable>();
+                if (kickable != null)
+                {
+                    kickable.Kick(0, kickForce, transform.position);
+                    SoundHandleScript.Current.PlaySound(SoundEnum.KICK, audioSource);
+                    kickable.Kick(0, kickForce, hitPoint.position);
+                }
+            }
+            if (enemy.CompareTag("Heal"))
+            {
+                var kickable = enemy.GetComponent<IKickable>();
+                if (kickable != null)
+                {
+                    kickable.Kick(kickDamage, kickForce, hitPoint.position);
+                }
+            }
+        }
 
-            //kickEvent?.Invoke(kickForce);
-            kickCoolDownTimer = 0;
+        kickCoolDownTimer = 0;
+    }
+
+    private void HandleStomping()
+    {
+        animator.SetTrigger("isGiant");
+        var hitEnemies = Physics.OverlapSphere(stompPoint.position, stompRange, layerMask);
+
+        foreach (var enemy in hitEnemies)
+        {
+            if (!enemy.CompareTag("Enemy")) 
+                continue;
+            
+            var stompable = enemy.GetComponent<IStompable>();
+
+            stompable?.Stomp(stompDamage);
         }
     }
 
+    private void HandleDancingAura()
+    {
+        if (!isDancingAura)
+            return;
+        
+        Collider[] hitEnemies = Physics.OverlapSphere(dancePoint.position, danceRange, layerMask);
+        Debug.Log("DANCE AROUND");
+        foreach (Collider enemy in hitEnemies)
+        {
+            if (enemy.CompareTag("Enemy"))
+            {
+                Debug.Log("DANCE FUCKER!");
+                IDancable danceable = enemy.GetComponent<IDancable>();
+                if (danceable != null)
+                {
+                    danceable.Dance();
+                }
+            }
+        }
+    }
+    
+    public void UltimateEffect(byte num, bool turner) //turner - вкл/выкл
+    {
+        switch (num)
+        {
+            case 0: // Запуск или остановка гиганта
+                if (turner)
+                {
+                    transform.localScale = new Vector3(playerSize, playerSize, playerSize);
+                }
+                else
+                {
+                    transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+                }
+
+                isGiant = turner;
+                
+                break;
+            case 1: // Запуск или остановка танца
+                isDancingAura = turner;
+                break;
+        }
+        GetComponent<UltimateTimers>().SetUltimateTimer(num);
+    }
+    
     private void OnJump(InputAction.CallbackContext obj)
     {
         isJumpPressed = obj.ReadValueAsButton();
@@ -298,6 +374,7 @@ public class Player : MonoBehaviour
         isPunching = obj.ReadValueAsButton();
         SoundHandleScript.Current.PlaySound(SoundEnum.WEAPON_SLASH, audioSource);
     }
+    
     private void OnRun(InputAction.CallbackContext obj)
     {
         isRunPressed = obj.ReadValueAsButton();
@@ -317,8 +394,27 @@ public class Player : MonoBehaviour
         pfVFXwalk.Play();
         SoundHandleScript.Current.PlaySound(SoundEnum.PLAYER_STEP, audioSource);
     }
+    
+    private void OnJumpEnd()
+    {
+        Debug.Log("SOSALITY@!!!");
+    }
 
     //=================
+    private void OnUltimate1(InputAction.CallbackContext obj)
+    {
+        //if(!isGiant && this.GetComponent<UltimateTimers>().GetCooldown(0) <= 0) 
+        if(!isGiant)
+            UltimateEffect(0, true);
+    }
+    
+    private void OnUltimate2(InputAction.CallbackContext obj)
+    {
+        //if (!isDancingAura && this.GetComponent<UltimateTimers>().GetCooldown(1)<=0)
+        if(!isDancingAura)    
+            UltimateEffect(1, true);
+    }
+
 
     private void OnEnable()
     {
@@ -333,5 +429,19 @@ public class Player : MonoBehaviour
     private void OnDestroy()
     {
         Current = null;
+    }
+    
+    
+
+    void OnDrawGizmosSelected()
+    {
+        // Draw a yellow sphere at the transform's position
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(stompPoint.position, stompRange);
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawSphere(dancePoint.position, danceRange);
+
+        /*Gizmos.color = Color.cyan;
+        Gizmos.DrawSphere(transform.position, reachTargetDistance);*/
     }
 }

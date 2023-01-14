@@ -667,6 +667,7 @@ GameObject:
   - component: {fileID: 6018972075183849623}
   - component: {fileID: 6018972075183849622}
   - component: {fileID: -6338504052512929701}
+  - component: {fileID: 8196412670384862327}
   - component: {fileID: 6018972075183849617}
   - component: {fileID: 799542200}
   - component: {fileID: 799542201}
@@ -731,7 +732,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AIDisabled: 0
-  enemyType: 2
+  isDancing: 0
   reachTargetDistance: 2
   damage: 35
   attackRate: 2
