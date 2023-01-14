@@ -22,13 +22,17 @@ public class Player : MonoBehaviour
     [SerializeField] [Range(1000f, 10000f)] private float kickForce;
     [SerializeField] [Range(0f, 1000f)] private float kickDamage;
     [SerializeField] [Range(0f, 1000f)] private float punchDamage;
+    [SerializeField] [Range(0f, 1000f)] private float stompDamage;
     [SerializeField] [Range(0f, 100f)] private float attackRange;
+    [SerializeField] [Range(1f, 5f)] private float playerSize;
+    [SerializeField] [Range(1f, 100f)] private float enemyDancingDuratation;
 
     [SerializeField] LayerMask layerMask;
 
     [SerializeField] private Transform hitPoint;
     [SerializeField] private Transform stompPoint;
     [SerializeField] private ParticleSystem pfVFXwalk;
+    [SerializeField] private Transform dancePoint;
 
     private AudioSource audioSource;
 
@@ -47,6 +51,7 @@ public class Player : MonoBehaviour
     private bool isPunching;
     private bool isKicking;
     private bool isGiant = false;
+    private bool isDancingAura = false;
 
     private int punchCount = 0;
 
@@ -95,6 +100,7 @@ public class Player : MonoBehaviour
     {
         
         HandleMovement();
+        HandleDancingAura();
         HandlePunch();
         HandleKick();
         
@@ -248,7 +254,7 @@ public class Player : MonoBehaviour
             }
             
             animator.SetInteger("Punch", punchCount);
-           // punchEvent?.Invoke();  // delete line
+
             punchCoolDownTimer = 0;
         }
     }
@@ -258,69 +264,79 @@ public class Player : MonoBehaviour
         {
             kickCoolDownTimer+=Time.deltaTime;
         }
-        if (isKicking && kickCoolDownTimer >= kickCoolDown)
-        {
-            animator.SetTrigger("IsKicking");
-            Collider[] hitEnemies = Physics.OverlapSphere(hitPoint.position, attackRange, layerMask);
 
-            foreach (Collider enemy in hitEnemies)
+        if (!isKicking || !(kickCoolDownTimer >= kickCoolDown)) 
+            return;
+        
+        animator.SetTrigger("IsKicking");
+        var hitEnemies = Physics.OverlapSphere(hitPoint.position, attackRange, layerMask);
+
+        foreach (var enemy in hitEnemies)
+        {
+            if (enemy.CompareTag("Enemy"))
             {
-                if (enemy.CompareTag("Enemy"))
+                var kickable = enemy.GetComponent<IKickable>();
+                if (kickable != null)
                 {
-                    IKickable kickable = enemy.GetComponent<IKickable>();
-                    if (kickable != null)
-                    {
-                        SoundHandleScript.Current.PlaySound(SoundEnum.KICK_REACTION_ENEMY, audioSource);
-                        kickable.Kick(kickDamage, kickForce, hitPoint.position);
-                    }
-                }
-                if (enemy.CompareTag("Interact"))
-                {
-                    IKickable kickable = enemy.GetComponent<IKickable>();
-                    if (kickable != null)
-                    {
-                        kickable.Kick(0, kickForce, transform.position);
-                        SoundHandleScript.Current.PlaySound(SoundEnum.KICK, audioSource);
-                        kickable.Kick(0, kickForce, hitPoint.position);
-                    }
-                }
-                if (enemy.CompareTag("Heal"))
-                {
-                    IKickable kickable = enemy.GetComponent<IKickable>();
-                    if (kickable != null)
-                    {
-                        kickable.Kick(kickDamage, kickForce, hitPoint.position);
-                    }
+                    SoundHandleScript.Current.PlaySound(SoundEnum.KICK_REACTION_ENEMY, audioSource);
+                    kickable.Kick(kickDamage, kickForce, hitPoint.position);
                 }
             }
-
-            //kickEvent?.Invoke(kickForce);
-            kickCoolDownTimer = 0;
+            if (enemy.CompareTag("Interact"))
+            {
+                var kickable = enemy.GetComponent<IKickable>();
+                if (kickable != null)
+                {
+                    kickable.Kick(0, kickForce, transform.position);
+                    SoundHandleScript.Current.PlaySound(SoundEnum.KICK, audioSource);
+                    kickable.Kick(0, kickForce, hitPoint.position);
+                }
+            }
+            if (enemy.CompareTag("Heal"))
+            {
+                var kickable = enemy.GetComponent<IKickable>();
+                if (kickable != null)
+                {
+                    kickable.Kick(kickDamage, kickForce, hitPoint.position);
+                }
+            }
         }
+
+        kickCoolDownTimer = 0;
     }
 
     private void HandleStomping()
     {
-            //animator.SetBool("isGiant", true);
-            animator.SetTrigger("isGiant");
-        //if (isGiant)
-        //{
-            Collider[] hitEnemies = Physics.OverlapSphere(stompPoint.position, attackRange, layerMask);
+        animator.SetTrigger("isGiant");
+        var hitEnemies = Physics.OverlapSphere(stompPoint.position, attackRange, layerMask);
 
-            foreach (Collider enemy in hitEnemies)
-            {
-                if (enemy.CompareTag("Enemy"))
-                {
-                    IStompable stompable = enemy.GetComponent<IStompable>();
-                    if (stompable != null)
-                    {
-                        stompable.Stomp(damage);
-                    }
-                }
-            }
-        //}
+        foreach (var enemy in hitEnemies)
+        {
+            if (!enemy.CompareTag("Enemy")) 
+                continue;
+            
+            var stompable = enemy.GetComponent<IStompable>();
+            stompable?.Stomp(stompDamage);
+        }
     }
 
+    private void HandleDancingAura()
+    {
+        Collider[] hitEnemies = Physics.OverlapSphere(dancePoint.position, attackRange, layerMask);
+
+        foreach (Collider enemy in hitEnemies)
+        {
+            if (enemy.CompareTag("Enemy"))
+            {
+                IDancable danceable = enemy.GetComponent<IDancable>();
+                if (danceable != null)
+                {
+                    danceable.Dance(true, enemyDancingDuratation);
+                }
+            }
+        }
+    }
+    
     public void UltimateEffect(byte num, bool turner) //turner - вкл/выкл
     {
         switch (num)
@@ -328,7 +344,7 @@ public class Player : MonoBehaviour
             case 0:
                 if (turner)
                 {
-                    this.transform.localScale = new Vector3(5.0f, 5.0f, 5.0f);
+                    this.transform.localScale = new Vector3(playerSize, playerSize, playerSize);
                 }
                 else
                 {
@@ -340,7 +356,7 @@ public class Player : MonoBehaviour
                 
                 break;
             case 1:
-                
+                isDancingAura = turner;
                 break;
         }
         this.GetComponent<UltimateTimers>().SetUltimateTimer(num);
@@ -385,12 +401,16 @@ public class Player : MonoBehaviour
     //=================
     private void OnUltimate1(InputAction.CallbackContext obj)
     {
-        if(!isGiant) UltimateEffect(0, true);
+        //if(!isGiant && this.GetComponent<UltimateTimers>().GetCooldown(0) <= 0) 
+        if(!isGiant)
+            UltimateEffect(0, true);
     }
     
     private void OnUltimate2(InputAction.CallbackContext obj)
     {
-        UltimateEffect(1, true);
+        //if (!isDancingAura && this.GetComponent<UltimateTimers>().GetCooldown(1)<=0)
+        if(!isDancingAura)    
+            UltimateEffect(1, true);
     }
 
 

@@ -6,17 +6,19 @@ using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
-public class EnemyAIControllerScript : MonoBehaviour
+public class EnemyAIControllerScript : MonoBehaviour, IDancable
 {
     public bool AIDisabled = false;
-    [SerializeField] public EnemyType enemyType;
+    public EnemyType EnemyType => enemyType;
+    
     [SerializeField] [Range(0.1f, 10f)] private float reachTargetDistance;
     [SerializeField] [Range(1f, 1000f)] private float damage;
     [SerializeField] [Range(0.1f, 10f)] private float attackRate;
     [SerializeField] [Range(0f, 500f)] private float speedMove;
     [SerializeField] private Transform hitArea;
     [SerializeField] private Collider WeaponHitArea;
-    
+    [SerializeField] private EnemyType enemyType;
+
     private float damageRadius;
     private  float attackTime;
 
@@ -27,6 +29,7 @@ public class EnemyAIControllerScript : MonoBehaviour
     private Animator animator;
 
     private bool isAttacking;
+    private bool isDancing = false;
 
     private float gruntCooldownTimer = 0;
     private float gruntCooldown = 10;
@@ -34,6 +37,8 @@ public class EnemyAIControllerScript : MonoBehaviour
     private bool isPlayerHittedByCurrentAttack;
     private EnemyState state;
     private Coroutine waitCoroutine;
+    
+    public bool GetDancing() => isDancing;
     
     void Start()
     {
@@ -74,6 +79,7 @@ public class EnemyAIControllerScript : MonoBehaviour
                 Destroy();
                 break;
         };
+        
         PerformGrunt(10, 25); //Random voice sounds by enemies
     }
     
@@ -105,6 +111,13 @@ public class EnemyAIControllerScript : MonoBehaviour
         state = EnemyState.Dying;
         animator.SetTrigger("isDie");
         ChangeStateAfterTime(4f, EnemyState.SelfDestroy);
+    }
+    
+    public void Dance(bool val, float duratation)
+    {
+        isDancing = val;
+        if(duratation <= 0)
+            this.GetComponent<EffectsTimers>().SetEffectTimer(0, duratation);
     }
 
     private void TryFindPlayerAndReach()

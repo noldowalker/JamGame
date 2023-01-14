@@ -15,10 +15,7 @@ public class UltimateTimers : MonoBehaviour
     private bool[] isCooldownTimerOn = new bool[]{false, false};
     private bool[] isDuratationTimerOn = new bool[]{false, false};
 
-    private void Start()
-    {
-        //player = this.transform.GetComponent<Player>();
-    }
+    //public float GetCooldown(byte num) => cooldowns[num];
 
     void FixedUpdate()
     {
@@ -55,4 +52,6 @@ public class UltimateTimers : MonoBehaviour
         isCooldownTimerOn[num] = true;
         isDuratationTimerOn[num] = true;
     }
+
+    
 }

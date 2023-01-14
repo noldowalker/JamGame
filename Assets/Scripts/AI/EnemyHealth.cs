@@ -3,15 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class EnemyHealth : MonoBehaviour, IKickable, IPunchable, IStompable
 [RequireComponent(typeof(EnemyAIControllerScript))]
-public class EnemyHealth : MonoBehaviour, IKickable, IPunchable
+public class EnemyHealth : MonoBehaviour, IKickable, IPunchable, IStompable
 {
-    private HealthSystem healthSystem;
-    private AudioSource audioSource;
-    private EnemyAIControllerScript enemyAI;
-    private HealthBar hpBar;
-
     [SerializeField] private Transform pfVFXpunch;
     [SerializeField] private Transform pfVFXkick;
     [SerializeField] private Transform pfVFXblood;
@@ -47,7 +41,7 @@ public class EnemyHealth : MonoBehaviour, IKickable, IPunchable
     {
         hpBar.ChangeHealthPercent(healthSystem.GetHealthPercent());
 
-        if (aiSystem.enemyType == EnemyType.KNIGHT || aiSystem.enemyType == EnemyType.ROYAL_KNIGHT)
+        if (aiSystem.EnemyType == EnemyType.KNIGHT || aiSystem.EnemyType == EnemyType.ROYAL_KNIGHT)
         {
             SoundHandleScript.Current.PlaySound(SoundEnum.HIT_REACTION_ARMOR, audioSource);
         } else
