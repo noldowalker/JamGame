@@ -20,7 +20,7 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
     [SerializeField] protected EnemyType enemyType;
 
     protected float damageRadius;
-    protected float attackTime;
+    protected  float attackTime;
 
     protected AudioSource audioSource;
     protected NavMeshAgent navMesh;
@@ -238,7 +238,7 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
             navMesh.enabled = false;
         if (newState == EnemyState.Idle)
             animator.SetTrigger("ToIdle");
-        
+        waitCoroutine = null;
         state = newState;
     }
     

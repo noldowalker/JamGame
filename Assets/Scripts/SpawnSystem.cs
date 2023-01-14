@@ -9,6 +9,7 @@ public class SpawnSystem : MonoBehaviour
     public static SpawnSystem Current;
     [SerializeField] public int totalEnemiesOnScene;
     [SerializeField] private string nextScene;
+    [SerializeField] private bool isBossBattle;
     public int currentDeadEnemies;
 
     private void Awake()
@@ -28,16 +29,19 @@ public class SpawnSystem : MonoBehaviour
 
     private void OnEnemyDead()
     {
-        currentDeadEnemies++;
-        if(currentDeadEnemies >= totalEnemiesOnScene)
+        if (!isBossBattle)
         {
-            ToggleNextLevel();
+            currentDeadEnemies++;
+            if (currentDeadEnemies >= totalEnemiesOnScene)
+            {
+                ToggleNextLevel();
+            }
         }
     }
 
     private void ToggleNextLevel()
     {
-        SceneManager.LoadScene(nextScene);
+        UIService.Current.LoadSceneWithScreen(nextScene);
     }
 
     private void OnDestroy()

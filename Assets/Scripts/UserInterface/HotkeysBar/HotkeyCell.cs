@@ -152,6 +152,7 @@ public class HotkeyCell : MonoBehaviour
     {
         CooldownRemove();
         ActivatedRemove();
+        Unsubscribe();
     }
     
     

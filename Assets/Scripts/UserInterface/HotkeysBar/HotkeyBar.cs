@@ -85,6 +85,11 @@ public class HotkeyBar : MonoBehaviour
     private void OnDestroy()
     {
         UnsubscribeHotkeys();
+        ObserverWithoutData.Unsub(Events.LargeUltimateActivated, ult1HotkeyCell.BindedAction);
+        ObserverWithData<CooldownObservingDTO>.Unsub(Events.LargeUltimateActivated, ult1HotkeyCell.SetOnCooldown);
+
+        ObserverWithoutData.Unsub(Events.DanceUltimateActivated, ult2HotkeyCell.BindedAction);
+        ObserverWithData<CooldownObservingDTO>.Unsub(Events.DanceUltimateActivated, ult2HotkeyCell.SetOnCooldown);
     }
     
     public void ChangeSpheresAmount(int spheresAmount)

@@ -405,23 +405,31 @@ public class Player : MonoBehaviour
     
     private void OnJump(InputAction.CallbackContext obj)
     {
+        if (isGiant || isDancingAura)
+            return;
         isJumpPressed = obj.ReadValueAsButton();
     }
 
     private void OnKick(InputAction.CallbackContext obj)
     {
+        if (isGiant || isDancingAura)
+            return;
         isKicking = obj.ReadValueAsButton();
         SoundHandleScript.Current.PlaySound(SoundEnum.WEAPON_SLASH, audioSource);
     }
 
     private void OnPunch(InputAction.CallbackContext obj)
     {
+        if (isGiant || isDancingAura)
+            return;
         isPunching = obj.ReadValueAsButton();
         SoundHandleScript.Current.PlaySound(SoundEnum.WEAPON_SLASH, audioSource);
     }
     
     private void OnRun(InputAction.CallbackContext obj)
     {
+        if (isGiant || isDancingAura)
+            return;
         isRunPressed = obj.ReadValueAsButton();
     }
 
@@ -449,14 +457,14 @@ public class Player : MonoBehaviour
     private void OnUltimate1(InputAction.CallbackContext obj)
     {
         //if(!isGiant && this.GetComponent<UltimateTimers>().GetCooldown(0) <= 0) 
-        if(!isGiant)
+        if(!isGiant && !isDancingAura && !timers.isCooldownTimerOn[0])
             UltimateEffect(0, true);
     }
     
     private void OnUltimate2(InputAction.CallbackContext obj)
     {
         //if (!isDancingAura && this.GetComponent<UltimateTimers>().GetCooldown(1)<=0)
-        if(!isDancingAura)    
+        if(!isDancingAura && !isGiant && !timers.isCooldownTimerOn[1])    
             UltimateEffect(1, true);
     }
 

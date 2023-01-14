@@ -43,6 +43,11 @@ public class UIService : MonoBehaviour
     [SerializeField] 
     private MainMenu mainMenuPrefab;
     
+    [Space]
+    [Header("Необходимые для загрузки ссылки")]
+    [SerializeField] 
+    private LoadingScreen loadingScreenPrefab;
+    
     private HotkeyBar _hotKeyPanel;
     private HelpPanel _helpPanel;
     private float _testHp = 100;
@@ -127,14 +132,28 @@ public class UIService : MonoBehaviour
         Current = null;
     }
 
+    private IEnumerator Reload()
+    {
+        yield return new WaitForSeconds(6);
+        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+        Resources.UnloadUnusedAssets();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex, LoadSceneMode.Single);
+    }
+
     private IEnumerator TranslationToMainMenuOnDeath()
     {
+        MusicHandleScript.Current.SwitchCurrentMusic(MusicEnum.DEATH_SCREEN);
+        foreach(var enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+        {
+            enemy.GetComponent<EnemyAIControllerScript>().AIDisabled = true;
+        }
         youDiedPanel.gameObject.SetActive(true);
         Time.timeScale = .2f;
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         Time.timeScale = 1;
+        yield return new WaitForSeconds(0.1f);
         youDiedPanel.gameObject.SetActive(false);
-        SceneManager.LoadScene("MainMenuScene");
+        Current.LoadSceneWithScreen(SceneManager.GetActiveScene().name);
     }
 
     public void PlayPressButtonSound()
@@ -145,5 +164,17 @@ public class UIService : MonoBehaviour
     public void ChangeSpheresAmount(int spheresAmount)
     {
         _hotKeyPanel.ChangeSpheresAmount(spheresAmount);
+    }
+
+    public void LoadSceneWithScreen(string sceneName)
+    {
+        if (gameCanvas == null)
+            Debug.LogError("Не установлен основной игровой канвас для сервиса пользовательского интерфейса");
+        if (loadingScreenPrefab == null)
+            Debug.LogError("Не установлен префаб для экрана загрузки");
+
+        var loadingScreen =Instantiate(loadingScreenPrefab, gameCanvas.transform);
+        loadingScreen.gameObject.SetActive(true);
+        loadingScreen.LoadScene(sceneName);
     }
 }

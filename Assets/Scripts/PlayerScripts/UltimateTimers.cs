@@ -12,7 +12,7 @@ public class UltimateTimers : MonoBehaviour
 
     private float[] curCooldowns = new float[2];
     private float[] curDuratations = new float[2];
-    private bool[] isCooldownTimerOn = new bool[]{false, false};
+    public bool[] isCooldownTimerOn = new bool[]{false, false};
     private bool[] isDuratationTimerOn = new bool[]{false, false};
     private Animator animator;
 

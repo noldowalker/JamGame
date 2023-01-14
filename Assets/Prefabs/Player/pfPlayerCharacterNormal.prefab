@@ -242,8 +242,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cooldowns:
-  - 20
-  - 20
+  - 30
+  - 30
   - 6
   duratations:
   - 10

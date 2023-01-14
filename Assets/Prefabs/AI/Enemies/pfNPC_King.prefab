@@ -892,13 +892,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AIDisabled: 0
-  enemyType: 4
   reachTargetDistance: 3
   damage: 50
-  attackRate: 0.1
   speedMove: 1
   hitArea: {fileID: 3087043056432873602}
   WeaponHitArea: {fileID: 0}
+  enemyType: 4
   rollDamage: 100
   explosionDamage: 100
   timeOfRoll: 15
@@ -907,6 +906,7 @@ MonoBehaviour:
   rollSpeed: 10
   explosionRadius: 10
   explosionChargeTime: 3
+  attackRate: 0.1
   toggleFriendlyFire: 0
   pfVFXposion: {fileID: 8112149470837786864, guid: 3a4e921b85c8a974d9e0c2199b1f1df3,
     type: 3}
@@ -1362,17 +1362,17 @@ PrefabInstance:
     - target: {fileID: 4175308947348694432, guid: 04ade8c7c8004ba4aa166321947ebca3,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.2
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 4175308947348694432, guid: 04ade8c7c8004ba4aa166321947ebca3,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.2
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 4175308947348694432, guid: 04ade8c7c8004ba4aa166321947ebca3,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.2
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 4175308947348694432, guid: 04ade8c7c8004ba4aa166321947ebca3,
         type: 3}

@@ -47,28 +47,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sounds:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 8300000, guid: 0424413af03bfe34fb7f607655883e26, type: 3}
+  - {fileID: 8300000, guid: 5614f1e7e3098f944a484cf48d0b9e60, type: 3}
+  - {fileID: 8300000, guid: 8c004e6e7c9a62045b25b89f9a724116, type: 3}
+  - {fileID: 8300000, guid: 1b851c943d2addb4e8615b89ed90b037, type: 3}
+  - {fileID: 8300000, guid: 6a5c18ba71d5c6c4c80162ea4eec67a8, type: 3}
   - {fileID: 8300000, guid: 0886459c4d499f441a60286dbbdf0fcf, type: 3}
-  - {fileID: 8300000, guid: a97a9ef42a2a35d4381647c87dda5fc0, type: 3}
+  - {fileID: 8300000, guid: 0731ddd8cbea8464c801d42c13b26284, type: 3}
+  - {fileID: 8300000, guid: c54eae836db11154c99d67a8432efbb3, type: 3}
+  - {fileID: 8300000, guid: 97937d6fa4d4411409de893ae1e3425c, type: 3}
+  - {fileID: 8300000, guid: dde76104e9879f94b9346f9218d32151, type: 3}
+  - {fileID: 8300000, guid: ae60a0a905affe94daf686c015aff20c, type: 3}
+  - {fileID: 8300000, guid: 43ad147c741989b409b2665377834b8a, type: 3}
+  - {fileID: 8300000, guid: 14fea3783eca31d4da10a18ecaca4dd1, type: 3}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 8300000, guid: 44955c851ea99874ca5faf4150e201fd, type: 3}
-  sourceNames: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f0000001000000011000000120000001300000014000000
+  - {fileID: 8300000, guid: 19fe3dd26cda3f746a06d52b643a413d, type: 3}
+  - {fileID: 8300000, guid: adf59665f11f28e4db521657c796b810, type: 3}
+  - {fileID: 8300000, guid: eb8d2b637f140f548833719186cd9e36, type: 3}
+  sourceNames: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000100000001100000012000000130000001400000015000000
 --- !u!114 &3734075398009465607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,14 +82,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3912ece05ebf17459a072bf2e546cfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentMusic: 0
+  currentMusic: 1
+  defaultSceneMusic: 1
   music:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  trackNames: 0000000001000000020000000300000004000000
+  - {fileID: 8300000, guid: 489710d3bff214d478a76aecce1d6e77, type: 3}
+  - {fileID: 8300000, guid: 22ff631f768ab6f43aa401ca7cbed428, type: 3}
+  - {fileID: 8300000, guid: b197010b408a9ef40a2b6fc018fc517e, type: 3}
+  - {fileID: 8300000, guid: f0a63187f302ac14fb039137cf615896, type: 3}
+  - {fileID: 8300000, guid: f307dc14ac0385a47b43132cbdbb6ceb, type: 3}
+  - {fileID: 8300000, guid: f1afa7172c58543448bb1f3329094d05, type: 3}
+  - {fileID: 8300000, guid: 8bdeb935f0b861c419cb148a6856e31b, type: 3}
+  - {fileID: 8300000, guid: 8d621186cf3e4c74d9c3795d46f26bac, type: 3}
+  trackNames: 0000000001000000020000000300000004000000060000000700000008000000
 --- !u!82 &3734075398009465606
 AudioSource:
   m_ObjectHideFlags: 0
