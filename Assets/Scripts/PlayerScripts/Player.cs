@@ -126,19 +126,16 @@ public class Player : MonoBehaviour
         currentMovement = (forward * curSpeedX) + (right * curSpeedY);
         HandleJump(movementDirectionY);
         characterController.Move(currentMovement * Time.deltaTime);
-        Quaternion currentRotation = transform.rotation;
-        if (currentMovement.x + currentMovement.z != 0) 
-        {
-            transform.rotation = Quaternion.Euler(0, Quaternion.LookRotation(currentMovement).eulerAngles.y, 0);
-        } else
-        {
-            transform.rotation = currentRotation;
-        }
+        
+        var rotationVector = new Vector3(input.y, 0, -input.x);
+        rotationVector.Normalize();
+        transform.forward = rotationVector;
     }
 
     private void HandleJump(float movementDirectionY)
     {
-
+        Debug.Log($@"movementDirectionY = {movementDirectionY}");
+        
         if (isJumpPressed && characterController.isGrounded)
         {  
             currentMovement.y = jumpForce;

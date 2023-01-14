@@ -122,6 +122,7 @@ public class HotkeyCell : MonoBehaviour
     private IEnumerator PlayActivationAnimation()
     {
         SetBackground(backgroundOnActivationColor);
+        UIService.Current.PlayPressButtonSound();
         yield return new WaitForSeconds(0.1f);
         SetBackground(backgroundReadyColor);
         _activatedAnimation = null;
