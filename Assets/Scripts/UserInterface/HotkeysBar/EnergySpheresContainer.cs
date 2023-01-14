@@ -97,7 +97,8 @@ namespace UserInterface.HotkeysBar
 
         private void OnDestroy()
         {
-            Player.Current.Input.PlayerController.Jump.started -=  AddPointForInputSystem;
+            if (Player.Current != null)
+                Player.Current.Input.PlayerController.Jump.started -=  AddPointForInputSystem;
         }
 
         private int _currentPoints = 0;
@@ -114,7 +115,6 @@ namespace UserInterface.HotkeysBar
                 _currentPoints = 0;
 
             IsRotationEnabled = _currentPoints == _spheres.Count;
-            Debug.Log(@$"AddPoint {_currentPoints}");
             SetShownPointsAmount(_currentPoints);
         }
     }
