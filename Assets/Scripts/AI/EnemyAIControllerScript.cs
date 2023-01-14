@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using AI.Enum;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 public class EnemyAIControllerScript : MonoBehaviour
 {
@@ -11,15 +14,16 @@ public class EnemyAIControllerScript : MonoBehaviour
     [SerializeField] [Range(1f, 1000f)] private float damage;
     [SerializeField] [Range(0.1f, 10f)] private float attackRate;
     [SerializeField] [Range(0f, 500f)] private float speedMove;
-
+    [SerializeField] private Transform hitArea;
+    [SerializeField] private Collider WeaponHitArea;
+    
     private float damageRadius;
     private  float attackTime;
-
-    [SerializeField] private Transform hitArea;
 
     private AudioSource audioSource;
     private NavMeshAgent navMesh;
     private GameObject player;
+    private Collider playersCollider;
     private Animator animator;
 
     private bool isAttacking;
@@ -27,6 +31,10 @@ public class EnemyAIControllerScript : MonoBehaviour
     private float gruntCooldownTimer = 0;
     private float gruntCooldown = 10;
 
+    private bool isPlayerHittedByCurrentAttack;
+    private EnemyState state;
+    private Coroutine waitCoroutine;
+    
     void Start()
     {
         navMesh = GetComponent<NavMeshAgent>();
@@ -34,87 +42,131 @@ public class EnemyAIControllerScript : MonoBehaviour
         navMesh.stoppingDistance = reachTargetDistance;
         navMesh.speed = speedMove;
         player = GameObject.FindGameObjectsWithTag("Player")[0];
+        if (player != null)
+            playersCollider = player.GetComponent<Collider>();
+        
         animator = GetComponent<Animator>();
         damageRadius = reachTargetDistance / 2;
+        state = EnemyState.Idle;
     }
 
     void Update()
     {
         if (!AIDisabled)
-        {
-            if (FollowPlayer())
-            {
-                navMesh.speed = 0.0f;
-                animator.SetBool("isRunning", false);
-                if(isAttacking)
-                HandlePunch();
-            }
-            PerformGrunt(10, 25); //Random voice sounds by enemies
-            // animator.Play("Base Layer.RobotHipHopDance"); 
-        }
+            Act();
     }
 
-    bool FollowPlayer()
+    private void Act()
     {
-        if(player !=null)
-        return FollowAgent(player);
-
-        return false;
+        switch (state)
+        {
+            case EnemyState.Idle: 
+                TryFindPlayerAndReach();
+                break;
+            case 
+                EnemyState.MoveTowardsPlayer: 
+                MoveTowardsPlayer();
+                break;
+            case EnemyState.Attacking:
+                CheckIfPlayeTouched();
+                break;
+            case EnemyState.SelfDestroy:
+                Destroy();
+                break;
+        };
+        PerformGrunt(10, 25); //Random voice sounds by enemies
+    }
+    
+    public void ReactOnPunch()
+    {
+        if (state == EnemyState.Dying)
+            return;
+        
+        state = EnemyState.Punched;
+        animator.SetTrigger("IsPunched");
+        ChangeStateAfterTime(1.2f, EnemyState.Idle);
     }
 
-    public bool FollowPoint(Transform point)
+    public void ReactOnKick()
+    {
+        if (state == EnemyState.Dying)
+            return;
+        
+        state = EnemyState.Kicked;
+        animator.SetTrigger("IsKicked");
+        ChangeStateAfterTime(4f, EnemyState.Idle);
+    }
+    
+    public void ReactOnDeath()
+    {
+        if (state == EnemyState.Dying)
+            return;
+        
+        state = EnemyState.Dying;
+        animator.SetTrigger("isDie");
+        ChangeStateAfterTime(4f, EnemyState.SelfDestroy);
+    }
+
+    private void TryFindPlayerAndReach()
+    {
+        if (player == null)
+            return;
+        
+        FollowPoint(player.transform);
+        state = EnemyState.MoveTowardsPlayer;
+    }
+
+    private void MoveTowardsPlayer()
+    {
+        if (player == null)
+            state = EnemyState.Idle;
+        
+        animator.SetBool("isRunning", true);
+        FollowPoint(player.transform);
+
+        if (!IsTargetAttackable(player.transform)) 
+            return;
+        
+        state = EnemyState.Attacking;
+        isPlayerHittedByCurrentAttack = false;
+        animator.Play("Base Layer.Melee Attack");
+        ChangeStateAfterTime(1.8f, EnemyState.Idle);
+    }
+    
+    private void FollowPoint(Transform point)
     {
         navMesh.destination = point.position;
-        animator.SetBool("isRunning", true);
         navMesh.speed = speedMove;
-        if (Vector3.Distance(transform.position, point.transform.position) <= reachTargetDistance)
-        {
-            UpdateFiring(Time.time);
-            return true;
-        }
-        else 
-            return false;
     }
 
-    public bool FollowAgent(GameObject agent)
+    private bool IsTargetAttackable(Transform target)
     {
-        return FollowPoint(agent.transform);
+        return Vector3.Distance(transform.position, target.position) <= reachTargetDistance;
     }
-    private void HandlePunch()
+
+    private void CheckIfPlayeTouched()
     {
+        if (isPlayerHittedByCurrentAttack)
+            return;
         SoundHandleScript.Current.PlaySound(SoundEnum.WEAPON_SLASH, audioSource);
 
-        Collider[] hitEnemies = Physics.OverlapSphere(hitArea.position, damageRadius);
+        if (!WeaponHitArea.bounds.Intersects(playersCollider.bounds)) 
+            return;
 
-        foreach (Collider enemy in hitEnemies)
+        Debug.Log("INTERSECTS!");
+        isPlayerHittedByCurrentAttack = true;
+        IDamagable damagable = player.GetComponent<IDamagable>();
+        if (damagable != null)
         {
-            if (enemy.CompareTag("Player"))
-            {
-                IDamagable damagable = enemy.GetComponent<IDamagable>();
-                if (damagable != null)
-                {
-                    damagable.Damage(damage);
-                }
-            }
+            damagable.Damage(damage);
         }
 
         animator.Play("Base Layer.Melee Attack");
-
     }
 
-    private void UpdateFiring(float deltaTime)
+    private void Destroy()
     {
-        float fireInterval = 1.0f / attackRate;
-
-        if (deltaTime > attackTime)
-        {
-            isAttacking = true;
-            attackTime = deltaTime + fireInterval;
-        }
-        else
-        {
-            isAttacking = false;
-        }
+        Destroy(gameObject);
     }
 
     private void PerformGrunt(float minInterval, float maxInterval)
@@ -150,5 +202,24 @@ public class EnemyAIControllerScript : MonoBehaviour
         Gizmos.DrawSphere(transform.position, reachTargetDistance);
     }
 
+    private void ChangeStateAfterTime(float waitTime, EnemyState newState)
+    {
+        if (waitCoroutine != null)
+            StopCoroutine(waitCoroutine);
 
+        waitCoroutine = StartCoroutine(WaitAndChangeState(waitTime, newState));
+    }
+    
+    private IEnumerator WaitAndChangeState(float waitTime, EnemyState newState)
+    {
+        yield return new WaitForSeconds(waitTime);
+        state = newState;
+        waitCoroutine = null;
+    }
+
+    private void OnDestroy()
+    {
+        if (waitCoroutine != null)
+            StopCoroutine(waitCoroutine);
+    }
 }

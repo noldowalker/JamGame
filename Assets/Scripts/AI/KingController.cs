@@ -24,6 +24,7 @@ public class KingController : MonoBehaviour
     private float rollCoolDownTimer;
 
     [SerializeField] private Transform hitArea;
+    [SerializeField] private Transform pfVFXposion;
 
     private NavMeshAgent navMesh;
     private GameObject player;
@@ -79,7 +80,8 @@ public class KingController : MonoBehaviour
     {
         navMesh.enabled = false;
         transform.position += transform.forward * rollSpeed;
-        if(rollTimer < timeOfRoll)
+        Instantiate(pfVFXposion, transform.position, transform.rotation);
+        if (rollTimer < timeOfRoll)
         {
             rollTimer += Time.deltaTime;
         } else
