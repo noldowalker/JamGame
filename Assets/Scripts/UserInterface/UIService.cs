@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UserInterface;
 using UserInterface.Enums;
+using UserInterface.IngameInformation;
 
 
 public class UIService : MonoBehaviour
@@ -140,10 +141,5 @@ public class UIService : MonoBehaviour
     public void PlayPressButtonSound()
     {
         SoundHandleScript.Current.PlaySound(SoundEnum.BUTTON_CLICK, audioSource);
-    }
-
-    public void ChangeSpheresAmount(int spheresAmount)
-    {
-        _hotKeyPanel.ChangeSpheresAmount(spheresAmount);
     }
 }

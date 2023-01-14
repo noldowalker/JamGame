@@ -21,20 +21,21 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
     private float damageRadius;
     private  float attackTime;
 
-    private AudioSource audioSource;
-    private NavMeshAgent navMesh;
-    private GameObject player;
-    private Collider playersCollider;
-    private Animator animator;
+    protected float damageRadius;
+    protected float attackTime;
 
-    private bool isAttacking;
+    protected AudioSource audioSource;
+    protected NavMeshAgent navMesh;
+    protected GameObject player;
+    protected Collider playersCollider;
+    protected Animator animator;
 
     private float gruntCooldownTimer = 0;
     private float gruntCooldown = 10;
 
-    private bool isPlayerHittedByCurrentAttack;
-    private EnemyState state;
-    private Coroutine waitCoroutine;
+    protected bool isPlayerHittedByCurrentAttack;
+    protected EnemyState state;
+    protected Coroutine waitCoroutine;
     
     void Start()
     {
@@ -81,6 +82,10 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
     
     public void ReactOnPunch()
     {
+        if (enemyType == EnemyType.KING)
+        {
+            return;
+        }
         if (state == EnemyState.Dying)
             return;
         
@@ -91,9 +96,12 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
 
     public void ReactOnKick()
     {
-        if (state == EnemyState.Dying)
+        if(enemyType == EnemyType.KING)
+        {
             return;
-        
+        }
+        if (state == EnemyState.Dying)
+            return;  
         ChangeState(EnemyState.Kicked);
         animator.SetTrigger("IsKicked");
         ChangeStateAfterTime(4f, EnemyState.Idle);
@@ -120,7 +128,7 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
         ChangeStateAfterTime(4f, EnemyState.Idle);
     }
 
-    private void TryFindPlayerAndReach()
+    protected void TryFindPlayerAndReach()
     {
         if (player == null)
             return;
@@ -129,7 +137,7 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
         ChangeState(EnemyState.MoveTowardsPlayer);
     }
 
-    private void MoveTowardsPlayer()
+    protected void MoveTowardsPlayer()
     {
         if (player == null)
             ChangeState(EnemyState.Idle);
@@ -146,19 +154,19 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
         animator.Play("Base Layer.Melee Attack");
         ChangeStateAfterTime(1.8f, EnemyState.Idle);
     }
-    
-    private void FollowPoint(Transform point)
+
+    protected void FollowPoint(Transform point)
     {
         navMesh.destination = point.position;
         navMesh.speed = speedMove;
     }
 
-    private bool IsTargetAttackable(Transform target)
+    protected bool IsTargetAttackable(Transform target)
     {
         return Vector3.Distance(transform.position, target.position) <= reachTargetDistance;
     }
 
-    private void CheckIfPlayeTouched()
+    protected void CheckIfPlayeTouched()
     {
         if (isPlayerHittedByCurrentAttack)
             return;
@@ -178,12 +186,12 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
         animator.Play("Base Layer.Melee Attack");
     }
 
-    private void Destroy()
+    protected void Destroy()
     {
         Destroy(gameObject);
     }
 
-    private void PerformGrunt(float minInterval, float maxInterval)
+    protected void PerformGrunt(float minInterval, float maxInterval)
     {
         if (gruntCooldownTimer < gruntCooldown)
         {
@@ -206,7 +214,7 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
         }
     }
 
-    void OnDrawGizmosSelected()
+    protected void OnDrawGizmosSelected()
     {
         // Draw a yellow sphere at the transform's position
         Gizmos.color = Color.yellow;
@@ -216,13 +224,14 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
         Gizmos.DrawSphere(transform.position, reachTargetDistance);
     }
 
-    private void ChangeStateAfterTime(float waitTime, EnemyState newState)
+    protected void ChangeStateAfterTime(float waitTime, EnemyState newState)
     {
         if (waitCoroutine != null)
             StopCoroutine(waitCoroutine);
 
         waitCoroutine = StartCoroutine(WaitAndChangeState(waitTime, newState));
     }
+
 
     private void ChangeState(EnemyState newState)
     {
@@ -241,7 +250,7 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
         waitCoroutine = null;
     }
 
-    private void OnDestroy()
+    protected void OnDestroy()
     {
         if (waitCoroutine != null)
             StopCoroutine(waitCoroutine);

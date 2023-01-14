@@ -2,8 +2,7 @@ namespace AI.Enum
 {
     public enum EnemyState
     {
-        Undefined = 0,
-        
+        Undefined = 0,  
         Idle = 1,
         MoveTowardsPlayer = 2,
         Attacking = 4,
@@ -12,5 +11,7 @@ namespace AI.Enum
         Dying = 7,
         SelfDestroy = 8,
         Dancing = 9,
+        KingRoll = 10,
+        KingExplode = 11
     }
 }

@@ -4,9 +4,10 @@ namespace GameLogic
     {
         Undefined = 0,
         
-        LargeUltimateActivated = 1,
-        DanceUltimateActivated = 2,
-        EnergyPointsAmountChanged = 3,
-        HelpPanelCalled = 4,
+        Button1Pressed,
+        Button2Pressed,
+        Button3Pressed,
+        HPLossPercent,
+        HelpPanelCalled,
     }
 }

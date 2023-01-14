@@ -29,11 +29,15 @@ namespace UserInterface.HotkeysBar
                 GeneratePoints(spheresAmount);
 
             SetShownPointsAmount(spheresAmount);
+            _currentPoints = spheresAmount;
             IsRotationEnabled = true;
+            Player.Current.Input.PlayerController.Jump.started +=  AddPointForInputSystem;
         }
 
         public void Update()
         {
+            if (Input.GetKeyUp(KeyCode.U)) 
+                ObserverWithoutData.FireEvent(Events.Button1Pressed);
             if (IsRotationEnabled)
                 RotatePoints();
         }
@@ -53,15 +57,10 @@ namespace UserInterface.HotkeysBar
         
         public void SetShownPointsAmount(int newAmount)
         {
-            if (_spheres.Count < newAmount)
-                GeneratePoints(newAmount);
-                
             for (var i = 0; i < _spheres.Count; i++)
             {
                 _spheres[i].gameObject.SetActive(i < newAmount);
             }
-            
-            IsRotationEnabled = _spheres.Count == newAmount;
         }
         
         public void GeneratePoints(int newPointsAmount)
@@ -94,6 +93,29 @@ namespace UserInterface.HotkeysBar
             pos.y = center.y + radius * Mathf.Cos(ang * Mathf.Deg2Rad);
             pos.z = center.z;
             return pos;
+        }
+
+        private void OnDestroy()
+        {
+            if (Player.Current != null)
+                Player.Current.Input.PlayerController.Jump.started -=  AddPointForInputSystem;
+        }
+
+        private int _currentPoints = 0;
+        public void AddPointForInputSystem(InputAction.CallbackContext obj)
+        {
+            AddPoint();
+        }
+        
+        public void AddPoint()
+        {
+            if (_currentPoints < _spheres.Count)
+                _currentPoints++;
+            else
+                _currentPoints = 0;
+
+            IsRotationEnabled = _currentPoints == _spheres.Count;
+            SetShownPointsAmount(_currentPoints);
         }
     }
 }

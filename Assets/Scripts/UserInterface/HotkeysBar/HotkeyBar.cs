@@ -5,7 +5,6 @@ using GameLogic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using UserInterface.HotkeysBar;
 
 public class HotkeyBar : MonoBehaviour
 {
@@ -34,7 +33,6 @@ public class HotkeyBar : MonoBehaviour
     [SerializeField]
     private HotkeyCell ult2HotkeyCell;
 
-    private EnergySpheresContainer energyPoints;
     void Start()
     {
         if(hotkeyCellPrefab == null)
@@ -57,14 +55,6 @@ public class HotkeyBar : MonoBehaviour
         Player.Current.Input.PlayerController.Jump.started += jumpHotkeyCell.BindedActionForInputSystem;
         Player.Current.Input.PlayerController.Ultimate1.started += ult1HotkeyCell.BindedActionForInputSystem;
         Player.Current.Input.PlayerController.Ultimate2.started += ult2HotkeyCell.BindedActionForInputSystem;
-
-        ObserverWithoutData.Sub(Events.LargeUltimateActivated, ult1HotkeyCell.BindedAction);
-        ObserverWithData<CooldownObservingDTO>.Sub(Events.LargeUltimateActivated, ult1HotkeyCell.SetOnCooldown);
-        
-        ObserverWithoutData.Sub(Events.DanceUltimateActivated, ult2HotkeyCell.BindedAction);
-        ObserverWithData<CooldownObservingDTO>.Sub(Events.DanceUltimateActivated, ult2HotkeyCell.SetOnCooldown);
-        
-        energyPoints = GetComponentInChildren<EnergySpheresContainer>();
     }
 
     private void UnsubscribeHotkeys()
@@ -81,14 +71,11 @@ public class HotkeyBar : MonoBehaviour
         Player.Current.Input.PlayerController.Ultimate1.started -= ult1HotkeyCell.BindedActionForInputSystem;
         Player.Current.Input.PlayerController.Ultimate2.started -= ult2HotkeyCell.BindedActionForInputSystem;
     }
+    
+    
 
     private void OnDestroy()
     {
         UnsubscribeHotkeys();
-    }
-    
-    public void ChangeSpheresAmount(int spheresAmount)
-    {
-        energyPoints.SetShownPointsAmount(spheresAmount);
     }
 }

@@ -120,7 +120,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1614748787727540040}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.038, z: 0.75}
+  m_LocalPosition: {x: -0.088, y: 1.038, z: 1.145}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -502,7 +502,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5209698289036136360}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -831,6 +831,7 @@ GameObject:
   - component: {fileID: 8407094387811601540}
   - component: {fileID: 1325114846971014655}
   - component: {fileID: 5297781425113662114}
+  - component: {fileID: 1454266589}
   m_Layer: 7
   m_Name: pfNPC_King
   m_TagString: Enemy
@@ -891,14 +892,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AIDisabled: 0
-  reachTargetDistance: 2
-  damage: 20
+  enemyType: 4
+  reachTargetDistance: 3
+  damage: 50
   attackRate: 0.1
-  rollRate: 0.1
-  timeOfRoll: 1.25
-  speedMove: 0.5
-  rollSpeed: 31
+  speedMove: 1
   hitArea: {fileID: 3087043056432873602}
+  WeaponHitArea: {fileID: 0}
+  rollDamage: 100
+  explosionDamage: 100
+  timeOfRoll: 15
+  timeOfExplosion: 1
+  ultimateCoolDown: 15
+  rollSpeed: 10
+  explosionRadius: 10
+  explosionChargeTime: 3
+  toggleFriendlyFire: 0
   pfVFXposion: {fileID: 8112149470837786864, guid: 3a4e921b85c8a974d9e0c2199b1f1df3,
     type: 3}
 --- !u!114 &180540372482978280
@@ -970,7 +979,7 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 1.4
-  m_Center: {x: 0, y: 1.34, z: 0}
+  m_Center: {x: 0, y: 1.3, z: 0}
 --- !u!82 &5297781425113662114
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1068,6 +1077,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!136 &1454266589
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6891160756219323771}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 1.22
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.4, z: 0}
 --- !u!1 &7027746297979002395
 GameObject:
   m_ObjectHideFlags: 0

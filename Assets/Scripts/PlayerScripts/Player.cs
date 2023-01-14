@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using GameLogic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
@@ -28,11 +27,8 @@ public class Player : MonoBehaviour
     [SerializeField] [Range(0f, 100f)] private float stompRange;
     [SerializeField] [Range(0f, 100f)] private float danceRange;
     [SerializeField] [Range(1f, 5f)] private float playerSize = 1f;
-    [SerializeField] [Range(1, 5)] private int maxEnergyPoints = 5;
-    [SerializeField] [Range(1f, 10f)] private float energyPointRestoreTime = 2f;
-    
-    
-    
+    [SerializeField] [Range(1f, 100f)] private float danceDuration;
+
     [SerializeField] LayerMask layerMask;
 
     [SerializeField] private Transform hitPoint;
@@ -64,21 +60,13 @@ public class Player : MonoBehaviour
     private float punchAnimCoolDownTimer;
     private float punchCoolDownTimer;
     private float kickCoolDownTimer;
-    
-    private int currentEnergyPoints;
-    private Coroutine energyRestoreCoroutine;
-    private UltimateTimers timers;
-    
+  
     private void Awake()
     {
         if (Current != null)
             Debug.LogError("Уже существует один экземпляр игрока!");
         Current = this;
-
-        if (maxEnergyPoints == 0)
-            maxEnergyPoints = 5;
-
-        currentEnergyPoints = maxEnergyPoints;
+        
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
         playerInput = new PlayerInput();
@@ -98,9 +86,6 @@ public class Player : MonoBehaviour
         playerInput.PlayerController.Ultimate2.started += OnUltimate2;
 
         pfVFXwalk = GetComponentInChildren<ParticleSystem>();
-
-        energyRestoreCoroutine = StartCoroutine(RestoreEnergyPoint());
-        timers = GetComponent<UltimateTimers>();
     }
 
     private void Start()
@@ -158,7 +143,10 @@ public class Player : MonoBehaviour
         
         var rotationVector = new Vector3(input.y, 0, -input.x);
         rotationVector.Normalize();
-        transform.forward = rotationVector;
+        if (rotationVector != Vector3.zero)
+        {
+            transform.forward = rotationVector;
+        }
         
         if (isGiant) 
             HandleStomping();
@@ -166,13 +154,11 @@ public class Player : MonoBehaviour
 
     private void HandleJump(float movementDirectionY)
     {
-        if (isJumpPressed && characterController.isGrounded && currentEnergyPoints > 0)
+        if (isJumpPressed && characterController.isGrounded)
         {  
             currentMovement.y = jumpForce;
             animator.SetTrigger("JumpPressed");
             SoundHandleScript.Current.PlaySound(SoundEnum.JUMP_START,audioSource);
-            currentEnergyPoints--;
-            UIService.Current.ChangeSpheresAmount(currentEnergyPoints);
         } else
         {
             currentMovement.y = movementDirectionY;
@@ -350,16 +336,12 @@ public class Player : MonoBehaviour
     
     public void UltimateEffect(byte num, bool turner) //turner - вкл/выкл
     {
-        var cooldownData = new CooldownObservingDTO();
-        
         switch (num)
         {
             case 0: // Запуск или остановка гиганта
                 if (turner)
                 {
                     transform.localScale = new Vector3(playerSize, playerSize, playerSize);
-                    cooldownData.InitialCooldownValue = timers.GetCooldown(num);
-                    ObserverWithData<CooldownObservingDTO>.FireEvent(Events.LargeUltimateActivated, cooldownData);
                 }
                 else
                 {
@@ -371,11 +353,9 @@ public class Player : MonoBehaviour
                 break;
             case 1: // Запуск или остановка танца
                 isDancingAura = turner;
-                cooldownData.InitialCooldownValue = timers.GetCooldown(num);
-                ObserverWithData<CooldownObservingDTO>.FireEvent(Events.DanceUltimateActivated, cooldownData);
                 break;
         }
-        timers.SetUltimateTimer(num);
+        GetComponent<UltimateTimers>().SetUltimateTimer(num);
     }
     
     private void OnJump(InputAction.CallbackContext obj)
@@ -449,22 +429,9 @@ public class Player : MonoBehaviour
     private void OnDestroy()
     {
         Current = null;
-        energyRestoreCoroutine = null;
     }
-
-    private IEnumerator RestoreEnergyPoint()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(energyPointRestoreTime);
-            if (currentEnergyPoints >= maxEnergyPoints)
-                currentEnergyPoints = maxEnergyPoints;
-            else
-                currentEnergyPoints++;
-            
-            UIService.Current.ChangeSpheresAmount(currentEnergyPoints);
-        }
-    }
+    
+    
 
     void OnDrawGizmosSelected()
     {

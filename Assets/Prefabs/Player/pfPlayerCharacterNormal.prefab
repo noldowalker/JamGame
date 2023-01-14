@@ -184,8 +184,7 @@ MonoBehaviour:
   stompRange: 1.5
   danceRange: 6
   playerSize: 2
-  maxEnergyPoints: 5
-  energyPointRestoreTime: 4
+  danceDuration: 5
   layerMask:
     serializedVersion: 2
     m_Bits: 640
