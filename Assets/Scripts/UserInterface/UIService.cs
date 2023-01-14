@@ -43,6 +43,11 @@ public class UIService : MonoBehaviour
     [SerializeField] 
     private MainMenu mainMenuPrefab;
     
+    [Space]
+    [Header("Необходимые для загрузки ссылки")]
+    [SerializeField] 
+    private LoadingScreen loadingScreenPrefab;
+    
     private HotkeyBar _hotKeyPanel;
     private HelpPanel _helpPanel;
     private float _testHp = 100;
@@ -134,7 +139,7 @@ public class UIService : MonoBehaviour
         yield return new WaitForSeconds(1f);
         Time.timeScale = 1;
         youDiedPanel.gameObject.SetActive(false);
-        SceneManager.LoadScene("MainMenuScene");
+        Current.LoadSceneWithScreen("MainMenuScene");
     }
 
     public void PlayPressButtonSound()
@@ -145,5 +150,17 @@ public class UIService : MonoBehaviour
     public void ChangeSpheresAmount(int spheresAmount)
     {
         _hotKeyPanel.ChangeSpheresAmount(spheresAmount);
+    }
+
+    public void LoadSceneWithScreen(string sceneName)
+    {
+        if (gameCanvas == null)
+            Debug.LogError("Не установлен основной игровой канвас для сервиса пользовательского интерфейса");
+        if (loadingScreenPrefab == null)
+            Debug.LogError("Не установлен префаб для экрана загрузки");
+
+        var loadingScreen =Instantiate(loadingScreenPrefab, gameCanvas.transform);
+        loadingScreen.gameObject.SetActive(true);
+        loadingScreen.LoadScene(sceneName);
     }
 }

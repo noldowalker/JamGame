@@ -59,6 +59,8 @@ MonoBehaviour:
   youDiedPanel: {fileID: 4600673191055914039}
   mainMenuPrefab: {fileID: 7094047169124016205, guid: 4c98dfa19450ba149945f3cebee6a063,
     type: 3}
+  loadingScreenPrefab: {fileID: 3292630664293290547, guid: ec593687eb7f7b24faa0a75e54e47b80,
+    type: 3}
 --- !u!82 &4450511052524742120
 AudioSource:
   m_ObjectHideFlags: 0

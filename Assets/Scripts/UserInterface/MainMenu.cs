@@ -9,7 +9,7 @@ namespace UserInterface
         [SerializeField] public GameObject AuthorsPanel;
         public void OnStartGame()
         {
-            SceneManager.LoadScene("SampleScene");
+            UIService.Current.LoadSceneWithScreen("SampleScene");
         }
 
         private void Awake()
