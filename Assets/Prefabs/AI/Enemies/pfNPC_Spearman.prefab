@@ -826,13 +826,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AIDisabled: 0
-  enemyType: 1
   reachTargetDistance: 2
-  damage: 10
+  damage: 20
   speedMove: 7
   hitArea: {fileID: 2595207713787138845}
   WeaponHitArea: {fileID: 5792074220164736223}
-  enemyType: 0
+  enemyType: 1
 --- !u!114 &-690802513099821912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -851,7 +850,7 @@ MonoBehaviour:
     type: 3}
   pfVFXstomp: {fileID: 3786527915178623174, guid: 5870c1381b085474a924e0d683b44e84,
     type: 3}
-  maxHealth: 80
+  maxHealth: 50
 --- !u!95 &7037532199596934255
 Animator:
   serializedVersion: 4

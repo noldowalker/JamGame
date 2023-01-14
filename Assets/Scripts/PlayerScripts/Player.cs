@@ -66,6 +66,7 @@ public class Player : MonoBehaviour
     private float punchAnimCoolDownTimer;
     private float punchCoolDownTimer;
     private float kickCoolDownTimer;
+    private float danceDamageCoolDownTimer;
     
     private int currentEnergyPoints;
     private Coroutine energyRestoreCoroutine;
@@ -318,7 +319,7 @@ public class Player : MonoBehaviour
 
     private void HandleStomping()
     {
-        animator.SetTrigger("isGiant");
+        //animator.SetTrigger("isGiant");
         var hitEnemies = Physics.OverlapSphere(stompPoint.position, stompRange, layerMask);
 
         foreach (var enemy in hitEnemies)
@@ -335,8 +336,11 @@ public class Player : MonoBehaviour
     private void HandleDancingAura()
     {
         if (!isDancingAura)
+        {
+            playerInput.PlayerController.Enable();
             return;
-        
+        }
+        playerInput.PlayerController.Disable();
         Collider[] hitEnemies = Physics.OverlapSphere(dancePoint.position, danceRange, layerMask);
         Debug.Log("DANCE AROUND");
         foreach (Collider enemy in hitEnemies)
@@ -348,7 +352,18 @@ public class Player : MonoBehaviour
                 if (danceable != null)
                 {
                     danceable.Dance();
+                    if (danceDamageCoolDownTimer < 1.5f)
+                    {
+                        danceDamageCoolDownTimer += Time.deltaTime;
+                    }
+                    else
+                    {
+                        danceDamageCoolDownTimer = 0;
+                        IPunchable punchable = enemy.GetComponent<IPunchable>();
+                        punchable.Punch(punchDamage);
+                    }
                 }
+               
             }
         }
     }
@@ -366,6 +381,8 @@ public class Player : MonoBehaviour
                     transform.localScale = new Vector3(playerSize, playerSize, playerSize);
                     cooldownData.InitialCooldownValue = timers.GetCooldown(num);
                     ObserverWithData<CooldownObservingDTO>.FireEvent(Events.LargeUltimateActivated, cooldownData);
+                    animator.SetTrigger("isGiant");
+                    MusicHandleScript.Current.SwitchCurrentMusic(MusicEnum.MUSIC_KAZACHOCK);
                 }
                 else
                 {
@@ -377,8 +394,10 @@ public class Player : MonoBehaviour
                 break;
             case 1: // Запуск или остановка танца
                 isDancingAura = turner;
+                animator.SetTrigger("isSinging");
                 cooldownData.InitialCooldownValue = timers.GetCooldown(num);
                 ObserverWithData<CooldownObservingDTO>.FireEvent(Events.DanceUltimateActivated, cooldownData);
+                MusicHandleScript.Current.SwitchCurrentMusic(MusicEnum.MUSIC_FISH);
                 break;
         }
         timers.SetUltimateTimer(num);

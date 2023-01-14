@@ -1055,7 +1055,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AIDisabled: 0
   reachTargetDistance: 2
-  damage: 20
+  damage: 10
   speedMove: 5
   hitArea: {fileID: 4333083118579854752}
   WeaponHitArea: {fileID: 4634108800255302161}

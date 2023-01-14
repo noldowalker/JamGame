@@ -8,5 +8,6 @@ namespace GameLogic
         DanceUltimateActivated = 2,
         EnergyPointsAmountChanged = 3,
         HelpPanelCalled = 4,
+        EnemyDead = 5
     }
 }

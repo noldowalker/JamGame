@@ -5,8 +5,8 @@ using UnityEngine;
 public class MusicHandleScript : MonoBehaviour
 {
     public static MusicHandleScript Current;
-
     [SerializeField] private MusicEnum currentMusic;
+    [SerializeField] public MusicEnum defaultSceneMusic;
     [SerializeField] private List<AudioClip> music;
     [SerializeField] private List<MusicEnum> trackNames;
     private Dictionary<MusicEnum, AudioClip> musicList;
@@ -36,6 +36,13 @@ public class MusicHandleScript : MonoBehaviour
     public void SwitchCurrentMusic(MusicEnum track)
     {
         currentMusic = track;
+        musicSource.clip = musicList[currentMusic];
+        musicSource.Play();
+    }
+
+    public void SwitchToDefault()
+    {
+        currentMusic = defaultSceneMusic;
         musicSource.clip = musicList[currentMusic];
         musicSource.Play();
     }

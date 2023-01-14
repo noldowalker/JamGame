@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using GameLogic;
 
 [RequireComponent(typeof(EnemyAIControllerScript))]
 public class EnemyHealth : MonoBehaviour, IKickable, IPunchable, IStompable

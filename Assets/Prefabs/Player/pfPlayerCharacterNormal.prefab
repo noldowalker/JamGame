@@ -109,9 +109,9 @@ GameObject:
   - component: {fileID: 613431661883436454}
   - component: {fileID: 613431661883436462}
   - component: {fileID: 133982340433532168}
+  - component: {fileID: 1644301585370395626}
   - component: {fileID: 4819340589066808017}
   - component: {fileID: 5483365162822684486}
-  - component: {fileID: 1644301585370395626}
   m_Layer: 8
   m_Name: pfPlayerCharacterNormal
   m_TagString: Player
@@ -229,6 +229,26 @@ MonoBehaviour:
   pfVFXDamage: {fileID: 8042522670054927314, guid: ab63d65226f0cab49af24ed4395b28ef,
     type: 3}
   maxHealth: 500
+--- !u!114 &1644301585370395626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613431661883436458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2acb750282371cc49bb7d57cd4658b8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cooldowns:
+  - 20
+  - 20
+  - 6
+  duratations:
+  - 10
+  - 10
+  - 5
 --- !u!82 &4819340589066808017
 AudioSource:
   m_ObjectHideFlags: 0
@@ -340,26 +360,6 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1644301585370395626
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 613431661883436458}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2acb750282371cc49bb7d57cd4658b8c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cooldowns:
-  - 12
-  - 6
-  - 6
-  duratations:
-  - 10
-  - 5
-  - 5
 --- !u!1 &685732270015047923
 GameObject:
   m_ObjectHideFlags: 0

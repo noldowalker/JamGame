@@ -755,7 +755,7 @@ MonoBehaviour:
     type: 3}
   pfVFXstomp: {fileID: 3786527915178623174, guid: 5870c1381b085474a924e0d683b44e84,
     type: 3}
-  maxHealth: 200
+  maxHealth: 150
 --- !u!95 &6018972075183849617
 Animator:
   serializedVersion: 4

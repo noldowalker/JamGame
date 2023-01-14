@@ -14,8 +14,14 @@ public class UltimateTimers : MonoBehaviour
     private float[] curDuratations = new float[2];
     private bool[] isCooldownTimerOn = new bool[]{false, false};
     private bool[] isDuratationTimerOn = new bool[]{false, false};
+    private Animator animator;
 
     //public float GetCooldown(byte num) => cooldowns[num];
+
+    private void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
 
     void FixedUpdate()
     {
@@ -28,6 +34,8 @@ public class UltimateTimers : MonoBehaviour
                     this.GetComponent<Player>().UltimateEffect(i, false);
                     isDuratationTimerOn[i] = false;
                     Debug.Log($"Duratation for {i} ultimate is up");
+                    MusicHandleScript.Current.SwitchToDefault();
+                    animator.SetTrigger("ToIdle");
                 }
                 else curDuratations[i] -= Time.deltaTime;
             }
@@ -56,5 +64,9 @@ public class UltimateTimers : MonoBehaviour
     public float GetCooldown(int index)
     {
         return cooldowns[index];
+    }
+    public float GetUltimateDuration(int index)
+    {
+        return duratations[index];
     }
 }

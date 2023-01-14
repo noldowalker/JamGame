@@ -13,13 +13,14 @@ public class EnemySpawnScript : MonoBehaviour
 
     void Start()
     {
-        currentTimer = 0;   
+        currentTimer = respawnTimer;   
     }
 
     void Update()
     {
-        if(canSpawnEnemies && CountAllEnemies() < maxEnemiesToSpawn)
-        SpawnByTimer();
+        int enemyCount = CountAllEnemies();
+        if (canSpawnEnemies && enemyCount < maxEnemiesToSpawn && (SpawnSystem.Current.currentDeadEnemies + enemyCount) < SpawnSystem.Current.totalEnemiesOnScene)
+            SpawnByTimer();
     }
 
     public void SpawnByTimer()

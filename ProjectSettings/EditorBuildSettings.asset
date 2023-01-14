@@ -6,9 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
     path: Assets/Scenes/MainMenuScene.unity
     guid: 50a194494e2a2bf449380e0ee2cbb4e0
+  - enabled: 1
+    path: Assets/Scenes/CastleYard.unity
+    guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/Prison.unity
+    guid: 6eb9369a09609c34491de0b03742d278
+  - enabled: 1
+    path: Assets/Scenes/ThroneRoom.unity
+    guid: 8f07a4650604cb249817ef361c82df3f
   m_configObjects: {}
