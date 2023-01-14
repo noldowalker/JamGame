@@ -6,10 +6,7 @@ using System;
 [RequireComponent(typeof(EnemyAIControllerScript))]
 public class EnemyHealth : MonoBehaviour, IKickable, IPunchable
 {
-    private HealthSystem healthSystem;
-    private AudioSource audioSource;
-    private EnemyAIControllerScript enemyAI;
-    private HealthBar hpBar;
+
 
     [SerializeField] private Transform pfVFXpunch;
     [SerializeField] private Transform pfVFXkick;

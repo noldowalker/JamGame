@@ -40,6 +40,10 @@ public class PlayerHealth : MonoBehaviour, IDamagable, IHealable
     }
     private void HealthSystem_OnDamaged(object sender, EventArgs e)
     {
+        if(playerHPBarImage == null)
+        {
+            playerHPBarImage = UIService.Current.GetPlayerHpBarImage();
+        }
         playerHPBarImage.fillAmount = healthSystem.GetHealthPercent();
         SoundHandleScript.Current.PlaySound(SoundEnum.HIT_REACTION,audioSource);
         Instantiate(pfVFXDamage, transform.position, transform.rotation);

@@ -27,7 +27,7 @@ public class Player : MonoBehaviour
     [SerializeField] LayerMask layerMask;
 
     [SerializeField] private Transform hitPoint;
-    [SerializeField] private ParticleSystem pfVFXwalk;
+    private ParticleSystem pfVFXwalk;
 
     private AudioSource audioSource;
 
@@ -129,7 +129,10 @@ public class Player : MonoBehaviour
         
         var rotationVector = new Vector3(input.y, 0, -input.x);
         rotationVector.Normalize();
-        transform.forward = rotationVector;
+        if (rotationVector != Vector3.zero)
+        {
+            transform.forward = rotationVector;
+        }
     }
 
     private void HandleJump(float movementDirectionY)

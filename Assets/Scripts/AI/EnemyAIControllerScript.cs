@@ -10,30 +10,28 @@ public class EnemyAIControllerScript : MonoBehaviour
 {
     public bool AIDisabled = false;
     [SerializeField] public EnemyType enemyType;
-    [SerializeField] [Range(0.1f, 10f)] private float reachTargetDistance;
-    [SerializeField] [Range(1f, 1000f)] private float damage;
-    [SerializeField] [Range(0.1f, 10f)] private float attackRate;
-    [SerializeField] [Range(0f, 500f)] private float speedMove;
-    [SerializeField] private Transform hitArea;
-    [SerializeField] private Collider WeaponHitArea;
-    
-    private float damageRadius;
-    private  float attackTime;
+    [SerializeField] [Range(0.1f, 10f)] protected float reachTargetDistance;
+    [SerializeField] [Range(1f, 1000f)] protected float damage;
+    [SerializeField] [Range(0.1f, 10f)] protected float attackRate;
+    [SerializeField] [Range(0f, 500f)] protected float speedMove;
+    [SerializeField] protected Transform hitArea;
+    [SerializeField] protected Collider WeaponHitArea;
 
-    private AudioSource audioSource;
-    private NavMeshAgent navMesh;
-    private GameObject player;
-    private Collider playersCollider;
-    private Animator animator;
+    protected float damageRadius;
+    protected float attackTime;
 
-    private bool isAttacking;
+    protected AudioSource audioSource;
+    protected NavMeshAgent navMesh;
+    protected GameObject player;
+    protected Collider playersCollider;
+    protected Animator animator;
 
     private float gruntCooldownTimer = 0;
     private float gruntCooldown = 10;
 
-    private bool isPlayerHittedByCurrentAttack;
-    private EnemyState state;
-    private Coroutine waitCoroutine;
+    protected bool isPlayerHittedByCurrentAttack;
+    protected EnemyState state;
+    protected Coroutine waitCoroutine;
     
     void Start()
     {
@@ -79,6 +77,10 @@ public class EnemyAIControllerScript : MonoBehaviour
     
     public void ReactOnPunch()
     {
+        if (enemyType == EnemyType.KING)
+        {
+            return;
+        }
         if (state == EnemyState.Dying)
             return;
         
@@ -89,9 +91,12 @@ public class EnemyAIControllerScript : MonoBehaviour
 
     public void ReactOnKick()
     {
-        if (state == EnemyState.Dying)
+        if(enemyType == EnemyType.KING)
+        {
             return;
-        
+        }
+        if (state == EnemyState.Dying)
+            return;  
         state = EnemyState.Kicked;
         animator.SetTrigger("IsKicked");
         ChangeStateAfterTime(4f, EnemyState.Idle);
@@ -107,7 +112,7 @@ public class EnemyAIControllerScript : MonoBehaviour
         ChangeStateAfterTime(4f, EnemyState.SelfDestroy);
     }
 
-    private void TryFindPlayerAndReach()
+    protected void TryFindPlayerAndReach()
     {
         if (player == null)
             return;
@@ -116,7 +121,7 @@ public class EnemyAIControllerScript : MonoBehaviour
         state = EnemyState.MoveTowardsPlayer;
     }
 
-    private void MoveTowardsPlayer()
+    protected void MoveTowardsPlayer()
     {
         if (player == null)
             state = EnemyState.Idle;
@@ -132,19 +137,19 @@ public class EnemyAIControllerScript : MonoBehaviour
         animator.Play("Base Layer.Melee Attack");
         ChangeStateAfterTime(1.8f, EnemyState.Idle);
     }
-    
-    private void FollowPoint(Transform point)
+
+    protected void FollowPoint(Transform point)
     {
         navMesh.destination = point.position;
         navMesh.speed = speedMove;
     }
 
-    private bool IsTargetAttackable(Transform target)
+    protected bool IsTargetAttackable(Transform target)
     {
         return Vector3.Distance(transform.position, target.position) <= reachTargetDistance;
     }
 
-    private void CheckIfPlayeTouched()
+    protected void CheckIfPlayeTouched()
     {
         if (isPlayerHittedByCurrentAttack)
             return;
@@ -164,12 +169,12 @@ public class EnemyAIControllerScript : MonoBehaviour
         animator.Play("Base Layer.Melee Attack");
     }
 
-    private void Destroy()
+    protected void Destroy()
     {
         Destroy(gameObject);
     }
 
-    private void PerformGrunt(float minInterval, float maxInterval)
+    protected void PerformGrunt(float minInterval, float maxInterval)
     {
         if (gruntCooldownTimer < gruntCooldown)
         {
@@ -192,7 +197,7 @@ public class EnemyAIControllerScript : MonoBehaviour
         }
     }
 
-    void OnDrawGizmosSelected()
+    protected void OnDrawGizmosSelected()
     {
         // Draw a yellow sphere at the transform's position
         Gizmos.color = Color.yellow;
@@ -202,22 +207,22 @@ public class EnemyAIControllerScript : MonoBehaviour
         Gizmos.DrawSphere(transform.position, reachTargetDistance);
     }
 
-    private void ChangeStateAfterTime(float waitTime, EnemyState newState)
+    protected void ChangeStateAfterTime(float waitTime, EnemyState newState)
     {
         if (waitCoroutine != null)
             StopCoroutine(waitCoroutine);
 
         waitCoroutine = StartCoroutine(WaitAndChangeState(waitTime, newState));
     }
-    
-    private IEnumerator WaitAndChangeState(float waitTime, EnemyState newState)
+
+    protected IEnumerator WaitAndChangeState(float waitTime, EnemyState newState)
     {
         yield return new WaitForSeconds(waitTime);
         state = newState;
         waitCoroutine = null;
     }
 
-    private void OnDestroy()
+    protected void OnDestroy()
     {
         if (waitCoroutine != null)
             StopCoroutine(waitCoroutine);

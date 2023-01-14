@@ -11,5 +11,7 @@ namespace AI.Enum
         Kicked = 6,
         Dying = 7,
         SelfDestroy = 8,
+        KingRoll = 9,
+        KingExplode = 10
     }
 }

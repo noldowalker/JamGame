@@ -3,36 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class KingController : MonoBehaviour
+public class KingController : EnemyAIControllerScript
 {
-    public bool AIDisabled = false;
-
-    [SerializeField] [Range(0.1f, 10f)] private float reachTargetDistance;
-
-    [SerializeField] [Range(1f, 1000f)] private float damage;
-    [SerializeField] [Range(0.1f, 10f)] private float attackRate;
-    [SerializeField] [Range(0.1f, 10f)] private float rollRate;
-    [SerializeField] [Range(1f, 30)] private float timeOfRoll;
-    [SerializeField] [Range(1f, 60f)] private float rollCoolDown;
-    [SerializeField] [Range(0f, 500f)] private float speedMove;
-    [SerializeField] [Range(0.01f, 2f)] private float rollSpeed;
-
-    private float damageRadius;
-
-    private float attackTime;
+    [SerializeField] [Range(1f, 1000f)] private float rollDamage;
+    [SerializeField] [Range(1f, 1000f)] private float explosionDamage;
+    [SerializeField] [Range(1f, 30f)] private float timeOfRoll;
+    [SerializeField] [Range(1f, 30f)] private float timeOfExplosion;
+    [SerializeField] [Range(1f, 60f)] private float ultimateCoolDown;
+    [SerializeField] [Range(1f, 25f)] private float rollSpeed;
+    [SerializeField] [Range(1f, 25f)] private float explosionRadius;
+    [SerializeField] [Range(1f, 25f)] private float explosionChargeTime;
+    [SerializeField] private bool toggleFriendlyFire;
     private float rollTimer;
-    private float rollCoolDownTimer;
+    private float rollChargeTimer;
+    private float explosionTimer;
+    private float ultimateCoolDownTimer;
+    private float defaultSphereRadius;
+    private float explosionChargeTimer;
 
-    [SerializeField] private Transform hitArea;
     [SerializeField] private Transform pfVFXposion;
-
-    private NavMeshAgent navMesh;
-    private GameObject player;
-    private Animator animator;
+    private SphereCollider sphereTrigger;
 
     private bool isAttacking;
     private bool isRolling = false;
     private bool isReadyToRoll = false;
+    private bool isReadyToExplode = false;
+    private bool isExploding = false;
 
     void Start()
     {
@@ -42,45 +38,66 @@ public class KingController : MonoBehaviour
         player = GameObject.FindGameObjectsWithTag("Player")[0];
         animator = GetComponent<Animator>();
         damageRadius = reachTargetDistance / 2;
+        sphereTrigger = GetComponent<SphereCollider>();
+        defaultSphereRadius = sphereTrigger.radius;
     }
 
     void Update()
     {
         if (!AIDisabled)
         {
+            if(state == AI.Enum.EnemyState.Dying)
+            {
+                AIDisabled = true;
+                print("KING IS DEAD. GLORY TO THE KING");
+                Destroy();
+            }
             UpdateUltimate();
-            if (isReadyToRoll)
+            HandleRolling();
+            HandleExplode();
+            if (navMesh.enabled)
             {
-                isRolling = true;
-                isReadyToRoll = false;
-            }
-            if (isRolling)
-            {
-                animator.SetBool("IsRolling", true);
-                Rolling();
-            }
-            else
-            {
-                animator.SetBool("IsRolling", false);
-
                 if (FollowPlayer())
                 {
-                    navMesh.speed = 0.0f;
-                    animator.SetBool("isWalking", false);
                     if (isAttacking)
                         HandlePunch();
                 }
             }
+        }
+    }
 
-            // animator.Play("Base Layer.RobotHipHopDance"); 
+    void HandleRolling()
+    {
+        if (isReadyToRoll)
+        {
+            navMesh.enabled = false;
+            animator.SetBool("isRolling", true);
+            transform.localScale += new Vector3(Random.Range(-0.01f, 0.01f), Random.Range(-0.01f, 0.01f), Random.Range(-0.01f, 0.01f));
+            if (rollChargeTimer < 5)
+            {
+                rollChargeTimer += Time.deltaTime;
+            } else
+            {
+                rollChargeTimer = 0;
+                isRolling = true;
+                isReadyToRoll = false;
+                transform.localScale = Vector3.one;
+            }
+        }
+        if (isRolling)
+        {
+            
+            Rolling();
+        }
+        else
+        {
+            animator.SetBool("isRolling", false);
         }
     }
 
     void Rolling()
     {
-        navMesh.enabled = false;
-        transform.position += transform.forward * rollSpeed;
-        Instantiate(pfVFXposion, transform.position, transform.rotation);
+        transform.position += transform.forward * rollSpeed * Time.deltaTime;
         if (rollTimer < timeOfRoll)
         {
             rollTimer += Time.deltaTime;
@@ -142,6 +159,52 @@ public class KingController : MonoBehaviour
 
     }
 
+    private void HandleExplode()
+    {
+        if (isReadyToExplode)
+        {
+            if(explosionChargeTimer < explosionChargeTime)
+            {
+                ChargeExplosion();
+            } else
+            {
+                explosionChargeTimer = 0;
+                isReadyToExplode = false;
+                transform.localScale = Vector3.one;
+                Explode();
+            }
+        }
+        if (isExploding)
+        {
+            if (explosionTimer < timeOfExplosion)
+            {
+                explosionTimer += Time.deltaTime;
+            }
+            else
+            {
+                navMesh.enabled = true;
+                explosionTimer = 0;
+                isExploding = false;
+                sphereTrigger.radius = defaultSphereRadius;
+            }
+        }
+    }
+
+    private void ChargeExplosion()
+    {
+        navMesh.enabled = false;
+        transform.localScale += new Vector3(Random.Range(-0.01f, 0.01f), Random.Range(-0.01f, 0.01f), Random.Range(-0.01f, 0.01f));
+        explosionChargeTimer += Time.deltaTime;
+    }
+
+    private void Explode()
+    {
+        isExploding = true;
+        sphereTrigger.radius = explosionRadius;
+        var explosion = Instantiate(pfVFXposion, transform.position, transform.rotation);
+        explosion.localScale *= explosionRadius/2;
+    }
+
     private void UpdateFiring(float deltaTime)
     {
         float fireInterval = 1.0f / attackRate;
@@ -159,26 +222,50 @@ public class KingController : MonoBehaviour
 
     private void UpdateUltimate()
     {
-        if (!isRolling)
+        if (!isRolling && !isExploding)
         {
-            if (rollCoolDownTimer < rollCoolDown)
+            if (ultimateCoolDownTimer < ultimateCoolDown)
             {
-                rollCoolDownTimer += Time.deltaTime;
+                ultimateCoolDownTimer += Time.deltaTime;
             }
             else
             {
-                rollCoolDownTimer = 0;
-                isReadyToRoll = true;
+                ultimateCoolDownTimer = 0;
+                switch (Random.Range(0, 2))
+                {
+                    case 0: isReadyToRoll = true;
+                        break;
+                    case 1: isReadyToExplode = true;
+                        break;
+                }
             }
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (isRolling && other.gameObject.isStatic)
+        if (isRolling || isExploding)
         {
-            print("bonk");
-            transform.rotation = Quaternion.Euler(0, transform.eulerAngles.y + 135, 0);
+            if (other.gameObject.isStatic)
+            {
+                transform.rotation = Quaternion.Euler(0, transform.eulerAngles.y + 135, 0);
+            }
+            if (other.CompareTag("Player"))
+            {
+                IDamagable damagable = other.GetComponent<IDamagable>();
+                if (damagable != null)
+                {
+                    damagable.Damage(isRolling ? rollDamage : explosionDamage);
+                }
+            }
+            if (other.CompareTag("Enemy") && toggleFriendlyFire)
+            {
+                IPunchable punchable = other.GetComponent<IPunchable>();
+                if (punchable != null)
+                {
+                    punchable.Punch(isRolling ? rollDamage : explosionDamage);
+                }
+            }
         }
     }
 }
