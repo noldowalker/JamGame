@@ -55,6 +55,9 @@ public class HotkeyBar : MonoBehaviour
     {
         hotkeysCells.ForEach(h => h.Unsubscribe());
         
+        if (Player.Current == null)
+            return;
+            
         Player.Current.Input.PlayerController.Kick.started -= kickHotkeyCell.BindedActionForInputSystem;
         Player.Current.Input.PlayerController.Punch.started -= punchHotkeyCell.BindedActionForInputSystem;
         Player.Current.Input.PlayerController.Run.started -= runHotkeyCell.BindedActionForInputSystem;

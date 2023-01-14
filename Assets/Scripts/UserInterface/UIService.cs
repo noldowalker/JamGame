@@ -47,6 +47,7 @@ public class UIService : MonoBehaviour
     private HotkeyBar _hotKeyPanel;
     private HelpPanel _helpPanel;
     private float _testHp = 100;
+    private AudioSource audioSource;
     
     private void Awake()
     {
@@ -59,6 +60,8 @@ public class UIService : MonoBehaviour
     void Start()
     {
         youDiedPanel.gameObject.SetActive(false);
+        audioSource = GetComponent<AudioSource>();
+        
         if (showGameLayout)
             TurnOnGameInterface();
         if (showMainMenu)
@@ -133,5 +136,10 @@ public class UIService : MonoBehaviour
         Time.timeScale = 1;
         youDiedPanel.gameObject.SetActive(false);
         SceneManager.LoadScene("MainMenuScene");
+    }
+
+    public void PlayPressButtonSound()
+    {
+        SoundHandleScript.Current.PlaySound(SoundEnum.BUTTON_CLICK, audioSource);
     }
 }
