@@ -20,12 +20,14 @@ public class Player : MonoBehaviour
     [SerializeField] [Range(0.1f, 10f)] private float punchCoolDown;
     [SerializeField] [Range(0.1f, 10f)] private float kickCoolDown;
     [SerializeField] [Range(1000f, 10000f)] private float kickForce;
-    [SerializeField] [Range(0f, 1000f)] private float damage;
+    [SerializeField] [Range(0f, 1000f)] private float kickDamage;
+    [SerializeField] [Range(0f, 1000f)] private float punchDamage;
     [SerializeField] [Range(0f, 100f)] private float attackRange;
 
     [SerializeField] LayerMask layerMask;
 
     [SerializeField] private Transform hitPoint;
+    [SerializeField] private ParticleSystem pfVFXwalk;
 
     private AudioSource audioSource;
 
@@ -72,6 +74,8 @@ public class Player : MonoBehaviour
         playerInput.PlayerController.Kick.started += OnKick;
         playerInput.PlayerController.Kick.canceled += OnKick;
 
+        pfVFXwalk = GetComponentInChildren<ParticleSystem>();
+
     }
 
     private void Start()
@@ -113,7 +117,8 @@ public class Player : MonoBehaviour
                     animator.SetFloat("speed", 1);
                 }
             }
-           
+        
+
         }
         float curSpeedX = speedMultipler * -input.x;
         float curSpeedY = speedMultipler * input.y;
@@ -198,11 +203,19 @@ public class Player : MonoBehaviour
                     IPunchable punchable = enemy.GetComponent<IPunchable>();
                     if (punchable != null)
                     {
-                        punchable.Punch(damage);
+                        punchable.Punch(punchDamage);
                     }
                 } else
                 {
                     SoundHandleScript.Current.PlaySound(SoundEnum.WEAPON_SLASH, audioSource);
+                }
+                if (enemy.CompareTag("Heal"))
+                {
+                    IPunchable punchable = enemy.GetComponent<IPunchable>();
+                    if (punchable != null)
+                    {
+                        punchable.Punch(punchDamage);
+                    }
                 }
             }
 
@@ -222,14 +235,6 @@ public class Player : MonoBehaviour
             punchCoolDownTimer = 0;
         }
     }
-
-    void OnDrawGizmosSelected()
-    {
-        // Draw a yellow sphere at the transform's position
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(hitPoint.position, attackRange);
-    }
-
     private void HandleKick()
     {
         if (kickCoolDownTimer < kickCoolDown)
@@ -248,8 +253,8 @@ public class Player : MonoBehaviour
                     IKickable kickable = enemy.GetComponent<IKickable>();
                     if (kickable != null)
                     {
-                        kickable.Kick(damage, kickForce, hitPoint.position);
                         SoundHandleScript.Current.PlaySound(SoundEnum.KICK_REACTION_ENEMY, audioSource);
+                        kickable.Kick(kickDamage, kickForce, hitPoint.position);
                     }
                 }
                 if (enemy.CompareTag("Interact"))
@@ -260,6 +265,14 @@ public class Player : MonoBehaviour
                         kickable.Kick(0, kickForce, transform.position);
                         SoundHandleScript.Current.PlaySound(SoundEnum.KICK, audioSource);
                         kickable.Kick(0, kickForce, hitPoint.position);
+                    }
+                }
+                if (enemy.CompareTag("Heal"))
+                {
+                    IKickable kickable = enemy.GetComponent<IKickable>();
+                    if (kickable != null)
+                    {
+                        kickable.Kick(kickDamage, kickForce, hitPoint.position);
                     }
                 }
             }
@@ -301,6 +314,7 @@ public class Player : MonoBehaviour
     private void OnStep()
     {
         //print("Step");
+        pfVFXwalk.Play();
         SoundHandleScript.Current.PlaySound(SoundEnum.PLAYER_STEP, audioSource);
     }
 

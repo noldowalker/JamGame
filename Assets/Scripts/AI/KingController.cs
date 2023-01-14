@@ -22,6 +22,7 @@ public class KingController : MonoBehaviour
     private float rollTime;
 
     [SerializeField] private Transform hitArea;
+    [SerializeField] private Transform pfVFXposion;
 
     private NavMeshAgent navMesh;
     private GameObject player;
@@ -71,6 +72,7 @@ public class KingController : MonoBehaviour
     IEnumerator Rolling()
     {
         isRolling = true;
+        Instantiate(pfVFXposion, transform.position, transform.rotation);
         animator.SetBool("isRolling", true);
         navMesh.speed = rollSpeed;
         navMesh.destination = player.transform.position;

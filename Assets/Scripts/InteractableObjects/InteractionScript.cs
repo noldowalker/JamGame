@@ -8,6 +8,8 @@ public class InteractionScript : MonoBehaviour, IKickable
     public static UnityEvent<float> hitEvent = new UnityEvent<float>();
     [SerializeField] private Transform pfDestroyDetails;
 
+    [SerializeField] private Transform pfVFXsmoke;
+
 
    // private bool playerInTrigger;
     private Rigidbody rigidbody;
@@ -21,24 +23,9 @@ public class InteractionScript : MonoBehaviour, IKickable
       //  Player.kickEvent.AddListener(onKick);
     }
 
-    void Update()
-    {
-    }
-
-    //private void onKick(float force)
-    //{
-    //    if (playerInTrigger)
-    //    {
-    //        rigidbody.AddForce((transform.position-player.transform.position)*force);
-    //    }
-    //}
 
     private void OnTriggerEnter(Collider other)
     {
-        //if (other.tag.Equals("HitArea"))
-        //{ 
-        //    playerInTrigger = true;
-        //}
         if (other.CompareTag("Enemy"))
         {           
             float hitForce = Vector3.Magnitude(rigidbody.velocity);
@@ -61,6 +48,7 @@ public class InteractionScript : MonoBehaviour, IKickable
                             }
                         }
                     }
+                    Instantiate(pfVFXsmoke,transform.position, transform.rotation);
                     SoundHandleScript.Current.PlaySound(SoundEnum.ITEM_DESTRUCTION, audioSource);
                     Destroy(gameObject);
                 }
@@ -69,13 +57,6 @@ public class InteractionScript : MonoBehaviour, IKickable
             }
         }
     }
-    //private void OnTriggerExit(Collider other)
-    //{
-    //    if(other.tag.Equals("HitArea"))
-    //    {
-    //        playerInTrigger = false;
-    //    }
-    //}
 
     public void Kick(float damage, float force, Vector3 direction)
     {

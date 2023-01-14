@@ -7,6 +7,8 @@ TagManager:
   - Enemy
   - Interact
   - HitArea
+  - FxTemporaire
+  - Heal
   layers:
   - Default
   - TransparentFX

@@ -736,6 +736,8 @@ MonoBehaviour:
   attackRate: 2
   speedMove: 4
   hitArea: {fileID: 8157700763072237396}
+  pfVFXswordHit: {fileID: 643200035428631075, guid: 378e61a2175d8ef43b48343de12eac88,
+    type: 3}
 --- !u!114 &-6338504052512929701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -748,7 +750,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e52bd2ea0f5c1f408533275ca27aa1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  pfVFXpunch: {fileID: 592421108419727834, guid: 7ef5e75951ce2c74db570790022ac10a,
+    type: 3}
+  pfVFXkick: {fileID: 4867276819491142602, guid: 29ab0abe6649afc499f18e6cee240c96,
+    type: 3}
+  pfVFXblood: {fileID: 2426154112933484713, guid: 75b74165c6ec55a4791d83cd1f900164,
+    type: 3}
+  pfVFXbloodSplash: {fileID: 2058468022746098646, guid: 0db4895e263c1db45a11f600ac687a4f,
+    type: 3}
+  maxHealth: 200
 --- !u!95 &6018972075183849617
 Animator:
   serializedVersion: 4
