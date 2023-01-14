@@ -13,6 +13,7 @@ public class KingController : EnemyAIControllerScript
     [SerializeField] [Range(1f, 25f)] private float rollSpeed;
     [SerializeField] [Range(1f, 25f)] private float explosionRadius;
     [SerializeField] [Range(1f, 25f)] private float explosionChargeTime;
+    [SerializeField] [Range(1f, 25f)] private float attackRate;
     [SerializeField] private bool toggleFriendlyFire;
     private float rollTimer;
     private float rollChargeTimer;

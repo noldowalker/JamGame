@@ -11,18 +11,15 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
     public bool AIDisabled = false;
     public EnemyType EnemyType => enemyType;
     
-    [SerializeField] [Range(0.1f, 10f)] private float reachTargetDistance;
-    [SerializeField] [Range(1f, 1000f)] private float damage;
-    [SerializeField] [Range(0f, 500f)] private float speedMove;
-    [SerializeField] private Transform hitArea;
-    [SerializeField] private Collider WeaponHitArea;
-    [SerializeField] private EnemyType enemyType;
-
-    private float damageRadius;
-    private  float attackTime;
+    [SerializeField] [Range(0.1f, 10f)] protected float reachTargetDistance;
+    [SerializeField] [Range(1f, 1000f)] protected float damage;
+    [SerializeField] [Range(0f, 500f)] protected float speedMove;
+    [SerializeField] protected Transform hitArea;
+    [SerializeField] protected Collider WeaponHitArea;
+    [SerializeField] protected EnemyType enemyType;
 
     protected float damageRadius;
-    protected float attackTime;
+    protected  float attackTime;
 
     protected AudioSource audioSource;
     protected NavMeshAgent navMesh;
