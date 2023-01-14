@@ -926,9 +926,7 @@ MonoBehaviour:
     type: 3}
   pfVFXkick: {fileID: 4867276819491142602, guid: 29ab0abe6649afc499f18e6cee240c96,
     type: 3}
-  pfVFXblood: {fileID: 2426154112933484713, guid: 75b74165c6ec55a4791d83cd1f900164,
-    type: 3}
-  pfVFXbloodSplash: {fileID: 2058468022746098646, guid: 0db4895e263c1db45a11f600ac687a4f,
+  pfVFXstomp: {fileID: 3786527915178623174, guid: 5870c1381b085474a924e0d683b44e84,
     type: 3}
   maxHealth: 500
 --- !u!95 &6891160756219323768

@@ -190,8 +190,9 @@ MonoBehaviour:
     m_Bits: 640
   hitPoint: {fileID: 8418788075186170900}
   stompPoint: {fileID: 8418788075186170900}
-  pfVFXwalk: {fileID: 7062827622624610666}
   dancePoint: {fileID: 8845760631796937859}
+  pfVFXgigant: {fileID: 1957849880803197077, guid: a6d5344727edc56409a09532a6a59dad,
+    type: 3}
 --- !u!95 &613431661883436462
 Animator:
   serializedVersion: 4
@@ -353,8 +354,10 @@ MonoBehaviour:
   cooldowns:
   - 12
   - 6
+  - 6
   duratations:
   - 10
+  - 5
   - 5
 --- !u!1 &685732270015047923
 GameObject:
@@ -1415,12 +1418,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7835d67fd7106ab42917b8d75328f55b, type: 3}
---- !u!1 &7062827622624610666 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6282205958578211840, guid: 7835d67fd7106ab42917b8d75328f55b,
-    type: 3}
-  m_PrefabInstance: {fileID: 3831108927555028330}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7062827622624712010 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6282205958577983520, guid: 7835d67fd7106ab42917b8d75328f55b,
