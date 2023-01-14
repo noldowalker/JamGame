@@ -18,7 +18,7 @@ MonoBehaviour:
     m_Value: 1
   intensity:
     m_OverrideState: 1
-    m_Value: 0.69
+    m_Value: 1.29
   scatter:
     m_OverrideState: 0
     m_Value: 0.7
@@ -62,7 +62,7 @@ MonoBehaviour:
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.25
+    m_Value: 0.087
   smoothness:
     m_OverrideState: 1
     m_Value: 0.4
@@ -81,7 +81,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c01700fd266d6914ababb731e09af2eb, type: 3}
   m_Name: DepthOfField
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   mode:
     m_OverrideState: 1
     m_Value: 2
@@ -99,13 +99,13 @@ MonoBehaviour:
     m_Value: 0
   focusDistance:
     m_OverrideState: 1
-    m_Value: 16.32
+    m_Value: 19.6
   aperture:
     m_OverrideState: 1
     m_Value: 2.4
   focalLength:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 128.9
   bladeCount:
     m_OverrideState: 1
     m_Value: 3
@@ -130,13 +130,13 @@ MonoBehaviour:
   active: 1
   shadows:
     m_OverrideState: 1
-    m_Value: {x: 0.9275194, y: 0.97229743, z: 1, w: -0.18026371}
+    m_Value: {x: 0.9550177, y: 0.964546, z: 1, w: -0.226886}
   midtones:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 0.9898234, z: 0.9454165, w: -0.22441116}
+    m_Value: {x: 1, y: 1, z: 1, w: -0.17583665}
   highlights:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 1, z: 1, w: -0.22519356}
+    m_Value: {x: 1, y: 1, z: 1, w: 0}
   shadowsStart:
     m_OverrideState: 0
     m_Value: 0
@@ -183,7 +183,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eb4b772797da9440885e8bd939e9560, type: 3}
   m_Name: ColorCurves
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   master:
     m_OverrideState: 1
     m_Value:
@@ -204,10 +204,10 @@ MonoBehaviour:
           inWeight: 0
           outWeight: 0
         - serializedVersion: 3
-          time: 0.21906693
-          value: 0.19067794
-          inSlope: 1.2643849
-          outSlope: 1.2643849
+          time: 0.19704433
+          value: 0.17006803
+          inSlope: 1.7261904
+          outSlope: 1.7261904
           tangentMode: 0
           weightedMode: 0
           inWeight: 0
@@ -421,10 +421,10 @@ MonoBehaviour:
   active: 1
   postExposure:
     m_OverrideState: 1
-    m_Value: 0.4
+    m_Value: 1
   contrast:
     m_OverrideState: 1
-    m_Value: 28.2
+    m_Value: 19.3
   colorFilter:
     m_OverrideState: 0
     m_Value: {r: 1, g: 1, b: 1, a: 1}
@@ -433,4 +433,4 @@ MonoBehaviour:
     m_Value: 77
   saturation:
     m_OverrideState: 1
-    m_Value: -24.1
+    m_Value: 0

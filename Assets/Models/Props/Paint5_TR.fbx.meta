@@ -1,9 +1,19 @@
 fileFormatVersion: 2
-guid: 1918ee9f038dbd548b633625b072228b
+guid: 40b8ada194135f744b7a8d15abe21e68
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MetalGold
+    second: {fileID: 2100000, guid: 14a5ddef5d30ac44fbe7d97f98eca02f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: PaintMaterial
+    second: {fileID: 2100000, guid: a4cb07e1ab8eb7948bf08e6bbcbb77d1, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -37,7 +47,7 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 1
+    addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
     importVisibility: 0
@@ -47,7 +57,7 @@ ModelImporter:
     nodeNameCollisionStrategy: 1
     fileIdsGeneration: 2
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 1
@@ -60,12 +70,12 @@ ModelImporter:
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
-    secondaryUVAreaDistortion: 15.000001
+    secondaryUVAreaDistortion: 15
     secondaryUVHardAngle: 88
     secondaryUVMarginMethod: 1
-    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinLightmapResolution: 10
     secondaryUVMinObjectScale: 1
-    secondaryUVPackMargin: 4
+    secondaryUVPackMargin: 20
     useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
