@@ -53,5 +53,8 @@ public class UltimateTimers : MonoBehaviour
         isDuratationTimerOn[num] = true;
     }
 
-    
+    public float GetCooldown(int index)
+    {
+        return cooldowns[index];
+    }
 }
