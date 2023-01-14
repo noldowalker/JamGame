@@ -4,6 +4,5 @@ using UnityEngine;
 
 public interface IDancable 
 {
-    void Dance(bool val, float duratation);
-
+    void Dance();
 }

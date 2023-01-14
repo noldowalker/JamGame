@@ -24,8 +24,10 @@ public class Player : MonoBehaviour
     [SerializeField] [Range(0f, 1000f)] private float punchDamage;
     [SerializeField] [Range(0f, 1000f)] private float stompDamage;
     [SerializeField] [Range(0f, 100f)] private float attackRange;
-    [SerializeField] [Range(1f, 5f)] private float playerSize;
-    [SerializeField] [Range(1f, 100f)] private float enemyDancingDuratation;
+    [SerializeField] [Range(0f, 100f)] private float stompRange;
+    [SerializeField] [Range(0f, 100f)] private float danceRange;
+    [SerializeField] [Range(1f, 5f)] private float playerSize = 1f;
+    [SerializeField] [Range(1f, 100f)] private float danceDuration;
 
     [SerializeField] LayerMask layerMask;
 
@@ -81,12 +83,9 @@ public class Player : MonoBehaviour
         playerInput.PlayerController.Kick.started += OnKick;
         playerInput.PlayerController.Kick.canceled += OnKick;
         playerInput.PlayerController.Ultimate1.started += OnUltimate1;
-        playerInput.PlayerController.Ultimate1.canceled += OnUltimate1;
         playerInput.PlayerController.Ultimate2.started += OnUltimate2;
-        playerInput.PlayerController.Ultimate2.canceled += OnUltimate2;
 
         pfVFXwalk = GetComponentInChildren<ParticleSystem>();
-
     }
 
     private void Start()
@@ -98,12 +97,10 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        
         HandleMovement();
         HandleDancingAura();
         HandlePunch();
         HandleKick();
-        
     }
     private void HandleMovement()
     {
@@ -121,22 +118,19 @@ public class Player : MonoBehaviour
         {
             if (isMovementPressed)
             {
-
-                    if (isRunPressed)
-                    {
-                        speedMultipler = runSpeed;
-                        animator.SetFloat("speed", 2);
-                    }
-                    else
-                    {
-                        speedMultipler = walkSpeed;
-                        animator.SetFloat("speed", 1);
-                    }
-                
+                if (isRunPressed)
+                {
+                    speedMultipler = runSpeed;
+                    animator.SetFloat("speed", 2);
+                }
+                else
+                {
+                    speedMultipler = walkSpeed;
+                    animator.SetFloat("speed", 1);
+                }
             }
-        
-
         }
+        
         float curSpeedX = speedMultipler * -input.x;
         float curSpeedY = speedMultipler * input.y;
         float movementDirectionY = currentMovement.y;
@@ -144,24 +138,19 @@ public class Player : MonoBehaviour
         HandleJump(movementDirectionY);
         characterController.Move(currentMovement * Time.deltaTime);
         
+        if (input.y == 0 && input.x == 0)
+            return;
+        
         var rotationVector = new Vector3(input.y, 0, -input.x);
         rotationVector.Normalize();
         transform.forward = rotationVector;
-        Quaternion currentRotation = transform.rotation;
-        if (currentMovement.x + currentMovement.z != 0) 
-        {
-            transform.rotation = Quaternion.Euler(0, Quaternion.LookRotation(currentMovement).eulerAngles.y, 0);
-        } else
-        {
-            transform.rotation = currentRotation;
-        }
-        if (isGiant) HandleStomping();
+        
+        if (isGiant) 
+            HandleStomping();
     }
 
     private void HandleJump(float movementDirectionY)
     {
-        Debug.Log($@"movementDirectionY = {movementDirectionY}");
-        
         if (isJumpPressed && characterController.isGrounded)
         {  
             currentMovement.y = jumpForce;
@@ -308,7 +297,7 @@ public class Player : MonoBehaviour
     private void HandleStomping()
     {
         animator.SetTrigger("isGiant");
-        var hitEnemies = Physics.OverlapSphere(stompPoint.position, attackRange, layerMask);
+        var hitEnemies = Physics.OverlapSphere(stompPoint.position, stompRange, layerMask);
 
         foreach (var enemy in hitEnemies)
         {
@@ -316,22 +305,27 @@ public class Player : MonoBehaviour
                 continue;
             
             var stompable = enemy.GetComponent<IStompable>();
+
             stompable?.Stomp(stompDamage);
         }
     }
 
     private void HandleDancingAura()
     {
-        Collider[] hitEnemies = Physics.OverlapSphere(dancePoint.position, attackRange, layerMask);
-
+        if (!isDancingAura)
+            return;
+        
+        Collider[] hitEnemies = Physics.OverlapSphere(dancePoint.position, danceRange, layerMask);
+        Debug.Log("DANCE AROUND");
         foreach (Collider enemy in hitEnemies)
         {
             if (enemy.CompareTag("Enemy"))
             {
+                Debug.Log("DANCE FUCKER!");
                 IDancable danceable = enemy.GetComponent<IDancable>();
                 if (danceable != null)
                 {
-                    danceable.Dance(true, enemyDancingDuratation);
+                    danceable.Dance();
                 }
             }
         }
@@ -341,25 +335,24 @@ public class Player : MonoBehaviour
     {
         switch (num)
         {
-            case 0:
+            case 0: // Запуск или остановка гиганта
                 if (turner)
                 {
-                    this.transform.localScale = new Vector3(playerSize, playerSize, playerSize);
+                    transform.localScale = new Vector3(playerSize, playerSize, playerSize);
                 }
                 else
                 {
-                    this.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-                    
+                    transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
                 }
 
                 isGiant = turner;
                 
                 break;
-            case 1:
+            case 1: // Запуск или остановка танца
                 isDancingAura = turner;
                 break;
         }
-        this.GetComponent<UltimateTimers>().SetUltimateTimer(num);
+        GetComponent<UltimateTimers>().SetUltimateTimer(num);
     }
     
     private void OnJump(InputAction.CallbackContext obj)
@@ -378,6 +371,7 @@ public class Player : MonoBehaviour
         isPunching = obj.ReadValueAsButton();
         SoundHandleScript.Current.PlaySound(SoundEnum.WEAPON_SLASH, audioSource);
     }
+    
     private void OnRun(InputAction.CallbackContext obj)
     {
         isRunPressed = obj.ReadValueAsButton();
@@ -396,6 +390,11 @@ public class Player : MonoBehaviour
         //print("Step");
         pfVFXwalk.Play();
         SoundHandleScript.Current.PlaySound(SoundEnum.PLAYER_STEP, audioSource);
+    }
+    
+    private void OnJumpEnd()
+    {
+        Debug.Log("SOSALITY@!!!");
     }
 
     //=================
@@ -427,5 +426,19 @@ public class Player : MonoBehaviour
     private void OnDestroy()
     {
         Current = null;
+    }
+    
+    
+
+    void OnDrawGizmosSelected()
+    {
+        // Draw a yellow sphere at the transform's position
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(stompPoint.position, stompRange);
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawSphere(dancePoint.position, danceRange);
+
+        /*Gizmos.color = Color.cyan;
+        Gizmos.DrawSphere(transform.position, reachTargetDistance);*/
     }
 }

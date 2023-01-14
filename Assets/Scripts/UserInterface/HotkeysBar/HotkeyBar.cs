@@ -28,6 +28,10 @@ public class HotkeyBar : MonoBehaviour
     private HotkeyCell runHotkeyCell;
     [SerializeField]
     private HotkeyCell jumpHotkeyCell;
+    [SerializeField]
+    private HotkeyCell ult1HotkeyCell;
+    [SerializeField]
+    private HotkeyCell ult2HotkeyCell;
 
     void Start()
     {
@@ -49,6 +53,8 @@ public class HotkeyBar : MonoBehaviour
         Player.Current.Input.PlayerController.Punch.started += punchHotkeyCell.BindedActionForInputSystem;
         Player.Current.Input.PlayerController.Run.started += runHotkeyCell.BindedActionForInputSystem;
         Player.Current.Input.PlayerController.Jump.started += jumpHotkeyCell.BindedActionForInputSystem;
+        Player.Current.Input.PlayerController.Ultimate1.started += ult1HotkeyCell.BindedActionForInputSystem;
+        Player.Current.Input.PlayerController.Ultimate2.started += ult2HotkeyCell.BindedActionForInputSystem;
     }
 
     private void UnsubscribeHotkeys()
@@ -62,6 +68,8 @@ public class HotkeyBar : MonoBehaviour
         Player.Current.Input.PlayerController.Punch.started -= punchHotkeyCell.BindedActionForInputSystem;
         Player.Current.Input.PlayerController.Run.started -= runHotkeyCell.BindedActionForInputSystem;
         Player.Current.Input.PlayerController.Jump.started -= jumpHotkeyCell.BindedActionForInputSystem;
+        Player.Current.Input.PlayerController.Ultimate1.started -= ult1HotkeyCell.BindedActionForInputSystem;
+        Player.Current.Input.PlayerController.Ultimate2.started -= ult2HotkeyCell.BindedActionForInputSystem;
     }
     
     

@@ -33,6 +33,7 @@ public class EnemyHealth : MonoBehaviour, IKickable, IPunchable, IStompable
 
     private void HealthSystem_OnDead(object sender, EventArgs e)
     {
+        Debug.Log($@"DEAD!!!!");
         aiSystem.ReactOnDeath();
         SoundHandleScript.Current.PlaySound(SoundEnum.ENEMY_DEATH, audioSource);
     }
@@ -66,6 +67,7 @@ public class EnemyHealth : MonoBehaviour, IKickable, IPunchable, IStompable
 
     public void Stomp(float damage)
     {
+        Debug.Log(@$"STOMP DAMAGE = {damage}");
         healthSystem.Damage(damage);
     }
 }

@@ -65,7 +65,7 @@ public class KingController : MonoBehaviour
                 }
             }
 
-            // animator.Play("Base Layer.RobotHipHopDance"); 
+            // 
         }
     }
 

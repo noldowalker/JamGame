@@ -111,6 +111,7 @@ GameObject:
   - component: {fileID: 133982340433532168}
   - component: {fileID: 4819340589066808017}
   - component: {fileID: 5483365162822684486}
+  - component: {fileID: 1644301585370395626}
   m_Layer: 8
   m_Name: pfPlayerCharacterNormal
   m_TagString: Player
@@ -132,6 +133,8 @@ Transform:
   m_Children:
   - {fileID: 5076327305123977180}
   - {fileID: 8418788075186170900}
+  - {fileID: 1757482467069259957}
+  - {fileID: 8845760631796937859}
   - {fileID: 7062827622624712010}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -176,17 +179,19 @@ MonoBehaviour:
   kickForce: 1419
   kickDamage: 40
   punchDamage: 15
-  stompDamage: 0
+  stompDamage: 60
   attackRange: 0.5
-  playerSize: 0
-  enemyDancingDuratation: 0
+  stompRange: 1.5
+  danceRange: 6
+  playerSize: 2
+  danceDuration: 5
   layerMask:
     serializedVersion: 2
     m_Bits: 640
   hitPoint: {fileID: 8418788075186170900}
-  stompPoint: {fileID: 0}
+  stompPoint: {fileID: 8418788075186170900}
   pfVFXwalk: {fileID: 7062827622624610666}
-  dancePoint: {fileID: 0}
+  dancePoint: {fileID: 8845760631796937859}
 --- !u!95 &613431661883436462
 Animator:
   serializedVersion: 4
@@ -333,6 +338,24 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1644301585370395626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613431661883436458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2acb750282371cc49bb7d57cd4658b8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cooldowns:
+  - 12
+  - 6
+  duratations:
+  - 10
+  - 5
 --- !u!1 &685732270015047923
 GameObject:
   m_ObjectHideFlags: 0
@@ -719,6 +742,37 @@ Transform:
   m_Father: {fileID: 1569270175828505879}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5500710409954381115
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1757482467069259957}
+  m_Layer: 0
+  m_Name: StompArea
+  m_TagString: HitArea
+  m_Icon: {fileID: 3306451490063965843, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1757482467069259957
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5500710409954381115}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.053, y: -0.946, z: 0.187}
+  m_LocalScale: {x: 0.88617283, y: 0.8500538, z: 0.60956955}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 613431661883436455}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5564597996768169318
 GameObject:
   m_ObjectHideFlags: 0
@@ -1067,6 +1121,37 @@ Transform:
   m_Father: {fileID: 8948791593901248025}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7289859113114812483
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8845760631796937859}
+  m_Layer: 0
+  m_Name: DanceEffectArea
+  m_TagString: HitArea
+  m_Icon: {fileID: 3306451490063965843, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8845760631796937859
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7289859113114812483}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.043, y: -0.946, z: -0.068}
+  m_LocalScale: {x: 0.88617283, y: 0.8500538, z: 0.60956955}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 613431661883436455}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7744456405100840018
 GameObject:
   m_ObjectHideFlags: 0
@@ -1271,7 +1356,7 @@ PrefabInstance:
     - target: {fileID: 6282205958577983520, guid: 7835d67fd7106ab42917b8d75328f55b,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6282205958577983520, guid: 7835d67fd7106ab42917b8d75328f55b,
         type: 3}

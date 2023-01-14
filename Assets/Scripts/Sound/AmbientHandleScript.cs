@@ -14,6 +14,7 @@ public class AmbientHandleScript : MonoBehaviour
 
     public void SwitchCurrent(SoundEnum track)
     {
+        Debug.Log(@$"track = {track}");
         SoundHandleScript.Current.PlaySound(track, source);
     }
 

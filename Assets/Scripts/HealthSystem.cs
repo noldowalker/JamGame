@@ -1,4 +1,6 @@
 using System;
+using UnityEngine;
+
 public class HealthSystem
 {
     public EventHandler OnHealthChanged;
@@ -48,8 +50,10 @@ public class HealthSystem
         _health -= damageAmount;
         OnDamaged?.Invoke(this, EventArgs.Empty);
 
+        Debug.Log($@"Нанесено {damageAmount} урона, осталось {_health} хп");
         if (_health <= 0)
         {
+            Debug.Log($@"ЧЕЛ МЕРТВ");
             _health = 0;
             OnDead?.Invoke(this, EventArgs.Empty);
         }

@@ -1155,8 +1155,6 @@ Transform:
   m_Children:
   - {fileID: 4269101169104165459}
   - {fileID: 1699041391630362749}
-  - {fileID: 7486293773147034555}
-  - {fileID: 5019867537958829373}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1200,13 +1198,18 @@ MonoBehaviour:
   kickForce: 1419
   kickDamage: 40
   punchDamage: 15
+  stompDamage: 0
   attackRange: 0.5
+  playerSize: 2
+  enemyDancingDuratation: 0
   layerMask:
     serializedVersion: 2
     m_Bits: 640
   hitPoint: {fileID: 1699041391630362749}
-  pfVFXwalk: {fileID: 5155940713418144474, guid: 7835d67fd7106ab42917b8d75328f55b,
+  stompPoint: {fileID: 1699041391630362749}
+  pfVFXwalk: {fileID: 6282205958593189216, guid: 7835d67fd7106ab42917b8d75328f55b,
     type: 3}
+  dancePoint: {fileID: 1699041391630362749}
 --- !u!95 &7765022532433750471
 Animator:
   serializedVersion: 4
@@ -1282,7 +1285,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8157945117816239114}
+  m_GameObject: {fileID: 8211192253649445612}
   m_LocalRotation: {x: 0.28623018, y: 0.12096868, z: -0.036455005, w: 0.9497947}
   m_LocalPosition: {x: -0.000000002980232, y: 0.161886, z: -0.000000011324882}
   m_LocalScale: {x: 0.99999994, y: 1, z: 1}
