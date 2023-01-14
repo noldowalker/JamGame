@@ -12,14 +12,16 @@ public class KingController : MonoBehaviour
     [SerializeField] [Range(1f, 1000f)] private float damage;
     [SerializeField] [Range(0.1f, 10f)] private float attackRate;
     [SerializeField] [Range(0.1f, 10f)] private float rollRate;
-    [SerializeField] [Range(0.1f, 10f)] private float timeOfRoll;
+    [SerializeField] [Range(1f, 30)] private float timeOfRoll;
+    [SerializeField] [Range(1f, 60f)] private float rollCoolDown;
     [SerializeField] [Range(0f, 500f)] private float speedMove;
-    [SerializeField] [Range(0f, 500f)] private float rollSpeed;
+    [SerializeField] [Range(0.01f, 2f)] private float rollSpeed;
 
     private float damageRadius;
 
     private float attackTime;
-    private float rollTime;
+    private float rollTimer;
+    private float rollCoolDownTimer;
 
     [SerializeField] private Transform hitArea;
 
@@ -28,8 +30,8 @@ public class KingController : MonoBehaviour
     private Animator animator;
 
     private bool isAttacking;
-    private bool isRolling;
-    private bool isReadyToRoll;
+    private bool isRolling = false;
+    private bool isReadyToRoll = false;
 
     void Start()
     {
@@ -45,15 +47,20 @@ public class KingController : MonoBehaviour
     {
         if (!AIDisabled)
         {
-            UpdateUltimate(Time.time);
-
-            if (!isRolling && isReadyToRoll)
+            UpdateUltimate();
+            if (isReadyToRoll)
             {
-                StartCoroutine(Rolling());
+                isRolling = true;
+                isReadyToRoll = false;
+            }
+            if (isRolling)
+            {
+                animator.SetBool("IsRolling", true);
+                Rolling();
             }
             else
             {
-                animator.SetBool("isRolling", false);
+                animator.SetBool("IsRolling", false);
 
                 if (FollowPlayer())
                 {
@@ -68,15 +75,20 @@ public class KingController : MonoBehaviour
         }
     }
 
-    IEnumerator Rolling()
+    void Rolling()
     {
-        isRolling = true;
-        animator.SetBool("isRolling", true);
-        navMesh.speed = rollSpeed;
-        navMesh.destination = player.transform.position;
-
-        yield return new WaitForSeconds(timeOfRoll); 
-        isRolling = false;
+        navMesh.enabled = false;
+        transform.position += transform.forward * rollSpeed;
+        if(rollTimer < timeOfRoll)
+        {
+            rollTimer += Time.deltaTime;
+        } else
+        {
+            navMesh.enabled = true;
+            rollTimer = 0;
+            isRolling = false;
+        }
+        
     }
 
     bool FollowPlayer()
@@ -143,18 +155,28 @@ public class KingController : MonoBehaviour
         }
     }
 
-    private void UpdateUltimate(float deltaTime)
+    private void UpdateUltimate()
     {
-        float fireInterval = 1.0f / rollRate;
-
-        if (deltaTime > rollTime)
+        if (!isRolling)
         {
-            isReadyToRoll = true;
-            rollTime = deltaTime + fireInterval;
+            if (rollCoolDownTimer < rollCoolDown)
+            {
+                rollCoolDownTimer += Time.deltaTime;
+            }
+            else
+            {
+                rollCoolDownTimer = 0;
+                isReadyToRoll = true;
+            }
         }
-        else
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (isRolling && other.gameObject.isStatic)
         {
-            isReadyToRoll = false;
+            print("bonk");
+            transform.rotation = Quaternion.Euler(0, transform.eulerAngles.y + 135, 0);
         }
     }
 }

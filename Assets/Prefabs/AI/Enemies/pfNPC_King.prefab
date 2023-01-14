@@ -502,7 +502,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5209698289036136360}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -896,6 +896,7 @@ MonoBehaviour:
   attackRate: 0.1
   rollRate: 0.1
   timeOfRoll: 1.25
+  rollCoolDown: 0
   speedMove: 0.5
   rollSpeed: 31
   hitArea: {fileID: 3087043056432873602}
@@ -960,7 +961,7 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 1.4
-  m_Center: {x: 0, y: 1.34, z: 0}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!82 &5297781425113662114
 AudioSource:
   m_ObjectHideFlags: 0

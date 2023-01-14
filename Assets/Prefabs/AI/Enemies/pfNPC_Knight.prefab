@@ -731,6 +731,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AIDisabled: 0
+  enemyType: 2
   reachTargetDistance: 2
   damage: 35
   attackRate: 2
