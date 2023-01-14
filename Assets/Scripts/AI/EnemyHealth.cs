@@ -8,8 +8,7 @@ public class EnemyHealth : MonoBehaviour, IKickable, IPunchable, IStompable
 {
     [SerializeField] private Transform pfVFXpunch;
     [SerializeField] private Transform pfVFXkick;
-    [SerializeField] private Transform pfVFXblood;
-    [SerializeField] private Transform pfVFXbloodSplash;
+    [SerializeField] private Transform pfVFXstomp;
 
     [Range(0, 500)] [SerializeField] private int maxHealth;
     
@@ -33,7 +32,6 @@ public class EnemyHealth : MonoBehaviour, IKickable, IPunchable, IStompable
 
     private void HealthSystem_OnDead(object sender, EventArgs e)
     {
-        Debug.Log($@"DEAD!!!!");
         aiSystem.ReactOnDeath();
         SoundHandleScript.Current.PlaySound(SoundEnum.ENEMY_DEATH, audioSource);
     }
@@ -53,6 +51,7 @@ public class EnemyHealth : MonoBehaviour, IKickable, IPunchable, IStompable
 
     public void Kick(float damage, float force, Vector3 direction)
     {
+        Instantiate(pfVFXkick, transform.position, transform.rotation);
         animator.SetTrigger("IsKicked");
         healthSystem.Damage(damage);
         aiSystem.ReactOnKick();
@@ -60,14 +59,16 @@ public class EnemyHealth : MonoBehaviour, IKickable, IPunchable, IStompable
 
     public void Punch(float damage)
     {
+        Instantiate(pfVFXpunch, transform.position, transform.rotation);
         animator.SetTrigger("IsPunched");
         healthSystem.Damage(damage);
         aiSystem.ReactOnPunch();
+
     }
 
     public void Stomp(float damage)
     {
-        Debug.Log(@$"STOMP DAMAGE = {damage}");
+        Instantiate(pfVFXstomp, transform.position, pfVFXstomp.rotation);
         healthSystem.Damage(damage);
     }
 }

@@ -33,9 +33,11 @@ public class Player : MonoBehaviour
 
     [SerializeField] private Transform hitPoint;
     [SerializeField] private Transform stompPoint;
-    [SerializeField] private ParticleSystem pfVFXwalk;
     [SerializeField] private Transform dancePoint;
 
+    [SerializeField] private Transform pfVFXgigant;
+
+    private ParticleSystem pfVFXwalk;
     private AudioSource audioSource;
 
     public static UnityEvent punchEvent = new UnityEvent();
@@ -341,6 +343,7 @@ public class Player : MonoBehaviour
             case 0: // Запуск или остановка гиганта
                 if (turner)
                 {
+                    Instantiate(pfVFXgigant, transform.position, pfVFXgigant.rotation);
                     transform.localScale = new Vector3(playerSize, playerSize, playerSize);
                 }
                 else

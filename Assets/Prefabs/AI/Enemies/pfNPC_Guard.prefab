@@ -990,7 +990,6 @@ GameObject:
   - component: {fileID: 5284700780344215636}
   - component: {fileID: 5284700780344215643}
   - component: {fileID: 1473871068073811146}
-  - component: {fileID: 4490711819846584085}
   - component: {fileID: 5284700780344215642}
   - component: {fileID: 1633315405}
   - component: {fileID: 7088290483847684518}
@@ -1057,7 +1056,6 @@ MonoBehaviour:
   AIDisabled: 0
   reachTargetDistance: 2
   damage: 20
-  attackRate: 1
   speedMove: 5
   hitArea: {fileID: 4333083118579854752}
   WeaponHitArea: {fileID: 4634108800255302161}
@@ -1078,23 +1076,9 @@ MonoBehaviour:
     type: 3}
   pfVFXkick: {fileID: 4867276819491142602, guid: 29ab0abe6649afc499f18e6cee240c96,
     type: 3}
-  pfVFXblood: {fileID: 2426154112933484713, guid: 75b74165c6ec55a4791d83cd1f900164,
-    type: 3}
-  pfVFXbloodSplash: {fileID: 2058468022746098646, guid: 0db4895e263c1db45a11f600ac687a4f,
+  pfVFXstomp: {fileID: 3786527915178623174, guid: 5870c1381b085474a924e0d683b44e84,
     type: 3}
   maxHealth: 100
---- !u!114 &4490711819846584085
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5284700780344215641}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebd8310302175174888af3bd9f72c2a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!95 &5284700780344215642
 Animator:
   serializedVersion: 4

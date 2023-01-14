@@ -89,6 +89,15 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Ultimate3"",
+                    ""type"": ""Button"",
+                    ""id"": ""4d33aacc-6e1a-4984-a048-68268fb91f8f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -212,6 +221,17 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""action"": ""Ultimate2"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1f6f5d1e-6f33-4a31-a604-7921b803592f"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Ultimate3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -227,6 +247,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         m_PlayerController_Kick = m_PlayerController.FindAction("Kick", throwIfNotFound: true);
         m_PlayerController_Ultimate1 = m_PlayerController.FindAction("Ultimate1", throwIfNotFound: true);
         m_PlayerController_Ultimate2 = m_PlayerController.FindAction("Ultimate2", throwIfNotFound: true);
+        m_PlayerController_Ultimate3 = m_PlayerController.FindAction("Ultimate3", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -293,6 +314,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerController_Kick;
     private readonly InputAction m_PlayerController_Ultimate1;
     private readonly InputAction m_PlayerController_Ultimate2;
+    private readonly InputAction m_PlayerController_Ultimate3;
     public struct PlayerControllerActions
     {
         private @PlayerInput m_Wrapper;
@@ -304,6 +326,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         public InputAction @Kick => m_Wrapper.m_PlayerController_Kick;
         public InputAction @Ultimate1 => m_Wrapper.m_PlayerController_Ultimate1;
         public InputAction @Ultimate2 => m_Wrapper.m_PlayerController_Ultimate2;
+        public InputAction @Ultimate3 => m_Wrapper.m_PlayerController_Ultimate3;
         public InputActionMap Get() { return m_Wrapper.m_PlayerController; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -334,6 +357,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @Ultimate2.started -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUltimate2;
                 @Ultimate2.performed -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUltimate2;
                 @Ultimate2.canceled -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUltimate2;
+                @Ultimate3.started -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUltimate3;
+                @Ultimate3.performed -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUltimate3;
+                @Ultimate3.canceled -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUltimate3;
             }
             m_Wrapper.m_PlayerControllerActionsCallbackInterface = instance;
             if (instance != null)
@@ -359,6 +385,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @Ultimate2.started += instance.OnUltimate2;
                 @Ultimate2.performed += instance.OnUltimate2;
                 @Ultimate2.canceled += instance.OnUltimate2;
+                @Ultimate3.started += instance.OnUltimate3;
+                @Ultimate3.performed += instance.OnUltimate3;
+                @Ultimate3.canceled += instance.OnUltimate3;
             }
         }
     }
@@ -372,5 +401,6 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         void OnKick(InputAction.CallbackContext context);
         void OnUltimate1(InputAction.CallbackContext context);
         void OnUltimate2(InputAction.CallbackContext context);
+        void OnUltimate3(InputAction.CallbackContext context);
     }
 }

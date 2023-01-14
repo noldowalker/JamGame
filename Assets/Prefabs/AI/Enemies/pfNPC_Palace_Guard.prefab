@@ -43,7 +43,6 @@ GameObject:
   - component: {fileID: 811727962856455262}
   - component: {fileID: 811727962856455263}
   - component: {fileID: 811727962856455248}
-  - component: {fileID: 6026922574722222640}
   - component: {fileID: 6224235240654186689}
   - component: {fileID: 811727962856455249}
   - component: {fileID: 4761660591036210758}
@@ -112,23 +111,10 @@ MonoBehaviour:
   enemyType: 3
   reachTargetDistance: 2
   damage: 27.37
-  attackRate: 1
   speedMove: 3
   hitArea: {fileID: 9094708524689873323}
   WeaponHitArea: {fileID: 2479677809847952144}
   enemyType: 0
---- !u!114 &6026922574722222640
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 811727962856455250}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebd8310302175174888af3bd9f72c2a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &6224235240654186689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,9 +131,7 @@ MonoBehaviour:
     type: 3}
   pfVFXkick: {fileID: 4867276819491142602, guid: 29ab0abe6649afc499f18e6cee240c96,
     type: 3}
-  pfVFXblood: {fileID: 2426154112933484713, guid: 75b74165c6ec55a4791d83cd1f900164,
-    type: 3}
-  pfVFXbloodSplash: {fileID: 2058468022746098646, guid: 0db4895e263c1db45a11f600ac687a4f,
+  pfVFXstomp: {fileID: 3786527915178623174, guid: 5870c1381b085474a924e0d683b44e84,
     type: 3}
   maxHealth: 250
 --- !u!95 &811727962856455249
