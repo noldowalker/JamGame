@@ -9,6 +9,7 @@ public class AmbientHandleScript : MonoBehaviour
 
     private void Awake()
     {
+        source = GetComponent<AudioSource>();
         SwitchCurrent(current);
     }
 
