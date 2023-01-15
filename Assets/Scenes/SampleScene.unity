@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028432, g: 0.22571506, b: 0.30692327, a: 1}
+  m_IndirectSpecularColor: {r: 0.4616958, g: 0.5124174, b: 0.58993334, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4219,6 +4219,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 786647013775644579, guid: f0a0880c843b9204da2eac5890e82afe,
+        type: 3}
+      propertyPath: showGameLayout
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 786647013775644581, guid: f0a0880c843b9204da2eac5890e82afe,
         type: 3}
       propertyPath: m_Name
@@ -4626,6 +4631,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   totalEnemiesOnScene: 28
   nextScene: ThroneRoom
+  isBossBattle: 0
   currentDeadEnemies: 0
 --- !u!4 &1911225678
 Transform:

@@ -81,7 +81,7 @@ public class HotkeyBar : MonoBehaviour
         Player.Current.Input.PlayerController.Ultimate1.started -= ult1HotkeyCell.BindedActionForInputSystem;
         Player.Current.Input.PlayerController.Ultimate2.started -= ult2HotkeyCell.BindedActionForInputSystem;
     }
-
+    
     private void OnDestroy()
     {
         UnsubscribeHotkeys();

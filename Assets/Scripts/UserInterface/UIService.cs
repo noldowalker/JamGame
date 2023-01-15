@@ -11,8 +11,11 @@ using UserInterface.Enums;
 
 public class UIService : MonoBehaviour
 {
-    public static UIService Current; 
-    
+    public static UIService Current;
+
+    [SerializeField] GameObject WinScrene;
+    [SerializeField] bool showWinScr;
+
     [Header("Включить игровой интерфейс")]
     [SerializeField] 
     private bool showGameLayout; 
@@ -55,6 +58,10 @@ public class UIService : MonoBehaviour
     
     private void Awake()
     {
+        if (showWinScr)
+        {
+            ShowWinScr();
+        }
         if (Current != null)
             Debug.LogError("Создано больше 1 сервиса для интерфейса!");
         
@@ -91,6 +98,15 @@ public class UIService : MonoBehaviour
         return hotkey;
     }
 
+    public void ShowWinScr()
+    {
+        WinScrene.SetActive(true);
+    }
+
+    public void ReturnToMainMenu()
+    {
+        LoadSceneWithScreen("MainMenuScene");
+    }
     public void ShowDeathMessage()
     {
         if (_hotKeyPanel)

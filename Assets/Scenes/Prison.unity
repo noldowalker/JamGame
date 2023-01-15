@@ -4761,6 +4761,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 786647013775644579, guid: f0a0880c843b9204da2eac5890e82afe,
+        type: 3}
+      propertyPath: showWinScr
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 786647013775644579, guid: f0a0880c843b9204da2eac5890e82afe,
+        type: 3}
+      propertyPath: showGameLayout
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 786647013775644581, guid: f0a0880c843b9204da2eac5890e82afe,
         type: 3}
       propertyPath: m_Name
@@ -5852,6 +5862,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   totalEnemiesOnScene: 16
   nextScene: SampleScene
+  isBossBattle: 0
   currentDeadEnemies: 0
 --- !u!4 &2080907882 stripped
 Transform:

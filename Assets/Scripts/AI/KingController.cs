@@ -51,6 +51,7 @@ public class KingController : EnemyAIControllerScript
             {
                 AIDisabled = true;
                 print("KING IS DEAD. GLORY TO THE KING");
+                UIService.Current.LoadSceneWithScreen("WinScene");
                 Destroy();
             }
             UpdateUltimate();
