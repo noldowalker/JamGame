@@ -69,6 +69,9 @@ public class EnemyHealth : MonoBehaviour, IKickable, IPunchable, IStompable
 
     public void Stomp(float damage)
     {
+        if (aiSystem.EnemyType == EnemyType.KING)
+            return;
+
         Instantiate(pfVFXstomp, transform.position, pfVFXstomp.rotation);
         healthSystem.Damage(damage);
     }

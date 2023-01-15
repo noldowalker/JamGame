@@ -177,7 +177,7 @@ MonoBehaviour:
   punchCoolDown: 0.5
   kickCoolDown: 1
   kickForce: 1419
-  kickDamage: 40
+  kickDamage: 50
   punchDamage: 15
   stompDamage: 60
   attackRange: 0.5
@@ -249,6 +249,7 @@ MonoBehaviour:
   - 10
   - 10
   - 5
+  isCooldownTimerOn: 0000
 --- !u!82 &4819340589066808017
 AudioSource:
   m_ObjectHideFlags: 0

@@ -119,8 +119,10 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
     {
         if (state == EnemyState.Dancing)
             return;
+        if (EnemyType == EnemyType.KING)
+            return;
 
-        ChangeState(EnemyState.Dancing);
+            ChangeState(EnemyState.Dancing);
         Debug.Log("IMMA FUCKER AND IM DANCING!");
         animator.SetTrigger("IsDancing");
         ChangeStateAfterTime(4f, EnemyState.Idle);
