@@ -33,12 +33,14 @@ public class HidablePanel : MonoBehaviour
 
     public void HidePanel()
     {
+        Time.timeScale = 1f;
         transform.position = _hidePoint;
         _panelStatus = false;
     }
 
     public void ShowPanel()
     {
+        Time.timeScale = 0f;
         transform.position = _showPoint;
         _panelStatus = true;
     }
