@@ -130,7 +130,10 @@ public class UIService : MonoBehaviour
         _hotKeyPanel = Instantiate(hotKeyPrefab, gameCanvas.transform);
         
         _helpPanel = Instantiate(helpPanelPrefab, gameCanvas.transform);
+        
         ObserverWithoutData.Sub(Events.HelpPanelCalled, _helpPanel.SwitchPanelVisibility);
+
+        
     }
     
     private void TurnOnMainMenu()
