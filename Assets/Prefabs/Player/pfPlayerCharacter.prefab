@@ -1140,7 +1140,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7765022532433750478
 Transform:
   m_ObjectHideFlags: 0
@@ -1200,16 +1200,18 @@ MonoBehaviour:
   punchDamage: 15
   stompDamage: 0
   attackRange: 0.5
+  stompRange: 0
+  danceRange: 0
   playerSize: 2
-  enemyDancingDuratation: 0
+  maxEnergyPoints: 5
+  energyPointRestoreTime: 2
   layerMask:
     serializedVersion: 2
     m_Bits: 640
   hitPoint: {fileID: 1699041391630362749}
   stompPoint: {fileID: 1699041391630362749}
-  pfVFXwalk: {fileID: 6282205958593189216, guid: 7835d67fd7106ab42917b8d75328f55b,
-    type: 3}
   dancePoint: {fileID: 1699041391630362749}
+  pfVFXgigant: {fileID: 0}
 --- !u!95 &7765022532433750471
 Animator:
   serializedVersion: 4
@@ -1263,6 +1265,7 @@ MonoBehaviour:
   duratations:
   - 10
   - 5
+  isCooldownTimerOn: 0000
 --- !u!1 &8211192253649445612
 GameObject:
   m_ObjectHideFlags: 0
