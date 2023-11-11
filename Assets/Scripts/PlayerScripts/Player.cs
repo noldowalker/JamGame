@@ -379,7 +379,7 @@ public class Player : MonoBehaviour
                 {
                     Instantiate(pfVFXgigant, transform.position, pfVFXgigant.rotation);
                     transform.localScale = new Vector3(playerSize, playerSize, playerSize);
-                    cooldownData.InitialCooldownValue = timers.GetCooldown(num);
+                    cooldownData.InitialCooldownValue = timers.GetCooldown(num) + timers.GetUltimateDuration(num);
                     ObserverWithData<CooldownObservingDTO>.FireEvent(Events.LargeUltimateActivated, cooldownData);
                     animator.SetTrigger("isGiant");
                     MusicHandleScript.Current.SwitchCurrentMusic(MusicEnum.MUSIC_KAZACHOCK);
@@ -395,7 +395,7 @@ public class Player : MonoBehaviour
             case 1: // Запуск или остановка танца
                 isDancingAura = turner;
                 animator.SetTrigger("isSinging");
-                cooldownData.InitialCooldownValue = timers.GetCooldown(num);
+                cooldownData.InitialCooldownValue = timers.GetCooldown(num) + timers.GetUltimateDuration(num);;
                 ObserverWithData<CooldownObservingDTO>.FireEvent(Events.DanceUltimateActivated, cooldownData);
                 MusicHandleScript.Current.SwitchCurrentMusic(MusicEnum.MUSIC_FISH);
                 break;

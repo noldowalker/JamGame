@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using GameLogic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -132,8 +133,6 @@ public class UIService : MonoBehaviour
         _helpPanel = Instantiate(helpPanelPrefab, gameCanvas.transform);
         
         ObserverWithoutData.Sub(Events.HelpPanelCalled, _helpPanel.SwitchPanelVisibility);
-
-        
     }
     
     private void TurnOnMainMenu()
@@ -149,6 +148,7 @@ public class UIService : MonoBehaviour
     private void OnDestroy()
     {
         Current = null;
+        ObserverWithoutData.Unsub(Events.HelpPanelCalled, _helpPanel.SwitchPanelVisibility);
     }
 
     private IEnumerator Reload()
@@ -196,4 +196,6 @@ public class UIService : MonoBehaviour
         loadingScreen.gameObject.SetActive(true);
         loadingScreen.LoadScene(sceneName);
     }
+    
+    
 }

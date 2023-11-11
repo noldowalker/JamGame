@@ -122,9 +122,10 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
         if (EnemyType == EnemyType.KING)
             return;
 
-            ChangeState(EnemyState.Dancing);
-        Debug.Log("IMMA FUCKER AND IM DANCING!");
         animator.SetTrigger("IsDancing");
+        ChangeState(EnemyState.Dancing);
+        Debug.Log("IMMA FUCKER AND IM DANCING!");
+
         ChangeStateAfterTime(4f, EnemyState.Idle);
     }
 
@@ -152,7 +153,7 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
         ChangeState(EnemyState.Attacking);
         isPlayerHittedByCurrentAttack = false;
         animator.Play("Base Layer.Melee Attack");
-        ChangeStateAfterTime(1.8f, EnemyState.Idle);
+        ChangeStateAfterTime(10f, EnemyState.Idle);
     }
 
     protected void FollowPoint(Transform point)
@@ -230,6 +231,9 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
         if (waitCoroutine != null)
             StopCoroutine(waitCoroutine);
 
+        animator.SetBool("IsDancingBool", state == EnemyState.Dancing);
+        
+        
         waitCoroutine = StartCoroutine(WaitAndChangeState(waitTime, newState));
     }
 
@@ -240,6 +244,8 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
             navMesh.enabled = false;
         if (newState == EnemyState.Idle)
             animator.SetTrigger("ToIdle");
+        animator.SetBool("IsDancingBool", state == EnemyState.Dancing);
+        
         waitCoroutine = null;
         state = newState;
     }

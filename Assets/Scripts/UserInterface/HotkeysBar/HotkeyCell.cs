@@ -82,8 +82,8 @@ public class HotkeyCell : MonoBehaviour
 
     public void SetOnCooldown(CooldownObservingDTO cooldownData)
     {
-        if (_cooldownAnimation != null)
-            return;
+        CooldownRemove();
+        _cooldownAnimation = null;
         
         var cooldownTime = cooldownData.InitialCooldownValue;
         _cooldownAnimation = StartCoroutine(PlayCooldownAnimation(cooldownTime));

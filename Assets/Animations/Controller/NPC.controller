@@ -365,6 +365,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 1
     m_ConditionEvent: ToIdle
     m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: IsDancingBool
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -6033191639501660798}
   m_Solo: 0
@@ -412,6 +415,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 1
     m_ConditionEvent: IsDancing
     m_EventTreshold: 0
+  - m_ConditionMode: 1
+    m_ConditionEvent: IsDancingBool
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -1723067667296993033}
   m_Solo: 0
@@ -436,6 +442,9 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: IsKicked
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: IsDancingBool
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -3466407474192575410}
@@ -492,6 +501,12 @@ AnimatorController:
     m_Controller: {fileID: 0}
   - m_Name: ToIdle
     m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
+  - m_Name: IsDancingBool
+    m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
@@ -614,6 +629,9 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
+  - m_ConditionMode: 2
+    m_ConditionEvent: IsDancingBool
+    m_EventTreshold: 0
   - m_ConditionMode: 1
     m_ConditionEvent: IsPunched
     m_EventTreshold: 0
