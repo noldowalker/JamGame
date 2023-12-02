@@ -45,20 +45,21 @@ public class HealthSystem
     {
         return _health / _healthMax;
     }
-    public void Damage(float damageAmount)
+    public bool Damage(float damageAmount)
     {
         _health -= damageAmount;
         OnDamaged?.Invoke(this, EventArgs.Empty);
 
-        Debug.Log($@"Нанесено {damageAmount} урона, осталось {_health} хп");
+       
         if (_health <= 0)
         {
-            Debug.Log($@"ЧЕЛ МЕРТВ");
             _health = 0;
             OnDead?.Invoke(this, EventArgs.Empty);
+            return true;
         }
 
         OnHealthChanged?.Invoke(this, EventArgs.Empty);
+        return false;
     }
 
     public void Heal(float healAmount)

@@ -98,6 +98,15 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Uppercut"",
+                    ""type"": ""Button"",
+                    ""id"": ""77b2eb3a-54d2-4ae0-9a4f-0ba25551ce0b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -115,7 +124,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 {
                     ""name"": ""up"",
                     ""id"": ""8eee7dd1-62ba-42f9-afb1-39c15d101653"",
-                    ""path"": ""<Keyboard>/upArrow"",
+                    ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -126,7 +135,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 {
                     ""name"": ""down"",
                     ""id"": ""8bfa6694-9135-43dd-9b97-2594188bf808"",
-                    ""path"": ""<Keyboard>/downArrow"",
+                    ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -137,7 +146,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 {
                     ""name"": ""left"",
                     ""id"": ""2eed015a-49db-43be-b117-dcbac016c7f6"",
-                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""path"": ""<Keyboard>/a"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -148,7 +157,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 {
                     ""name"": ""right"",
                     ""id"": ""85280688-0b8c-4a3d-9ec5-f5352b79701e"",
-                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""path"": ""<Keyboard>/d"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -170,7 +179,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""ce3ed8c9-9b2e-4f4d-b010-b14ce58f406e"",
-                    ""path"": ""<Keyboard>/q"",
+                    ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -192,7 +201,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""2e3707ac-bef4-4a40-85d4-7e27293aaa45"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Mouse>/rightButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -224,6 +233,17 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""8d96606e-aa78-4877-8658-4986257a83bb"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": ""Press(behavior=2)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Uppercut"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""1f6f5d1e-6f33-4a31-a604-7921b803592f"",
                     ""path"": ""<Keyboard>/3"",
                     ""interactions"": """",
@@ -248,6 +268,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         m_PlayerController_Ultimate1 = m_PlayerController.FindAction("Ultimate1", throwIfNotFound: true);
         m_PlayerController_Ultimate2 = m_PlayerController.FindAction("Ultimate2", throwIfNotFound: true);
         m_PlayerController_Ultimate3 = m_PlayerController.FindAction("Ultimate3", throwIfNotFound: true);
+        m_PlayerController_Uppercut = m_PlayerController.FindAction("Uppercut", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -315,6 +336,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerController_Ultimate1;
     private readonly InputAction m_PlayerController_Ultimate2;
     private readonly InputAction m_PlayerController_Ultimate3;
+    private readonly InputAction m_PlayerController_Uppercut;
     public struct PlayerControllerActions
     {
         private @PlayerInput m_Wrapper;
@@ -327,6 +349,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         public InputAction @Ultimate1 => m_Wrapper.m_PlayerController_Ultimate1;
         public InputAction @Ultimate2 => m_Wrapper.m_PlayerController_Ultimate2;
         public InputAction @Ultimate3 => m_Wrapper.m_PlayerController_Ultimate3;
+        public InputAction @Uppercut => m_Wrapper.m_PlayerController_Uppercut;
         public InputActionMap Get() { return m_Wrapper.m_PlayerController; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -360,6 +383,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @Ultimate3.started -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUltimate3;
                 @Ultimate3.performed -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUltimate3;
                 @Ultimate3.canceled -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUltimate3;
+                @Uppercut.started -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUppercut;
+                @Uppercut.performed -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUppercut;
+                @Uppercut.canceled -= m_Wrapper.m_PlayerControllerActionsCallbackInterface.OnUppercut;
             }
             m_Wrapper.m_PlayerControllerActionsCallbackInterface = instance;
             if (instance != null)
@@ -388,6 +414,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @Ultimate3.started += instance.OnUltimate3;
                 @Ultimate3.performed += instance.OnUltimate3;
                 @Ultimate3.canceled += instance.OnUltimate3;
+                @Uppercut.started += instance.OnUppercut;
+                @Uppercut.performed += instance.OnUppercut;
+                @Uppercut.canceled += instance.OnUppercut;
             }
         }
     }
@@ -402,5 +431,6 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         void OnUltimate1(InputAction.CallbackContext context);
         void OnUltimate2(InputAction.CallbackContext context);
         void OnUltimate3(InputAction.CallbackContext context);
+        void OnUppercut(InputAction.CallbackContext context);
     }
 }

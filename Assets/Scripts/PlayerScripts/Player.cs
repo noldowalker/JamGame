@@ -18,9 +18,8 @@ public class Player : MonoBehaviour
     [SerializeField] [Range(1f, 100f)] private float jumpForce;
     [SerializeField] [Range(1f, 100f)] private float fallControlSpeed;
     [SerializeField] [Range(1f, 100f)] private float gravity;
-    [SerializeField] [Range(0.1f, 10f)] private float punchCoolDown;
-    [SerializeField] [Range(0.1f, 10f)] private float kickCoolDown;
     [SerializeField] [Range(1000f, 10000f)] private float kickForce;
+    [SerializeField] [Range(1000f, 10000f)] private float uppercutForce;
     [SerializeField] [Range(0f, 1000f)] private float kickDamage;
     [SerializeField] [Range(0f, 1000f)] private float punchDamage;
     [SerializeField] [Range(0f, 1000f)] private float stompDamage;
@@ -30,6 +29,7 @@ public class Player : MonoBehaviour
     [SerializeField] [Range(1f, 5f)] private float playerSize = 1f;
     [SerializeField] [Range(1, 5)] private int maxEnergyPoints = 5;
     [SerializeField] [Range(1f, 10f)] private float energyPointRestoreTime = 2f;
+    [SerializeField] [Range(0f, 0.05f)] private float hitDashForce;
     
     
     
@@ -41,14 +41,14 @@ public class Player : MonoBehaviour
 
     [SerializeField] private Transform pfVFXgigant;
 
-    private ParticleSystem pfVFXwalk;
     private AudioSource audioSource;
 
     public static UnityEvent punchEvent = new UnityEvent();
     public static UnityEvent<float> kickEvent = new UnityEvent<float>();
     public static Player Current;
     public PlayerInput Input => playerInput;
-    
+
+    public ParticleSystem pfvfxWalk;
     private Vector2 input;
     private Vector3 currentMovement;
 
@@ -58,8 +58,10 @@ public class Player : MonoBehaviour
     private bool isMovementPressed;
     private bool isPunching;
     private bool isKicking;
+    private bool isUppercut;
     private bool isGiant = false;
     private bool isDancingAura = false;
+    private bool isCanPunch = true;
 
     private int punchCount = 0;
 
@@ -71,16 +73,18 @@ public class Player : MonoBehaviour
     private int currentEnergyPoints;
     private Coroutine energyRestoreCoroutine;
     private UltimateTimers timers;
-    
+    private bool isCanMove;
+    private GameObject magneticTarget;
+
+
     private void Awake()
     {
         if (Current != null)
             Debug.LogError("Уже существует один экземпляр игрока!");
         Current = this;
-
+        isCanMove = true;
         if (maxEnergyPoints == 0)
             maxEnergyPoints = 5;
-
         currentEnergyPoints = maxEnergyPoints;
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
@@ -99,8 +103,7 @@ public class Player : MonoBehaviour
         playerInput.PlayerController.Kick.canceled += OnKick;
         playerInput.PlayerController.Ultimate1.started += OnUltimate1;
         playerInput.PlayerController.Ultimate2.started += OnUltimate2;
-
-        pfVFXwalk = GetComponentInChildren<ParticleSystem>();
+        playerInput.PlayerController.Uppercut.started += OnUppercut;
 
         energyRestoreCoroutine = StartCoroutine(RestoreEnergyPoint());
         timers = GetComponent<UltimateTimers>();
@@ -108,9 +111,6 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        punchAnimCoolDownTimer = 0;
-        punchCoolDownTimer = punchCoolDown;
-        kickCoolDownTimer = kickCoolDown;
     }
 
     private void Update()
@@ -118,66 +118,68 @@ public class Player : MonoBehaviour
         HandleMovement();
         HandleDancingAura();
         HandlePunch();
-        HandleKick();
+        HandleUppercut();
     }
     private void HandleMovement()
     {
-        
-        animator.SetFloat("speed", 0);
+        if (isCanMove)
+        {
+            animator.SetFloat("speed", 0);
 
-        Vector3 forward = Vector3.forward;
-        Vector3 right = Vector3.right;
-        float speedMultipler = 1;
-        if (isFalling)
-        {
-            speedMultipler = fallControlSpeed;
-        }
-        else
-        {
-            if (isMovementPressed)
+            Vector3 forward = Vector3.forward;
+            Vector3 right = Vector3.right;
+            float speedMultipler = 1;
+            if (isFalling)
             {
-                if (isRunPressed)
+                speedMultipler = fallControlSpeed;
+            }
+            else
+            {
+                if (isMovementPressed)
                 {
-                    speedMultipler = runSpeed;
-                    animator.SetFloat("speed", 2);
-                }
-                else
-                {
-                    speedMultipler = walkSpeed;
-                    animator.SetFloat("speed", 1);
+                    if (isRunPressed)
+                    {
+                        speedMultipler = runSpeed;
+                        animator.SetFloat("speed", 2);
+                    }
+                    else
+                    {
+                        speedMultipler = walkSpeed;
+                        animator.SetFloat("speed", 1);
+                    }
                 }
             }
+
+            float curSpeedX = speedMultipler * -input.x;
+            float curSpeedY = speedMultipler * input.y;
+            float movementDirectionY = currentMovement.y;
+            currentMovement = (forward * curSpeedX) + (right * curSpeedY);
+            HandleJump(movementDirectionY);
+            characterController.Move(currentMovement * Time.deltaTime);
+
+            if (input.y == 0 && input.x == 0)
+                return;
+
+            var rotationVector = new Vector3(input.y, 0, -input.x);
+            rotationVector.Normalize();
+            if (rotationVector != Vector3.zero)
+            {
+                transform.forward = rotationVector;
+            }
+
+            if (isGiant)
+                HandleStomping();
         }
-        
-        float curSpeedX = speedMultipler * -input.x;
-        float curSpeedY = speedMultipler * input.y;
-        float movementDirectionY = currentMovement.y;
-        currentMovement = (forward * curSpeedX) + (right * curSpeedY);
-        HandleJump(movementDirectionY);
-        characterController.Move(currentMovement * Time.deltaTime);
-        
-        if (input.y == 0 && input.x == 0)
-            return;
-        
-        var rotationVector = new Vector3(input.y, 0, -input.x);
-        rotationVector.Normalize();
-        if (rotationVector != Vector3.zero)
-        {
-            transform.forward = rotationVector;
-        }
-        
-        if (isGiant) 
-            HandleStomping();
     }
 
     private void HandleJump(float movementDirectionY)
     {
-        if (isJumpPressed && characterController.isGrounded && currentEnergyPoints > 0)
+        if (isJumpPressed && characterController.isGrounded)
         {  
             currentMovement.y = jumpForce;
             animator.SetTrigger("JumpPressed");
             SoundHandleScript.Current.PlaySound(SoundEnum.JUMP_START,audioSource);
-            currentEnergyPoints--;
+            //currentEnergyPoints--;
             UIService.Current.ChangeSpheresAmount(currentEnergyPoints);
         } else
         {
@@ -202,7 +204,7 @@ public class Player : MonoBehaviour
     }
 
    
-    private void CoolDown()
+   /* private void CoolDown()
     {
         if (punchCoolDownTimer < punchCoolDown)
         {
@@ -221,66 +223,156 @@ public class Player : MonoBehaviour
                 punchAnimCoolDownTimer = 0;
             }
         }
+    }*/
+
+    private GameObject determineTarget()
+    {
+        Collider[] targets = Physics.OverlapSphere(hitPoint.position, attackRange * 3, layerMask);
+        foreach (Collider target in targets)
+        {
+            Debug.Log(target.tag);
+            if (target.CompareTag("Enemy"))
+            {
+                return target.gameObject;
+            }
+        }
+        return null;
+    }
+
+    private void HandleUppercut()
+    {
+        if (isCanPunch)
+        {
+            if (isUppercut)
+            {
+                isUppercut = false;
+                animator.SetTrigger("isUppercut");
+            }
+        }
+    }
+
+    private void UppercutJump()
+    {
+        currentMovement.y = jumpForce;
     }
 
     private void HandlePunch()
     {
-        CoolDown();
-        if (isPunching && punchCoolDownTimer >= punchCoolDown)
+        if(isCanPunch)
         {
-
-            Collider[] hitEnemies = Physics.OverlapSphere(hitPoint.position, attackRange, layerMask);
-
-            foreach (Collider enemy in hitEnemies)
+            if (!isCanMove)
             {
-                if (enemy.CompareTag("Enemy"))
+                isCanMove = true;
+            }
+            if (isPunching || isKicking)
+            {
+                SoundHandleScript.Current.PlaySound(SoundEnum.WEAPON_SLASH, audioSource);
+                magneticTarget = determineTarget();
+
+                if (isPunching)
                 {
-                    IPunchable punchable = enemy.GetComponent<IPunchable>();
-                    if (punchable != null)
+                    isCanPunch = false;
+                    isPunching = false;
+                    isCanMove = false;
+
+                    punchCount++;
+                    if (punchCount > 3)
                     {
-                        punchable.Punch(punchDamage);
+                        punchCount = 1;
                     }
-                } else
-                {
-                    SoundHandleScript.Current.PlaySound(SoundEnum.WEAPON_SLASH, audioSource);
+                    animator.SetTrigger("IsPunching");
+                    animator.SetInteger("Punch", punchCount);
                 }
-                if (enemy.CompareTag("Heal"))
+                if (isKicking)
                 {
-                    IPunchable punchable = enemy.GetComponent<IPunchable>();
-                    if (punchable != null)
-                    {
-                        punchable.Punch(punchDamage);
-                    }
+                    isCanPunch = false;
+                    isKicking = false;
+                    isCanMove = false;
+                    animator.SetTrigger("IsKicking");
                 }
             }
-
-            animator.SetTrigger("IsPunching");
-            punchAnimCoolDownTimer = 0;
-            if (punchCount >= 3)
+        } else
+        {
+            animator.SetFloat("speed", 2);
+            if (magneticTarget != null)
             {
-                punchCount = 0;
+                Vector3 target = new Vector3(magneticTarget.transform.position.x,
+                    transform.position.y, magneticTarget.transform.position.z);
+                transform.LookAt(target);
+                if(Vector3.Distance(transform.position,magneticTarget.transform.position) > 1.5f)
+                {
+                    characterController.Move(transform.forward * hitDashForce);
+                }
             }
             else
             {
-                punchCount++;
+                characterController.Move(transform.forward * hitDashForce);
             }
-            
-            animator.SetInteger("Punch", punchCount);
+        }
 
-            punchCoolDownTimer = 0;
+    }
+
+    public void HandleHitDamage()
+    {
+        isPunching = false;
+        isCanPunch = true;
+        Collider[] hitEnemies = Physics.OverlapSphere(hitPoint.position, attackRange, layerMask);
+
+        foreach (Collider enemy in hitEnemies)
+        {
+            if (enemy.CompareTag("Enemy"))
+            {
+                IPunchable punchable = enemy.GetComponent<IPunchable>();
+                if (punchable != null)
+                {
+                    punchable.Punch(punchDamage);
+                }
+            }
+            if (enemy.CompareTag("Heal"))
+            {
+                IPunchable punchable = enemy.GetComponent<IPunchable>();
+                if (punchable != null)
+                {
+                    punchable.Punch(punchDamage);
+                }
+            }
         }
     }
-    private void HandleKick()
-    {
-        if (kickCoolDownTimer < kickCoolDown)
-        {
-            kickCoolDownTimer+=Time.deltaTime;
-        }
 
-        if (!isKicking || !(kickCoolDownTimer >= kickCoolDown)) 
-            return;
-        
-        animator.SetTrigger("IsKicking");
+    public void HandleUppercutDamage()
+    {
+        isPunching = false;
+        isCanPunch = true;
+        Collider[] hitEnemies = Physics.OverlapSphere(hitPoint.position, attackRange*5, layerMask);
+        foreach (Collider enemy in hitEnemies)
+        {
+            if (enemy.CompareTag("Enemy"))
+            {
+                IUppercutable punchable = enemy.GetComponent<IUppercutable>();
+                if (punchable != null)
+                {
+                    punchable.Uppercut(punchDamage, uppercutForce);
+                }
+            }
+            if (enemy.CompareTag("Heal"))
+            {
+                IPunchable punchable = enemy.GetComponent<IPunchable>();
+                if (punchable != null)
+                {
+                    punchable.Punch(punchDamage);
+                }
+            }
+        }
+    }
+
+    public void HandleHitEnd()
+    {
+        punchCount = 0;
+    }
+
+    public void HandleKickDamage()
+    {
+        isCanPunch = true;
         var hitEnemies = Physics.OverlapSphere(hitPoint.position, attackRange, layerMask);
 
         foreach (var enemy in hitEnemies)
@@ -313,9 +405,8 @@ public class Player : MonoBehaviour
                 }
             }
         }
-
-        kickCoolDownTimer = 0;
     }
+
 
     private void HandleStomping()
     {
@@ -402,6 +493,14 @@ public class Player : MonoBehaviour
         }
         timers.SetUltimateTimer(num);
     }
+
+
+    private void OnUppercut(InputAction.CallbackContext obj)
+    {
+        if (isGiant || isDancingAura)
+            return;
+        isUppercut = obj.ReadValueAsButton();
+    }
     
     private void OnJump(InputAction.CallbackContext obj)
     {
@@ -415,7 +514,6 @@ public class Player : MonoBehaviour
         if (isGiant || isDancingAura)
             return;
         isKicking = obj.ReadValueAsButton();
-        SoundHandleScript.Current.PlaySound(SoundEnum.WEAPON_SLASH, audioSource);
     }
 
     private void OnPunch(InputAction.CallbackContext obj)
@@ -423,7 +521,6 @@ public class Player : MonoBehaviour
         if (isGiant || isDancingAura)
             return;
         isPunching = obj.ReadValueAsButton();
-        SoundHandleScript.Current.PlaySound(SoundEnum.WEAPON_SLASH, audioSource);
     }
     
     private void OnRun(InputAction.CallbackContext obj)
@@ -444,13 +541,14 @@ public class Player : MonoBehaviour
     private void OnStep()
     {
         //print("Step");
-        pfVFXwalk.Play();
+        ParticleSystem currentPfWalk = Instantiate(pfvfxWalk, this.transform);
+        currentPfWalk.Play();
+
         SoundHandleScript.Current.PlaySound(SoundEnum.PLAYER_STEP, audioSource);
     }
     
     private void OnJumpEnd()
     {
-        Debug.Log("SOSALITY@!!!");
     }
 
     //=================
@@ -495,7 +593,7 @@ public class Player : MonoBehaviour
             else
                 currentEnergyPoints++;
             
-            UIService.Current.ChangeSpheresAmount(currentEnergyPoints);
+            //UIService.Current.ChangeSpheresAmount(currentEnergyPoints);
         }
     }
 

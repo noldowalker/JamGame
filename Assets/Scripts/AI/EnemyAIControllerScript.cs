@@ -27,6 +27,12 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
     protected GameObject player;
     protected Collider playersCollider;
     protected Animator animator;
+    protected Collider[] enemyColliders;
+    protected Collider mainCollider;
+    protected Rigidbody mainRigidbody;
+    private Rigidbody[] rigidbodies;
+    private Vector3 kickDirection;
+    private bool isKicked;
 
     private float gruntCooldownTimer = 0;
     private float gruntCooldown = 10;
@@ -39,6 +45,10 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
     {
         navMesh = GetComponent<NavMeshAgent>();
         audioSource = GetComponent<AudioSource>();
+        mainCollider = GetComponent<Collider>();
+        mainRigidbody = GetComponent<Rigidbody>();
+        rigidbodies = GetComponentsInChildren<Rigidbody>();
+        enemyColliders = GetComponentsInChildren<Collider>();
         navMesh.stoppingDistance = reachTargetDistance;
         navMesh.speed = speedMove;
         player = GameObject.FindGameObjectsWithTag("Player")[0];
@@ -48,6 +58,7 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
         animator = GetComponent<Animator>();
         damageRadius = reachTargetDistance / 2;
         ChangeState(EnemyState.Idle);
+        enableRagdoll(false);
     }
 
     void Update()
@@ -73,9 +84,27 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
             case EnemyState.SelfDestroy:
                 Destroy();
                 break;
+            case EnemyState.Dying:
+                return;
         };
         
         PerformGrunt(10, 25); //Random voice sounds by enemies
+    }
+
+    public void enableRagdoll(bool enable)
+    {
+        
+        foreach(Collider col in enemyColliders)
+        {
+            col.enabled = enable;
+        }
+        foreach(Rigidbody rb in rigidbodies)
+        {
+            rb.isKinematic = !enable;
+        }
+        animator.enabled = !enable;
+        mainRigidbody.isKinematic = enable;
+        mainCollider.enabled = !enable;
     }
     
     public void ReactOnPunch()
@@ -85,38 +114,62 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
             return;
         }
         if (state == EnemyState.Dying)
+        {
             return;
-        
+        }
         ChangeState(EnemyState.Punched);
         animator.SetTrigger("IsPunched");
         ChangeStateAfterTime(1.2f, EnemyState.Idle);
     }
 
-    public void ReactOnKick()
+    public void ReactOnKick(float force, Vector3 direction)
     {
         if(enemyType == EnemyType.KING)
         {
             return;
         }
         if (state == EnemyState.Dying)
-            return;  
-        ChangeState(EnemyState.Kicked);
-        animator.SetTrigger("IsKicked");
-        ChangeStateAfterTime(4f, EnemyState.Idle);
+        {
+            return;
+        }
+        mainRigidbody.AddForce((transform.position - direction) * force, ForceMode.Impulse);
+        ChangeState(EnemyState.Punched);
+        animator.SetTrigger("IsPunched");
+        ChangeStateAfterTime(1.2f, EnemyState.Idle);
+    }
+
+    public void ReactOnUppercut(float force)
+    {
+        if (enemyType == EnemyType.KING)
+        {
+            return;
+        }
+        if (state == EnemyState.Dying)
+        {
+            return;
+        }
+        mainRigidbody.AddForce((transform.up) * force, ForceMode.Impulse);
+        ChangeState(EnemyState.Punched);
+        animator.SetTrigger("IsPunched");
+        ChangeStateAfterTime(3, EnemyState.Idle);
     }
     
     public void ReactOnDeath()
-    {
-        if (state == EnemyState.Dying)
-            return;
-        
+    {   
         ChangeState(EnemyState.Dying);
         animator.SetTrigger("IsDie");
+        /*enemyCollider.enabled = false;
+        WeaponHitArea.enabled = false;*/
         ChangeStateAfterTime(4f, EnemyState.SelfDestroy);
+        enableRagdoll(true);
     }
     
     public void Dance()
     {
+        if (state == EnemyState.Dying)
+        {
+            return;
+        }
         if (state == EnemyState.Dancing)
             return;
         if (EnemyType == EnemyType.KING)
@@ -140,24 +193,39 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
 
     protected void MoveTowardsPlayer()
     {
+        if (state == EnemyState.Dying)
+        {
+            return;
+        }
         if (player == null)
             ChangeState(EnemyState.Idle);
 
         navMesh.enabled = true;
-        animator.SetBool("isRunning", true);
+        animator.SetFloat("Speed", 1);
         FollowPoint(player.transform);
 
-        if (!IsTargetAttackable(player.transform)) 
+        if (!IsTargetAttackable(player.transform))
+        {
             return;
+        }
         
         ChangeState(EnemyState.Attacking);
         isPlayerHittedByCurrentAttack = false;
-        animator.Play("Base Layer.Melee Attack");
+        animator.SetFloat("Speed", 0);
+        animator.SetTrigger("Attack");
         ChangeStateAfterTime(10f, EnemyState.Idle);
     }
 
     protected void FollowPoint(Transform point)
     {
+        if (state == EnemyState.Dying)
+        {
+            return;
+        }
+        if (!navMesh.enabled)
+        {
+            return;
+        }
         navMesh.destination = point.position;
         navMesh.speed = speedMove;
     }
@@ -169,22 +237,25 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
 
     protected void CheckIfPlayeTouched()
     {
+        if (state == EnemyState.Dying)
+        {
+            return;
+        }
+        
         if (isPlayerHittedByCurrentAttack)
             return;
         SoundHandleScript.Current.PlaySound(SoundEnum.WEAPON_SLASH, audioSource);
 
+        animator.Play("Base Layer.Melee Attack");
         if (!WeaponHitArea.bounds.Intersects(playersCollider.bounds)) 
             return;
 
-        Debug.Log("INTERSECTS!");
         isPlayerHittedByCurrentAttack = true;
         IDamagable damagable = player.GetComponent<IDamagable>();
         if (damagable != null)
         {
             damagable.Damage(damage);
         }
-
-        animator.Play("Base Layer.Melee Attack");
     }
 
     protected void Destroy()
@@ -195,6 +266,10 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
 
     protected void PerformGrunt(float minInterval, float maxInterval)
     {
+        if (state == EnemyState.Dying)
+        {
+            return;
+        }
         if (gruntCooldownTimer < gruntCooldown)
         {
             gruntCooldownTimer += Time.deltaTime;
@@ -240,6 +315,7 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
 
     private void ChangeState(EnemyState newState)
     {
+        state = newState;
         if (newState != EnemyState.MoveTowardsPlayer)
             navMesh.enabled = false;
         if (newState == EnemyState.Idle)
@@ -247,7 +323,6 @@ public class EnemyAIControllerScript : MonoBehaviour, IDancable
         animator.SetBool("IsDancingBool", state == EnemyState.Dancing);
         
         waitCoroutine = null;
-        state = newState;
     }
     
     private IEnumerator WaitAndChangeState(float waitTime, EnemyState newState)

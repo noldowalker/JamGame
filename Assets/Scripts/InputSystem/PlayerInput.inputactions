@@ -76,6 +76,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Uppercut",
+                    "type": "Button",
+                    "id": "77b2eb3a-54d2-4ae0-9a4f-0ba25551ce0b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -93,7 +102,7 @@
                 {
                     "name": "up",
                     "id": "8eee7dd1-62ba-42f9-afb1-39c15d101653",
-                    "path": "<Keyboard>/upArrow",
+                    "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -104,7 +113,7 @@
                 {
                     "name": "down",
                     "id": "8bfa6694-9135-43dd-9b97-2594188bf808",
-                    "path": "<Keyboard>/downArrow",
+                    "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -115,7 +124,7 @@
                 {
                     "name": "left",
                     "id": "2eed015a-49db-43be-b117-dcbac016c7f6",
-                    "path": "<Keyboard>/leftArrow",
+                    "path": "<Keyboard>/a",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -126,7 +135,7 @@
                 {
                     "name": "right",
                     "id": "85280688-0b8c-4a3d-9ec5-f5352b79701e",
-                    "path": "<Keyboard>/rightArrow",
+                    "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -148,7 +157,7 @@
                 {
                     "name": "",
                     "id": "ce3ed8c9-9b2e-4f4d-b010-b14ce58f406e",
-                    "path": "<Keyboard>/q",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -170,7 +179,7 @@
                 {
                     "name": "",
                     "id": "2e3707ac-bef4-4a40-85d4-7e27293aaa45",
-                    "path": "<Keyboard>/e",
+                    "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -197,6 +206,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Ultimate2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8d96606e-aa78-4877-8658-4986257a83bb",
+                    "path": "<Keyboard>/f",
+                    "interactions": "Press(behavior=2)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Uppercut",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
